@@ -9,7 +9,10 @@
     "preview": "vite preview --host",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "test": "vitest run",
-    "lint:register": "vitest run src/lint/register.test.ts"
+    "lint:register": "vitest run src/lint/register.test.ts",
+    "voice:plan": "vite-node scripts/generate-voice.ts -- --dry-run",
+    "voice:casting": "vite-node scripts/generate-voice.ts -- --casting",
+    "voice:canonical": "vite-node scripts/generate-voice.ts --"
   },
   "dependencies": {
     "react": "^18.3.1",

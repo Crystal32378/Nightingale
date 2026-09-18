@@ -180,6 +180,27 @@ Instruction ──┬─→ renderer + validator ─→ verified text ─→ 畫
 
 ---
 
+## 6.5 已經建好的部分（尚未生成任何音檔）
+
+以下都已經進 repo，跑 `npm test` 會驗，**完全沒有花到點數**：
+
+| 檔案 | 做什麼 |
+| --- | --- |
+| `src/voice/utterances.ts` | 從 string table + verified registry **推導**出 canonical 清單。腳本裡沒有任何一句手打的句子 |
+| `src/voice/manifest.ts` | manifest 型別、`checkManifest`（對照 renderer）、`isPlayable`（播放前逐字比對） |
+| `src/voice/utterances.test.ts` | 15 個測試：清單筆數、id 唯一、每句等於 renderer 輸出、每句通過 register lint、manifest 偵測改字／缺檔／孤兒 |
+| `scripts/generate-voice.ts` | MiniMax T2A 批次生成。三種模式：`voice:plan`（只印、不呼叫）、`voice:casting`、`voice:canonical` |
+| `.env.example` | key 的位置。`.env` 與 `casting/` 都已 gitignore |
+
+實際清單（`npm run voice:plan` 的輸出）：**20 句、140 個中文字**。
+casting 一個音色 8 句、56 個字；四個音色一起試也只有 224 個字。
+
+`SPOKEN_KEYS` 決定哪些 key 會被唸；`label.*`、`checkpoint.next`、`place.bare`
+是畫面用的，永遠不會送進聲音層。`fallback.safe` 與 `guidance.uncertain` 是同一
+串字，所以共用同一個音檔，不會被錄兩次然後慢慢分岔。
+
+---
+
 ## 7. 點數怎麼花最划算
 
 建議順序，理由是**耳朵是 Crystal 的，不是我的**：

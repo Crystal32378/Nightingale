@@ -40,6 +40,28 @@ export function isStringKey(value: string): value is StringKey {
   return (STRING_KEYS as readonly string[]).includes(value)
 }
 
+/**
+ * The keys that are ever SPOKEN. Everything else is screen chrome and is never
+ * sent to a voice.
+ *
+ * `fallback.safe` is deliberately absent: it is the same characters as
+ * `guidance.uncertain`, so the two share one audio file rather than being
+ * recorded twice and drifting apart.
+ */
+export const SPOKEN_KEYS = [
+  'guidance.go',
+  'guidance.turn.left',
+  'guidance.turn.right',
+  'guidance.uncertain',
+  'guidance.arrived',
+  'ask.utterance',
+] as const
+
+export type SpokenKey = (typeof SPOKEN_KEYS)[number]
+
+/** Spoken keys that interpolate a verified place, so they need one file per place. */
+export const PLACE_BEARING_SPOKEN_KEYS = ['guidance.arrived', 'ask.utterance'] as const
+
 export interface StringParams {
   /** registry key, never a display string */
   placeId?: string
