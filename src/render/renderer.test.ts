@@ -1,10 +1,20 @@
 import { describe, expect, it } from 'vitest'
 import type { Instruction } from '../engine/types'
+import { PLACE_REGISTRY, type PlaceRegistry } from '../registry/types'
 import { ZH_TW } from '../strings/zh-TW'
-import { renderAsk, renderGuidance, renderNextCheckpoint } from './renderer'
+import { label, renderAsk, renderGuidance, renderNextCheckpoint, renderPlace } from './renderer'
 import { validate } from './validator'
 
 const now = 1_700_000_000_000
+
+/**
+ * Test-only registry. The shipped registry contains real places only — an
+ * unverified entry lives here, not in the product.
+ */
+const FIXTURE_REGISTRY: PlaceRegistry = {
+  ...PLACE_REGISTRY,
+  UNVERIFIED_WARD: { id: 'UNVERIFIED_WARD', verified: false, names: { 'zh-TW': '某某病房' } },
+}
 
 function instruction(partial: Partial<Instruction>): Instruction {
   return {
@@ -42,6 +52,22 @@ describe('verified registry interpolation', () => {
     expect(renderNextCheckpoint('REGISTRATION', now)?.screen).toBe('下一個：掛號櫃台')
     expect(renderNextCheckpoint(null, now)).toBeNull()
   })
+
+  it('renders a bare place name for a screen label', () => {
+    expect(renderPlace('ELEVATOR_OUT', now)).toBe('電梯出口')
+    expect(renderPlace(null, now)).toBeNull()
+  })
+
+  it('leaves a quiet gap rather than an apology where a place name belongs', () => {
+    expect(renderPlace('CARDIOLOGY', now)).toBeNull()
+    expect(renderPlace('UNVERIFIED_WARD', now, { registry: FIXTURE_REGISTRY })).toBeNull()
+  })
+
+  it('keeps screen chrome in the same table, so no component invents wording', () => {
+    expect(label('label.ask')).toBe('幫我問')
+    expect(label('label.rest')).toBe('休息')
+    expect(label('label.current')).toBe('目前位置')
+  })
 })
 
 describe('validator falls back instead of improvising', () => {
@@ -53,7 +79,7 @@ describe('validator falls back instead of improvising', () => {
   })
 
   it('refuses a registry entry that exists but is not verified', () => {
-    const rendered = renderAsk('UNVERIFIED_WARD', now)
+    const rendered = renderAsk('UNVERIFIED_WARD', now, { registry: FIXTURE_REGISTRY })
     expect(rendered.fallbackUsed).toBe(true)
     expect(rendered.failures).toContain('UNVERIFIED_PLACE')
   })
@@ -68,7 +94,7 @@ describe('validator falls back instead of improvising', () => {
 
   it('allows a direction inside its TTL', () => {
     const live = instruction({ intent: 'TURN', turn: 'LEFT', turnExpiresAt: now + 10_000 })
-    expect(renderGuidance(live, now).screen).toBe('左轉。')
+    expect(renderGuidance(live, now).screen).toBe('往左手邊走。')
   })
 
   it('refuses any distance, floor or count the engine did not supply', () => {
@@ -92,5 +118,13 @@ describe('validator falls back instead of improvising', () => {
 
   it('admits uncertainty in one approved sentence', () => {
     expect(renderGuidance(instruction({ intent: 'ASK_DIRECTION' }), now).screen).toBe('我不確定。我陪你問。')
+  })
+})
+
+describe('the shipped registry carries no test scaffolding', () => {
+  it('contains only verified places', () => {
+    for (const entry of Object.values(PLACE_REGISTRY)) {
+      expect(entry.verified).toBe(true)
+    }
   })
 })

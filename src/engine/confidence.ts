@@ -1,10 +1,7 @@
 import type { Band } from './types'
+import { BAND_DECAYING_MIN, BAND_FRESH_MIN, CONFIDENCE_HALF_LIFE_MS } from './tuning'
 
-/** Confidence halves every this many ms since the last observation. */
-export const CONFIDENCE_HALF_LIFE_MS = 120_000
-
-export const BAND_FRESH_MIN = 0.5
-export const BAND_DECAYING_MIN = 0.2
+export { BAND_DECAYING_MIN, BAND_FRESH_MIN, CONFIDENCE_HALF_LIFE_MS }
 
 /**
  * Confidence is a function of time only. It never encodes anything about the

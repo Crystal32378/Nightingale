@@ -1,10 +1,7 @@
 import type { VenueGraph, VenueEdge, TurnDirection } from './types'
+import { TURN_AMBIGUOUS_DEG, TURN_DEADZONE_DEG } from './tuning'
 
-/** Degrees below which we call it "straight ahead" and emit no turn. */
-export const TURN_DEADZONE_DEG = 25
-
-/** Degrees at or above which left/right is not reliably distinguishable (near reversal). */
-export const TURN_AMBIGUOUS_DEG = 160
+export { TURN_AMBIGUOUS_DEG, TURN_DEADZONE_DEG }
 
 export function normalizeBearing(deg: number): number {
   const n = deg % 360

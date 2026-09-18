@@ -1,5 +1,5 @@
 import type { Instruction } from '../engine/types'
-import { isVerifiedPlace } from '../registry/types'
+import { isVerifiedPlace, PLACE_REGISTRY, type PlaceRegistry } from '../registry/types'
 import { isStringKey, type StringRequest } from '../strings/keys'
 
 /**
@@ -20,6 +20,7 @@ export interface ValidationContext {
   /** The instruction this string claims to express. */
   instruction: Instruction | null
   now: number
+  registry?: PlaceRegistry
 }
 
 export interface ValidationResult {
@@ -39,11 +40,12 @@ const UNRESOLVED = /\{[a-zA-Z]+\}/
 
 export function validate(request: StringRequest, text: string, ctx: ValidationContext): ValidationResult {
   const failures: ValidationFailure[] = []
+  const registry = ctx.registry ?? PLACE_REGISTRY
 
   if (!isStringKey(request.key)) failures.push('UNKNOWN_KEY')
 
   const placeId = request.params?.placeId
-  if (placeId !== undefined && !isVerifiedPlace(placeId)) failures.push('UNVERIFIED_PLACE')
+  if (placeId !== undefined && !isVerifiedPlace(placeId, registry)) failures.push('UNVERIFIED_PLACE')
 
   if (UNRESOLVED.test(text)) failures.push('UNRESOLVED_PLACEHOLDER')
 

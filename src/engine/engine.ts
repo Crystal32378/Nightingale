@@ -12,12 +12,9 @@ import type {
 } from './types'
 import { bandOf, confidenceAt } from './confidence'
 import { deriveTurn, edgeBetween, findPath, nextNodeId } from './graph'
+import { AT_CHECKPOINT_WINDOW_MS, TURN_TTL_MS } from './tuning'
 
-/** A directional instruction is never valid longer than this. */
-export const TURN_TTL_MS = 45_000
-
-/** How long after an observation we still consider the person to be at that checkpoint. */
-export const AT_CHECKPOINT_WINDOW_MS = 20_000
+export { AT_CHECKPOINT_WINDOW_MS, TURN_TTL_MS }
 
 export interface EngineInput {
   graph: VenueGraph

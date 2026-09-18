@@ -44,7 +44,7 @@ describe('Phase 1 acceptance loop', () => {
     now += 40_000
     observation = scan('REGISTRATION', now)
     out = at(observation, now)
-    expect(renderGuidance(out.instruction, now).screen).toBe('右轉。')
+    expect(renderGuidance(out.instruction, now).screen).toBe('往右手邊走。')
     expect(bird.lastCue).toBe('RIGHT')
 
     // 6. Continue. Between checkpoints the bird is quiet.
@@ -59,7 +59,7 @@ describe('Phase 1 acceptance loop', () => {
     now += 60_000
     observation = scan('ELEVATOR_OUT', now)
     out = at(observation, now)
-    expect(renderGuidance(out.instruction, now).screen).toBe('左轉。')
+    expect(renderGuidance(out.instruction, now).screen).toBe('往左手邊走。')
     expect(bird.lastCue).toBe('LEFT')
 
     // The person stops for a while. Persistence holds the step.
