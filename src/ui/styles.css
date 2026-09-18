@@ -1,0 +1,253 @@
+:root {
+  --ground: #0f1513;
+  --surface: #172020;
+  --line: #27332f;
+  --ink: #e6ebe7;
+  --ink-soft: #9aa8a2;
+  --accent: #63ada4;
+  --quiet: #33413d;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: "Noto Sans TC", "PingFang TC", "Helvetica Neue", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.topline {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 24px 0;
+}
+
+.checkpoint {
+  font-size: 15px;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+  min-height: 22px;
+}
+
+.guidance {
+  font-size: clamp(30px, 9vw, 44px);
+  line-height: 1.35;
+  font-weight: 700;
+  text-align: center;
+  min-height: 1.35em;
+  text-wrap: balance;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+button {
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 12px;
+  cursor: pointer;
+  min-height: 52px;
+}
+
+button:active {
+  background: #1e2a28;
+}
+
+button.primary {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+button.wide {
+  grid-column: 1 / -1;
+}
+
+/* ---- bird ---- */
+.bird {
+  width: 180px;
+  height: 180px;
+  display: block;
+}
+
+.bird .body {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 2;
+}
+
+.bird .lamp {
+  fill: var(--quiet);
+  transition: fill 240ms ease, opacity 240ms ease;
+}
+
+.bird.ready .lamp,
+.bird.arrived .lamp {
+  fill: var(--accent);
+}
+
+.bird.ask .lamp {
+  fill: var(--accent);
+  animation: breathe 3.2s ease-in-out infinite;
+}
+
+.bird.left .wing-left,
+.bird.right .wing-right {
+  fill: var(--accent);
+}
+
+.bird .wing-left,
+.bird .wing-right {
+  fill: var(--quiet);
+  transition: fill 200ms ease;
+}
+
+.bird.arrived .lamp {
+  animation: blink 900ms ease-in-out 2;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.cue-label {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ---- ask card ---- */
+.ask-card {
+  position: fixed;
+  inset: 0;
+  background: var(--ground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 32px 24px calc(32px + env(safe-area-inset-bottom));
+  z-index: 10;
+}
+
+.ask-line {
+  font-size: clamp(40px, 15vw, 88px);
+  font-weight: 700;
+  line-height: 1.18;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.ask-line.subject {
+  color: var(--accent);
+}
+
+.ask-actions {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: calc(28px + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* ---- dev panel ---- */
+.dev {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.dev summary {
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.dev-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.dev-grid button {
+  min-height: 44px;
+  padding: 10px 8px;
+  font-size: 13px;
+}
+
+.dev-readout {
+  margin-top: 12px;
+  display: grid;
+  gap: 4px;
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.dev-readout b {
+  color: var(--ink);
+  font-weight: 500;
+}
