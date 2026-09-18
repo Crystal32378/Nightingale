@@ -12,9 +12,9 @@ import type {
 } from './types'
 import { bandOf, confidenceAt } from './confidence'
 import { deriveTurn, edgeBetween, findPath, nextNodeId } from './graph'
-import { AT_CHECKPOINT_WINDOW_MS, TURN_TTL_MS } from './tuning'
+import { AT_CHECKPOINT_WINDOW_MS, TURN_GUIDANCE_TTL_MS } from './tuning'
 
-export { AT_CHECKPOINT_WINDOW_MS, TURN_TTL_MS }
+export { AT_CHECKPOINT_WINDOW_MS, TURN_GUIDANCE_TTL_MS }
 
 export interface EngineInput {
   graph: VenueGraph
@@ -61,7 +61,7 @@ export function step(input: EngineInput): EngineOutput {
     lastObservation,
     posture,
     now,
-    turnTtlMs = TURN_TTL_MS,
+    turnTtlMs = TURN_GUIDANCE_TTL_MS,
     atCheckpointWindowMs = AT_CHECKPOINT_WINDOW_MS,
   } = input
 

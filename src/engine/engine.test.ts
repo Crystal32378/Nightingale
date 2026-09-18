@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
 import { deriveCue } from './cues'
-import { detectBacktrack, step, TURN_TTL_MS } from './engine'
+import { detectBacktrack, step, TURN_GUIDANCE_TTL_MS } from './engine'
 import type { Observation, Posture } from './types'
 
 const t0 = 1_700_000_000_000
@@ -72,11 +72,11 @@ describe('turns', () => {
 
   it('gives a TTL with every direction', () => {
     const out = run(obs('REGISTRATION'), t0)
-    expect(out.instruction.turnExpiresAt).toBe(t0 + TURN_TTL_MS)
+    expect(out.instruction.turnExpiresAt).toBe(t0 + TURN_GUIDANCE_TTL_MS)
   })
 
   it('stops emitting left or right once the TTL has passed', () => {
-    const out = run(obs('REGISTRATION'), t0 + TURN_TTL_MS + 1)
+    const out = run(obs('REGISTRATION'), t0 + TURN_GUIDANCE_TTL_MS + 1)
     expect(out.instruction.turn).toBeNull()
     expect(out.instruction.turnExpiresAt).toBeNull()
     expect(out.instruction.intent).toBe('GO')

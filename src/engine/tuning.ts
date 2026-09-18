@@ -16,8 +16,14 @@ export const BAND_FRESH_MIN = 0.5
 /** confidence >= this is DECAYING; below it, UNKNOWN. */
 export const BAND_DECAYING_MIN = 0.2
 
-/** A directional instruction is never valid longer than this. */
-export const TURN_TTL_MS = 45_000
+/**
+ * NAVIGATION concept. How long a left/right instruction stays true.
+ *
+ * After this, the system may no longer say which way to turn — the person has
+ * had time to walk past the corner it referred to. This governs guidance, not
+ * hardware.
+ */
+export const TURN_GUIDANCE_TTL_MS = 45_000
 
 /** How long after an observation the person still counts as at that checkpoint. */
 export const AT_CHECKPOINT_WINDOW_MS = 20_000
@@ -29,10 +35,23 @@ export const TURN_DEADZONE_DEG = 25
 export const TURN_AMBIGUOUS_DEG = 160
 
 /**
- * Phase 3 reference only, not used by this code: the firmware must re-arm the
- * bird to QUIET this long after a cue if no new cue arrives, and immediately on
- * disconnect. That duplication of `turnExpiresAt` is deliberate — a bird that
- * keeps pointing left after the phone dies would walk someone into the wrong
- * corridor and never stop.
+ * HARDWARE SAFETY concept, and a different thing entirely from the constant
+ * above. Phase 3 reference only; this code never uses it.
+ *
+ * It is the firmware's dead-man switch: if no new cue arrives within this long,
+ * or the link drops, the bird returns itself to QUIET — motors off, lamp off —
+ * without being told to. It exists because the phone can lock, be throttled in
+ * a background tab, or die outright, and a bird left buzzing on one side would
+ * walk someone into the wrong corridor and never stop.
+ *
+ * Why the two are NOT the same constant, and must never be merged:
+ *
+ *   TURN_GUIDANCE_TTL_MS      how long the instruction is still TRUE
+ *                             (navigation; measured in a person's walking pace)
+ *   HAPTIC_FAILSAFE_TIMEOUT_MS  how long until the hardware stops on its own
+ *                             (safety; measured in how fast a link can fail)
+ *
+ * The second is much shorter on purpose, and lives in firmware precisely so it
+ * keeps working when the software that owns the first has stopped running.
  */
-export const BIRD_CUE_TTL_MS = 8_000
+export const HAPTIC_FAILSAFE_TIMEOUT_MS = 8_000

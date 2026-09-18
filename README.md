@@ -154,8 +154,41 @@ There is no map tab. A map is the remaining route, and the remaining route is
 the one thing this product does not show.
 
 Tunable numbers all live in `src/engine/tuning.ts` and are **provisional** until
-corridor testing: confidence half-life, band thresholds, turn TTL, checkpoint
-window, turn dead zone.
+corridor testing.
+
+Two of them look similar and are not the same thing:
+
+| constant | concept | question it answers |
+| --- | --- | --- |
+| `TURN_GUIDANCE_TTL_MS` (45s) | navigation | how long is this left/right instruction still TRUE? |
+| `HAPTIC_FAILSAFE_TIMEOUT_MS` (8s) | hardware safety | how long until the bird stops buzzing **on its own** if the link drops? |
+
+They are deliberately different lengths and live in different places. The second
+is a firmware dead-man switch and exists precisely so that it keeps working when
+the software that owns the first has stopped running. Never merge them.
+
+## The bird artwork
+
+One canonical PNG, one pose (`src/assets/nightingale-canonical.png`). A LEFT cue
+mirrors that same image rather than swapping in a second drawing, so the
+character is identical both ways.
+
+The mirroring is a **gesture**, not a compass claim — "this way, your left hand
+side", said at the same moment as the arrow and the sentence. Three things keep
+it readable that way, and all three are tested in
+`src/ui/birdPresentation.test.ts`:
+
+1. it only happens while a turn is live, so it expires with the guidance TTL;
+2. every other cue returns the bird to canonical — there is no resting pose that
+   points anywhere;
+3. it never appears alone; the arrow and the sentence carry the same claim, from
+   the same instruction.
+
+The lamp is a separate layer over the chest and is never baked into the artwork,
+exactly as on the physical bird.
+
+Voice: [`docs/voice-architecture.md`](docs/voice-architecture.md) — evaluation
+only, nothing implemented yet.
 
 ## Not in Phase 1, deliberately
 
