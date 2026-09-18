@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { label } from '../render/renderer'
 import { speak } from './speech'
 
 /**
@@ -25,9 +26,9 @@ export function AskCard({ text, onClose }: { text: string; onClose: () => void }
         </p>
       ))}
       <div className="ask-actions">
-        <button onClick={() => speak(text)}>再說一次</button>
+        <button onClick={() => speak(text)}>{label('label.again')}</button>
         <button className="primary" onClick={onClose}>
-          好了
+          {label('label.done')}
         </button>
       </div>
     </div>

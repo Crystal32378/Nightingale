@@ -38,7 +38,8 @@ bird event, and the raw engine response.
 
 1. Start at `ENTRANCE`. Nightingale appears.
 2. Only the next checkpoint is shown — `下一個：掛號櫃台`.
-3. Simulate a checkpoint. The bird cues `RIGHT`, the screen says `右轉。`
+3. Simulate a checkpoint. The bird cues `RIGHT` and turns to face it, and the
+   screen says `往右手邊走。`
 4. Between checkpoints the bird is quiet. That is correct, not a bug.
 5. Simulate confidence decay. The band reaches `UNKNOWN`, the bird stops
    guessing and the screen says `我不確定。我陪你問。`
@@ -89,9 +90,12 @@ src/
 │   ├── graph.ts       traversal + turn derivation + authoring checks
 │   ├── confidence.ts  decay and band derivation
 │   ├── engine.ts      observation → state + ONE next step
-│   └── cues.ts        (state, instruction) → Cue, a pure function
+│   ├── cues.ts        (state, instruction) → Cue, a pure function
+│   └── tuning.ts      every tunable number, all provisional
 ├── venue/mock.ts      synthetic venue. Not a real hospital.
 ├── registry/          verified places. The only source of proper nouns.
+│                      Registry is data: every lookup takes one, so tests
+│                      supply their own and the shipped one stays real.
 ├── strings/           hand-written zh-TW strings + the key inventory
 ├── render/            renderer (structured instruction → exact string) + validator
 ├── lint/register.ts   build-time register lint
@@ -135,6 +139,23 @@ recorded, no speech is transcribed, and no reply is parsed — what the member o
 staff says goes to the person, not to us.
 
 Full string list: [`docs/string-inventory.md`](docs/string-inventory.md).
+
+## The screen
+
+One user-facing screen — bird, next checkpoint, one instruction, where you are
+and where you are going, and two actions: 幫我問 and 休息. Nothing else is
+visible by default.
+
+The dev panel is collapsed at the bottom, deliberately quiet, and is the only
+place raw state appears. Every screen string comes from the string table, so a
+component cannot introduce wording or a place name of its own.
+
+There is no map tab. A map is the remaining route, and the remaining route is
+the one thing this product does not show.
+
+Tunable numbers all live in `src/engine/tuning.ts` and are **provisional** until
+corridor testing: confidence half-life, band thresholds, turn TTL, checkpoint
+window, turn dead zone.
 
 ## Not in Phase 1, deliberately
 

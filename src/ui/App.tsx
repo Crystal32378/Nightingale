@@ -1,45 +1,126 @@
 import { useMemo } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
-import { DEMO_VISIT } from '../venue/mock'
+import type { Instruction } from '../engine/types'
+import { label, renderPlace } from '../render/renderer'
+import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
 import { AskCard } from './AskCard'
 import { DevPanel } from './DevPanel'
 import { NightingaleBird } from './NightingaleBird'
 import { useNightingale } from './useNightingale'
 
+/**
+ * An arrow is a claim about direction, so it is drawn from the instruction and
+ * from nothing else. No live turn, no arrow.
+ */
+function InstructionArrow({ instruction }: { instruction: Instruction }) {
+  if (instruction.intent === 'GO') {
+    return (
+      <svg className="arrow" viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M20 34 V9" />
+        <path d="M11 18 L20 8 L29 18" />
+      </svg>
+    )
+  }
+  if (instruction.intent === 'TURN' && instruction.turn !== null) {
+    return (
+      <svg
+        className="arrow"
+        viewBox="0 0 40 40"
+        aria-hidden="true"
+        style={instruction.turn === 'LEFT' ? { transform: 'scaleX(-1)' } : undefined}
+      >
+        <path d="M11 34 V20 C11 15 14 12 19 12 H30" />
+        <path d="M24 6 L31 12 L24 18" />
+      </svg>
+    )
+  }
+  return null
+}
+
 export function App() {
   const adapter = useMemo(() => new VirtualBirdAdapter(), [])
   const ng = useNightingale(adapter)
   const { output, actions } = ng
+
   const leg = DEMO_VISIT[ng.visit ? Math.min(ng.visit.legIndex, DEMO_VISIT.length - 1) : 0]
   const resting = output.state.posture === 'RESTING'
+  const arrived = output.state.progress === 'ARRIVED'
+
+  // "下一個：掛號櫃台" shown as a label and a name. Presentation of one verified
+  // string, broken where it is already punctuated — not a second string.
+  const nextParts = ng.checkpoint ? ng.checkpoint.screen.split('：') : null
+
+  const currentNodeId = ng.visit?.lastObservation?.nodeId ?? null
+  const currentPlace = currentNodeId ? renderPlace(MOCK_VENUE.nodes[currentNodeId]?.placeId ?? null, ng.now) : null
+  const destinationPlace = ng.started ? renderPlace(leg.destinationId, ng.now) : null
+
+  const guidanceText = ng.guidance.screen
+  const instructionClass = [
+    'instruction',
+    guidanceText.length === 0 ? 'empty' : '',
+    ng.guidance.key === 'guidance.uncertain' || ng.guidance.fallbackUsed ? 'uncertain' : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <div className="app">
-      <div className="topline">
-        <span>Nightingale</span>
-        <span>{ng.started ? `${output.state.band.toLowerCase()}` : 'phase 1'}</span>
+      <header className="masthead">
+        <div>
+          <h1 className="wordmark">Nightingale</h1>
+          <p className="tagline">Walk with you</p>
+        </div>
+        {/* Nothing is shown while resting. Silence includes the status line. */}
+        {ng.started && !resting ? (
+          <span className="status">
+            <span className="dot" />
+            {arrived ? label('label.arrived') : label('label.underway')}
+          </span>
+        ) : null}
+      </header>
+
+      <NightingaleBird cue={ng.cue} />
+
+      <div className="next">
+        {nextParts && nextParts.length === 2 ? (
+          <>
+            <p className="label">{nextParts[0]}</p>
+            <p className="place">{nextParts[1]}</p>
+          </>
+        ) : null}
       </div>
 
-      <div className="stage">
-        <NightingaleBird cue={ng.cue} />
-        <p className="checkpoint">{ng.checkpoint ? ng.checkpoint.screen : ''}</p>
-        <p className="guidance">{ng.guidance.screen}</p>
+      <div className={instructionClass}>
+        <InstructionArrow instruction={output.instruction} />
+        {guidanceText.length > 0 ? <p className="text">{guidanceText}</p> : null}
       </div>
 
-      <div className="controls">
+      <div className="meta">
+        <div>
+          <p className="label">{label('label.current')}</p>
+          <p className="value">{currentPlace ?? '—'}</p>
+        </div>
+        <div className="rule" />
+        <div>
+          <p className="label">{label('label.destination')}</p>
+          <p className="value">{destinationPlace ?? '—'}</p>
+        </div>
+      </div>
+
+      <div className="actions">
         {!ng.started ? (
           <button className="primary wide" onClick={actions.start}>
-            開始
+            {label('label.start')}
           </button>
         ) : (
           <>
             <button className="primary" onClick={actions.askForMe}>
-              幫我問
+              {label('label.ask')}
             </button>
             {resting ? (
-              <button onClick={() => actions.setPosture('MOVING')}>繼續</button>
+              <button onClick={() => actions.setPosture('MOVING')}>{label('label.resume')}</button>
             ) : (
-              <button onClick={() => actions.setPosture('RESTING')}>休息</button>
+              <button onClick={() => actions.setPosture('RESTING')}>{label('label.rest')}</button>
             )}
           </>
         )}
