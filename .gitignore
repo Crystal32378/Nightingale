@@ -9,3 +9,4 @@ tsconfig.tsbuildinfo
 
 .env
 casting/
+vite.config.ts.timestamp-*

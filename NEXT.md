@@ -32,13 +32,18 @@ git fetch origin && git rev-parse HEAD origin/main && git status --porcelain
 
 ---
 
-## 還沒做完的事：20 句 × 2 個聲音
+## 已經做完：20 句 × 2 個聲音（2026-09-19）
+
+40 個檔都在 `public/audio/zh-TW/male|female/`，兩份 manifest 都產好了，
+`npm test` 175 passed。每一句生成時都從 MiniMax 的 `audio/details` 回應
+逐句核對過 `voice_info.uniq_id` / `speed` / `pitch` / `volume` / `model`，
+不是看畫面認的。
 
 對照表在 **`scripts/plan/download-guide.md`**（每一句要存成哪個檔名）。
 清單是**推導出來的**，不是手寫的 —— 改了字串表就要重跑
 `npx tsx scripts/export-voice-plan.ts`，否則 `src/voice/plan.test.ts` 會擋下來。
 
-做完之後：
+重錄任何一句之後都要再跑一次：
 
 ```bash
 node scripts/voice.mjs --from-files --profile=MALE
@@ -97,6 +102,8 @@ renderer 真正會輸出的字 —— 這是防止「改了句子沒重錄」的
 - **pitch 跟著「講給誰聽」走。** 理由與風險全寫在 `src/voice/profiles.ts` 的檔頭
   和 `b3f98cc` 的 commit message。同一支聲音、同樣語速、同樣用字，
   只有面對誰的時候語氣不同。測試守住這條線（差距不得超過一階）。
+  **2026-09-19：Crystal 把「往前走。」和「請問，神經外科？」連著聽過了 ——
+  還是同一隻鳥，PUBLIC 的 pitch 1 維持不動。** 這一關過了。
 - **音量在播放端決定，不烤進檔案。** `src/voice/level.ts`：四階、
   `PRIVATE`/`PUBLIC` 兩組、超過原音量一定先壓縮再放大
   （左/右 靠子音分辨，爆掉的子音是這個產品唯一不能出的錯）。
@@ -105,9 +112,6 @@ renderer 真正會輸出的字 —— 這是防止「改了句子沒重錄」的
 
 ## 還沒解決的
 
-- **一隻鳥還是兩隻？** 音檔做完，把 `往前走。` 和 `請問，神經外科？`
-  連著放給 Crystal 聽。**聽起來像兩個人，就把 `PUBLIC` 的 pitch 拉回 0。**
-  一個同伴的性格比多換到的一點幫忙重要。
 - **真正的驗收測試還沒做**：吵雜大廳、一位有點重聽的長輩，
   哪一版她第一次就聽懂。這個測試會推翻上面任何一個由耳朵做的決定。
 - **registry 從 8 個科別擴到約 40 個。** 注意：科別名稱**就是真值本身**，

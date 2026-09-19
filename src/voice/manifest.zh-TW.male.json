@@ -1,0 +1,197 @@
+{
+  "locale": "zh-TW",
+  "profile": "MALE",
+  "voiceId": "Chinese_calm_streamer_nv1",
+  "model": "manual-web",
+  "voiceSettings": {
+    "speed": 0.9,
+    "pitch": {
+      "PRIVATE": 0,
+      "PUBLIC": 1
+    },
+    "vol": 2
+  },
+  "generatedAt": "2026-09-19",
+  "utterances": {
+    "guidance.go": {
+      "text": "往前走。",
+      "file": "audio/zh-TW/male/guidance.go.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "d8eb7bfe81de4b257a554d3db075087d64c03ce6ece54a4cf4661332099994e5",
+      "bytes": 20106,
+      "durationMs": 0
+    },
+    "guidance.turn.left": {
+      "text": "往左手邊走。",
+      "file": "audio/zh-TW/male/guidance.turn.left.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "f16028de9370088d8a817c3e39bcab27641e49c642b99612787a85b40089ffe6",
+      "bytes": 25539,
+      "durationMs": 0
+    },
+    "guidance.turn.right": {
+      "text": "往右手邊走。",
+      "file": "audio/zh-TW/male/guidance.turn.right.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "4fcbe2709d6a487f1bb1c477f9f1066276a3cd35d0e767074d6b3aa00bbf7af4",
+      "bytes": 23867,
+      "durationMs": 0
+    },
+    "guidance.uncertain": {
+      "text": "我不確定。我陪你問。",
+      "file": "audio/zh-TW/male/guidance.uncertain.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "0b0dfaa945dc6ee815a14af7448fa327fd6a8e3dc638f01efb2dcf482ceba4ad",
+      "bytes": 37660,
+      "durationMs": 0
+    },
+    "guidance.arrived#CASHIER": {
+      "text": "批價櫃台，到了。",
+      "file": "audio/zh-TW/male/guidance.arrived__CASHIER.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "eff240a7f94b751fa164c4c2e28426b7dda6f1def044f33abe3731fc1e595435",
+      "bytes": 34734,
+      "durationMs": 0
+    },
+    "guidance.arrived#ELEVATOR_IN": {
+      "text": "電梯口，到了。",
+      "file": "audio/zh-TW/male/guidance.arrived__ELEVATOR_IN.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "339e32e560af190f405be7de5148bc95d98d83f853777e1ffe6081da1d4f897e",
+      "bytes": 34734,
+      "durationMs": 0
+    },
+    "guidance.arrived#ELEVATOR_OUT": {
+      "text": "電梯出口，到了。",
+      "file": "audio/zh-TW/male/guidance.arrived__ELEVATOR_OUT.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "26947196a9c60b7414902415b73d1c5e4ba8bbc012afb6481a52dc0a9947cb83",
+      "bytes": 37660,
+      "durationMs": 0
+    },
+    "guidance.arrived#ENTRANCE": {
+      "text": "大門，到了。",
+      "file": "audio/zh-TW/male/guidance.arrived__ENTRANCE.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "26605cb13a512de72df1b53c0ed341da20a99d207292080ca453c1c7abcfff19",
+      "bytes": 26793,
+      "durationMs": 0
+    },
+    "guidance.arrived#EXIT": {
+      "text": "出口，到了。",
+      "file": "audio/zh-TW/male/guidance.arrived__EXIT.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "07296f0708575d00fd407f30f3feaf19f9dfb95071bfd171723acba94ed527c0",
+      "bytes": 32226,
+      "durationMs": 0
+    },
+    "guidance.arrived#NEUROSURGERY": {
+      "text": "神經外科，到了。",
+      "file": "audio/zh-TW/male/guidance.arrived__NEUROSURGERY.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "57464a631588f3031a2df97fc7c34b881c1cfa016c9a5703f79f8a73f9081a91",
+      "bytes": 35988,
+      "durationMs": 0
+    },
+    "guidance.arrived#PHARMACY": {
+      "text": "藥局，到了。",
+      "file": "audio/zh-TW/male/guidance.arrived__PHARMACY.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "f6d6bd9cc04a1efa61291358dc0cd4aafb2ddb5566cebe7620c94e16509230a2",
+      "bytes": 30973,
+      "durationMs": 0
+    },
+    "guidance.arrived#REGISTRATION": {
+      "text": "掛號櫃台，到了。",
+      "file": "audio/zh-TW/male/guidance.arrived__REGISTRATION.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "2cdf5d5f10670bd1eb92ba63c15dcbf90da977cfcde39814d737d6ce7a5f10e0",
+      "bytes": 41422,
+      "durationMs": 0
+    },
+    "ask.utterance#CASHIER": {
+      "text": "請問，批價櫃台？",
+      "file": "audio/zh-TW/male/ask.utterance__CASHIER.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "0daae61fae0cfa4bc143be723f554a8ff4669373521a84e8b96242e9978934c9",
+      "bytes": 37660,
+      "durationMs": 0
+    },
+    "ask.utterance#ELEVATOR_IN": {
+      "text": "請問，電梯口？",
+      "file": "audio/zh-TW/male/ask.utterance__ELEVATOR_IN.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "2711ca8aa9a6131be81ada42e71ec901fa9f9c6c4bdaac1ef7b4ad0b15801e6e",
+      "bytes": 37660,
+      "durationMs": 0
+    },
+    "ask.utterance#ELEVATOR_OUT": {
+      "text": "請問，電梯出口？",
+      "file": "audio/zh-TW/male/ask.utterance__ELEVATOR_OUT.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "e80497169683124914f9247efc338ed490ebdefdf21f90aecff4e2be90cbb8b1",
+      "bytes": 37660,
+      "durationMs": 0
+    },
+    "ask.utterance#ENTRANCE": {
+      "text": "請問，大門？",
+      "file": "audio/zh-TW/male/ask.utterance__ENTRANCE.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "9d66a283c95e83e7d9fc0bdcb8d7131ef170da176d4183ee34a57d9d4ee06a74",
+      "bytes": 32226,
+      "durationMs": 0
+    },
+    "ask.utterance#EXIT": {
+      "text": "請問，出口？",
+      "file": "audio/zh-TW/male/ask.utterance__EXIT.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "5db6bf3e2a8c6ea3d90ac7f8d963cb0e6c1df360a9445a221ae619c50f57a4ff",
+      "bytes": 30973,
+      "durationMs": 0
+    },
+    "ask.utterance#NEUROSURGERY": {
+      "text": "請問，神經外科？",
+      "file": "audio/zh-TW/male/ask.utterance__NEUROSURGERY.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "1c0c1ae43c874cc38262571b68199e9d1de78df47dcbb1f39a0e44bb2b066eab",
+      "bytes": 37660,
+      "durationMs": 0
+    },
+    "ask.utterance#PHARMACY": {
+      "text": "請問，藥局？",
+      "file": "audio/zh-TW/male/ask.utterance__PHARMACY.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "bae4332f7ac20707beb22ce7d51ba16064879141159951e996bccc4f20ab3e54",
+      "bytes": 29301,
+      "durationMs": 0
+    },
+    "ask.utterance#REGISTRATION": {
+      "text": "請問，掛號櫃台？",
+      "file": "audio/zh-TW/male/ask.utterance__REGISTRATION.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "54666ef9399b4b7bba94f8673ecbbcfe021ea217a5f3373fdd85692cfcd24a12",
+      "bytes": 39750,
+      "durationMs": 0
+    }
+  }
+}
