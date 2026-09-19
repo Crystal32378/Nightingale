@@ -7,6 +7,7 @@ import { AskCard } from './AskCard'
 import { DevPanel } from './DevPanel'
 import { NightingaleBird } from './NightingaleBird'
 import { useNightingale } from './useNightingale'
+import { VolumeControl } from './VolumeControl'
 
 /**
  * An arrow is a claim about direction, so it is drawn from the instruction and
@@ -125,6 +126,11 @@ export function App() {
           </>
         )}
       </div>
+
+      {/* The bird's voice, one reach above the thumb's resting place. Always
+          visible: a volume control you must go find is one you never adjust.
+          Icon and bars only — no words to misread. */}
+      <VolumeControl context="PRIVATE" />
 
       <DevPanel
         output={output}
