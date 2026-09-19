@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { lintString } from '../lint/register'
 import { renderAsk, renderGuidance } from '../render/renderer'
-import { PLACE_REGISTRY } from '../registry/types'
+import { isVerifiedEntry, PLACE_REGISTRY } from '../registry/types'
 import { ZH_TW } from '../strings/zh-TW'
 import { checkManifest, isPlayable, type VoiceManifest } from './manifest'
 import { canonicalUtterances, fileStemFor, SHARED_AUDIO, utteranceId } from './utterances'
@@ -11,7 +11,7 @@ const now = 1_700_000_000_000
 
 describe('the canonical utterance set is derived, not written by hand', () => {
   it('covers every verified place exactly twice, plus the four place-free lines', () => {
-    const verifiedPlaces = Object.values(PLACE_REGISTRY).filter((p) => p.verified).length
+    const verifiedPlaces = Object.values(PLACE_REGISTRY).filter((p) => isVerifiedEntry(p)).length
     expect(utterances).toHaveLength(4 + verifiedPlaces * 2)
   })
 

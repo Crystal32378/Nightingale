@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Instruction } from '../engine/types'
-import { PLACE_REGISTRY, type PlaceRegistry } from '../registry/types'
+import { isVerifiedEntry, PLACE_REGISTRY, type PlaceRegistry } from '../registry/types'
 import { ZH_TW } from '../strings/zh-TW'
 import { label, renderAsk, renderGuidance, renderNextCheckpoint, renderPlace } from './renderer'
 import { validate } from './validator'
@@ -13,7 +13,7 @@ const now = 1_700_000_000_000
  */
 const FIXTURE_REGISTRY: PlaceRegistry = {
   ...PLACE_REGISTRY,
-  UNVERIFIED_WARD: { id: 'UNVERIFIED_WARD', verified: false, names: { 'zh-TW': '某某病房' } },
+  UNVERIFIED_WARD: { id: 'UNVERIFIED_WARD', names: { 'zh-TW': '某某病房' }, source: null },
 }
 
 function instruction(partial: Partial<Instruction>): Instruction {
@@ -124,7 +124,7 @@ describe('validator falls back instead of improvising', () => {
 describe('the shipped registry carries no test scaffolding', () => {
   it('contains only verified places', () => {
     for (const entry of Object.values(PLACE_REGISTRY)) {
-      expect(entry.verified).toBe(true)
+      expect(isVerifiedEntry(entry)).toBe(true)
     }
   })
 })

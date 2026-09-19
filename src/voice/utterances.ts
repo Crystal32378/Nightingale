@@ -1,4 +1,4 @@
-import { PLACE_REGISTRY, type PlaceRegistry } from '../registry/types'
+import { isVerifiedEntry, PLACE_REGISTRY, type PlaceRegistry } from '../registry/types'
 import { materialize } from '../render/renderer'
 import { PLACE_BEARING_SPOKEN_KEYS, SPOKEN_KEYS, type SpokenKey } from '../strings/keys'
 import { contextForKey, type ListeningContext } from './level'
@@ -40,7 +40,7 @@ export function fileStemFor(id: string): string {
 
 export function canonicalUtterances(registry: PlaceRegistry = PLACE_REGISTRY): CanonicalUtterance[] {
   const verifiedPlaceIds = Object.values(registry)
-    .filter((entry) => entry.verified)
+    .filter((entry) => isVerifiedEntry(entry))
     .map((entry) => entry.id)
     .sort()
 
