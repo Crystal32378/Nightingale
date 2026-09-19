@@ -208,6 +208,23 @@ manifest and the tests treat both identically, because what is verified is the
 text, not how the audio was made. Taigi will take the second path: see the doc
 for why synthesis was rejected for it.
 
+### How loud
+
+The files are generated at a clean level and never touched again. Loudness
+lives at playback, in `src/voice/level.ts`, because loudness is a property of
+the room and the ear rather than of the sentence.
+
+Four steps, not a slider — a slider asks someone already lost in a corridor to
+solve a calibration problem. Two levels, not one: guidance is heard by the
+person holding the phone, the ask utterance by a stranger across a counter, so
+`PUBLIC` starts one step higher than `PRIVATE`. Pressing 再說一遍 raises the
+level and keeps it there, on the reasoning that asking to hear something again
+is evidence it was not heard.
+
+Anything above unity compresses before it amplifies. 左 and 右 are told apart
+by their consonants, and a clipped consonant is the one failure this product
+cannot afford.
+
 Details: [`docs/voice-architecture.md`](docs/voice-architecture.md).
 Hand-generation guide: [`scripts/plan/download-guide.md`](scripts/plan/download-guide.md).
 
