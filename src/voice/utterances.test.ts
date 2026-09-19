@@ -71,8 +71,10 @@ describe('every recordable line is exactly what the renderer says', () => {
 describe('the manifest is checked against the renderer, not trusted', () => {
   const good: VoiceManifest = {
     locale: 'zh-TW',
+    profile: 'FEMALE',
     voiceId: 'test',
     model: 'test',
+    voiceSettings: { speed: 1, pitch: 0, vol: 1 },
     generatedAt: '2026-09-19',
     utterances: Object.fromEntries(
       utterances.map((u) => [

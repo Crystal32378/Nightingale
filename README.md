@@ -187,8 +187,29 @@ it readable that way, and all three are tested in
 The lamp is a separate layer over the chest and is never baked into the artwork,
 exactly as on the physical bird.
 
-Voice: [`docs/voice-architecture.md`](docs/voice-architecture.md) — evaluation
-only, nothing implemented yet.
+## Voice
+
+Two chosen voices, one female and one male, chosen by ear and recorded in
+`src/voice/profiles.ts` with the settings they were approved at. Same words,
+same register; only the speaker changes.
+
+The set of things Nightingale can say out loud is **derived**, never written by
+hand: `src/voice/utterances.ts` builds it from the spoken string keys and the
+verified place registry. It comes to 20 utterances.
+
+The manifest's `text` field is the comparison point, not documentation. A file
+is only ever played when the text beside it is character-for-character what the
+renderer produced, checked once at build time and again before playback. Edit a
+sentence without re-recording and the tests fail.
+
+Audio can come from the API (`scripts/voice.mjs --canonical`) or be made by hand
+in a web interface and dropped in (`--from-files`, no API and no credits) — the
+manifest and the tests treat both identically, because what is verified is the
+text, not how the audio was made. Taigi will take the second path: see the doc
+for why synthesis was rejected for it.
+
+Details: [`docs/voice-architecture.md`](docs/voice-architecture.md).
+Hand-generation guide: [`scripts/plan/download-guide.md`](scripts/plan/download-guide.md).
 
 ## Not in Phase 1, deliberately
 

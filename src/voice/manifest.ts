@@ -20,8 +20,12 @@ export interface VoiceManifestEntry {
 
 export interface VoiceManifest {
   locale: 'zh-TW'
+  /** which chosen voice this is — FEMALE or MALE */
+  profile: string
   voiceId: string
   model: string
+  /** the settings that were approved by ear; recorded so a re-run sounds the same */
+  voiceSettings: { speed: number; pitch: number; vol: number }
   generatedAt: string
   utterances: Record<string, VoiceManifestEntry>
 }
