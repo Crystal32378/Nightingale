@@ -149,6 +149,50 @@ renderer 真正會輸出的字 —— 這是防止「改了句子沒重錄」的
 - **playback 的音量控制還沒接到 UI。** `level.ts` 是純邏輯，已有 16 個測試；
   還沒有按鈕，也還沒接 Web Audio 的 GainNode + Compressor。
 
+## 黑客松：Nebius x NVIDIA（2026-09-19 查證）
+
+**截止 2026-10-30**（devpost），不是 Build Day 那天。六個星期。
+
+規則（會決定架構，不是加分項）：
+
+- 專案**必須跑在 Nebius Token Factory 或 Nebius AI Cloud 上**，而且**必須用至少一個
+  NVIDIA 開源模型**（點名 Nemotron）。Google Cloud 出局。
+- 必須有**公開 repo ＋ 開源授權**（Apache 2.0 / MIT / MPL 2.0）。本專案是 MIT，符合。
+- 必須有 working demo URL、三分鐘以內的 demo 影片、README。
+
+手上的資源：Token Factory $100、Nebius AI Cloud $100、Tavily 9000 credits、
+MiniMax 約 7,600 點（40 個音檔只花了約 350）。
+建議：Token Factory 跑 Nemotron 推論，AI Cloud 放 demo 網站，兩個規則都踩滿。
+
+### 模型放在哪裡（已定方向，未實作）
+
+**模型只做選擇題，不做問答題。** 介面是：一句話進去 → registry 裡的某個 id 出來，
+或者回「不確定」。回傳不在 registry 裡的東西，validator 照擋，走
+「我不確定。我陪你問。」。
+
+- **Nemotron**（Token Factory）→ 封閉清單分類。交件版本用這個，符合規定。
+- **Jev**（TypeSafe，Crystal 已開帳號；也在 Vercel AI Gateway 上，
+  model id `typesafe-ai/jev`，$0.04/1M tokens，用 Vercel 金鑰即可）→
+  是非題＋校準過的信心分數。**信心低於門檻就是「我不確定。我陪你問。」的開關。**
+- 這一段要做成**可以換的插頭**，交件不押在還在早期的 Jev 上。
+- 數字（叫號進度）**要由程式抓，不能由模型讀** —— 模型會讀錯而且很有自信。
+  一樣用 registry 那招：抽出來的字串必須逐字出現在原始頁面裡。
+
+**三把金鑰（Nebius、Token Factory / Vercel、Tavily）只進 `.env`。
+repo 是 public，金鑰進了 git 歷史就撿不回來。**
+
+## 下一棒（依序）
+
+1. **Tavily 抓仁愛的科別 ＋ 地址 ＋ 樓層**，列成一張表給 Crystal 一筆一筆點頭。
+   `source` 用 `kind: 'web'`，帶網址、讀取日期、頁面原文。
+   **先做仁愛一家就好** —— 榮總和台大留在結構裡證明擴得動即可。
+   選仁愛的理由：離 Crystal 最近，那個「吵雜大廳」驗收只能她本人走進去做。
+2. **`level.ts` 接 Web Audio**（GainNode + Compressor）。邏輯和 16 個測試都在，
+   缺的是接線。**按鈕外觀是 Kimi 的活，Web Audio 這段不是** ——
+   檔頭寫了「爆掉的子音是這個產品唯一不能出的錯」。
+3. **「我和你一起回去等。」還沒進字串表、還沒錄音。** 等候診功能真的設計出來再錄，
+   現在錄，語氣可能還會變。兩個音檔、約 30 點。
+
 ## 交給 Kimi（Cline）的邊界
 
 可以：`src/ui/styles.css` 的視覺打磨、黑客松簡報與 demo 腳本、獨立的 `mockup.html`。
@@ -157,3 +201,12 @@ renderer 真正會輸出的字 —— 這是防止「改了句子沒重錄」的
 任何 `*.test.ts`。
 
 給任務時請明確畫界線，否則兩邊同時改同一個 repo 會撞。
+
+**2026-09-19 已發出：** `~/Desktop/Opus Chamber/BRIEFING-NIGHTINGALE-UI-長輩友善.md`
+（規則部分經福複驗，附福擬的英文版可直接貼）。
+分支 `ui/nightingale-companion`，從 `19926d3` 開，**不得合進 `main`**，
+交付 prototype ＋ 桌機/390px 截圖 ＋ 無障礙說明 ＋ diff，停在分支等複驗。
+
+視覺參考給了 Ato（heyato.ai，給長輩的無螢幕語音裝置）。
+**只看視覺**：字體粗、對比強、暖色調、留白大、音量控制一眼看得出來是音量。
+**底層不要參考** —— Ato 賭「什麼都能聊」，本專案賭「話很少但不會錯」，是相反的賭。
