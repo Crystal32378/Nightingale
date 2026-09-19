@@ -64,8 +64,12 @@ export function App() {
     .filter(Boolean)
     .join(' ')
 
+  // Three scenes, three protagonists. Idle: the bird. Guiding: the sentence.
+  // Resting: the silence. The layout knows which scene it is in.
+  const scene = !ng.started ? 'idle' : resting ? 'rest' : 'guide'
+
   return (
-    <div className="app">
+    <div className="app" data-scene={scene}>
       <header className="masthead">
         <div>
           <h1 className="wordmark">Nightingale</h1>
