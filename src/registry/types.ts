@@ -69,16 +69,47 @@ export const PLACE_REGISTRY: PlaceRegistry = {
   EXIT: { id: 'EXIT', names: { 'zh-TW': '出口' }, source: generic(FACILITY) },
 }
 
+/** A URL a person could actually open. Anything else is not a citation. */
+function isFetchableUrl(value: string): boolean {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 /**
- * An entry earns the right to be spoken by carrying a source, and — for a name
- * taken off a page — by that page's wording still containing it. A quote that
- * has drifted away from the name is treated as no source at all, because it can
- * no longer be checked.
+ * A date that exists. `2026-13-45` matches the shape of a date and is not one,
+ * and a source dated to a day that never happened cannot be gone back to.
+ */
+function isCalendarDate(value: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
+  const parsed = new Date(`${value}T00:00:00Z`)
+  return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value
+}
+
+/**
+ * The single gate. Everything that decides whether a name may be spoken lives
+ * here, not in the tests that happen to iterate the shipped registry — a second
+ * venue supplies its own registry at runtime and must meet the same bar.
+ *
+ * Note the empty name: `''.includes('')` is true, so a blank name would sail
+ * through a containment check alone. A place with no name is not a place.
  */
 export function isVerifiedEntry(entry: PlaceEntry | null): boolean {
   if (entry === null || entry.source === null) return false
+
+  const name = entry.names['zh-TW']
+  if (typeof name !== 'string' || name.trim().length === 0) return false
+
   if (entry.source.kind === 'generic') return entry.source.because.trim().length > 0
-  return entry.source.asWritten.includes(entry.names['zh-TW'])
+
+  const { url, readOn, asWritten } = entry.source
+  if (!isFetchableUrl(url)) return false
+  if (!isCalendarDate(readOn)) return false
+  if (asWritten.trim().length === 0) return false
+  return asWritten.includes(name)
 }
 
 export function lookupPlace(id: string | null, registry: PlaceRegistry = PLACE_REGISTRY): PlaceEntry | null {

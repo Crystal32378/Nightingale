@@ -73,3 +73,54 @@ describe('an entry that cannot be checked is not spoken', () => {
     expect(isVerifiedEntry(sourced('神經外科', '本院設有神經內科。'))).toBe(false)
   })
 })
+
+/**
+ * 福's review of 605d960: the URL and date checks only guarded the shipped
+ * registry, never the gate a second venue's registry passes through at runtime.
+ * One counterexample per rule, all aimed at isVerifiedEntry itself.
+ */
+describe('the runtime gate refuses every unusable source, not only a drifted quote', () => {
+  const web = (name: string, over: Partial<{ url: string; readOn: string; asWritten: string }> = {}): PlaceEntry => ({
+    id: 'X',
+    names: { 'zh-TW': name },
+    source: {
+      kind: 'web',
+      url: 'https://example.org/depts',
+      readOn: '2026-09-19',
+      asWritten: `本院設有${name}。`,
+      ...over,
+    },
+  })
+
+  it('refuses a blank name — an empty string is contained by every quote', () => {
+    expect(isVerifiedEntry(web(''))).toBe(false)
+    expect(isVerifiedEntry(web('   '))).toBe(false)
+  })
+
+  it('refuses a blank name even when the entry is claimed to be generic', () => {
+    expect(isVerifiedEntry({ id: 'X', names: { 'zh-TW': '' }, source: { kind: 'generic', because: 'a reason' } })).toBe(
+      false,
+    )
+  })
+
+  it('refuses a citation that is not a URL anyone could open', () => {
+    expect(isVerifiedEntry(web('心臟內科', { url: 'not-a-url' }))).toBe(false)
+    expect(isVerifiedEntry(web('心臟內科', { url: 'ftp://example.org/x' }))).toBe(false)
+    expect(isVerifiedEntry(web('心臟內科', { url: '' }))).toBe(false)
+  })
+
+  it('refuses a date that never happened, however well shaped', () => {
+    expect(isVerifiedEntry(web('心臟內科', { readOn: '2026-13-45' }))).toBe(false)
+    expect(isVerifiedEntry(web('心臟內科', { readOn: '2026-02-30' }))).toBe(false)
+    expect(isVerifiedEntry(web('心臟內科', { readOn: '19/09/2026' }))).toBe(false)
+    expect(isVerifiedEntry(web('心臟內科', { readOn: '' }))).toBe(false)
+  })
+
+  it('refuses an empty quote', () => {
+    expect(isVerifiedEntry(web('心臟內科', { asWritten: '   ' }))).toBe(false)
+  })
+
+  it('still accepts a source that meets every one of them', () => {
+    expect(isVerifiedEntry(web('心臟內科'))).toBe(true)
+  })
+})

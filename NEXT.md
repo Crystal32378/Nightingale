@@ -8,10 +8,15 @@ Crystal 不是工程背景，**回覆請用中文**；程式碼、檔名、型�
 
 ## 現在在哪裡
 
-- `HEAD` = `origin/main` = **`d2dd02c`**，ahead 0 / behind 0
+- 最後確認：**2026-09-19 晚間**
 - 工作區乾淨（`git status --porcelain` 無輸出）
-- **push 已完成**，遠端已同步，沒有待推的 commit
-- `npm test` → **175 passed**，`npx tsc --noEmit` 乾淨（福獨立複驗過）
+- **本機 `main` 比 `origin/main` 多兩個 commit，還沒 push** ——
+  `605d960`（registry 改用 `source`）以及這份筆記所在的這一個
+- 遠端 `origin/main` 停在 `d834c4d`（「The bird has a voice」，40 個音檔）
+- `npm test` → **191 passed**，`npx tsc --noEmit` 乾淨
+
+這份筆記不再自己抄 `HEAD` 的編號 —— 抄了就會過期，而且過期的方式很安靜。
+下面那行指令才是真的。
 
 以上是寫這份筆記當下實際查過的狀態，不是沿用前一輪的說法。
 **還是自己再查一次** —— 這份筆記本身也會過時：
