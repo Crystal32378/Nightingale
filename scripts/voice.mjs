@@ -25,7 +25,7 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const API_URL = 'https://api.minimax.io/v1/t2a_v2'
-const DEFAULT_MODEL = 'speech-2.6-hd'
+const DEFAULT_MODEL = 'speech-2.8-hd'
 
 function loadEnv() {
   const path = join(ROOT, '.env')
@@ -51,7 +51,11 @@ function write(path, data) {
 const audioDirFor = (gender) => `audio/zh-TW/${gender.toLowerCase()}`
 const manifestPathFor = (gender) => `src/voice/manifest.zh-TW.${gender.toLowerCase()}.json`
 
-async function synthesise(text, profile, model) {
+/** pitch follows who is being spoken to; everything else is the same speaker. */
+const pitchFor = (profile, context) =>
+  typeof profile.pitch === 'object' ? (profile.pitch[context] ?? profile.pitch.PRIVATE) : profile.pitch
+
+async function synthesise(text, profile, model, pitch) {
   const apiKey = process.env.MINIMAX_API_KEY
   if (!apiKey) throw new Error('MINIMAX_API_KEY is not set — put it in .env')
 
@@ -64,7 +68,7 @@ async function synthesise(text, profile, model) {
       stream: false,
       language_boost: 'Chinese',
       output_format: 'hex',
-      voice_setting: { voice_id: profile.voiceId, speed: profile.speed, vol: profile.vol, pitch: profile.pitch },
+      voice_setting: { voice_id: profile.voiceId, speed: profile.speed, vol: profile.vol, pitch },
       audio_setting: { sample_rate: 32000, bitrate: 128000, format: 'mp3', channel: 1 },
     }),
   })
@@ -92,7 +96,11 @@ function writeManifest(gender, profile, model, entries) {
         profile: gender,
         voiceId: profile.voiceId,
         model,
-        voiceSettings: { speed: profile.speed, pitch: profile.pitch, vol: profile.vol },
+        voiceSettings: {
+          speed: profile.speed,
+          pitch: typeof profile.pitch === 'object' ? profile.pitch : { PRIVATE: profile.pitch, PUBLIC: profile.pitch },
+          vol: profile.vol,
+        },
         generatedAt: new Date().toISOString().slice(0, 10),
         utterances: entries,
       },
@@ -120,11 +128,13 @@ function fromFiles(gender, profile) {
     entries[u.id] = {
       text: u.text,
       file: rel,
+      context: u.context,
+      pitch: pitchFor(profile, u.context),
       sha256: createHash('sha256').update(audio).digest('hex'),
       bytes: statSync(abs).size,
       durationMs: 0,
     }
-    console.log(`  ✓ ${u.fileStem.padEnd(32)} ${u.text}`)
+    console.log(`  ✓ ${u.context.padEnd(8)} ${u.fileStem.padEnd(32)} ${u.text}`)
   }
 
   if (missing.length > 0) {
@@ -162,7 +172,7 @@ async function main() {
     for (const voiceId of voices) {
       console.log(`\n${voiceId}`)
       for (const line of lines) {
-        const { audio, usageCharacters } = await synthesise(line.text, { voiceId, speed: 1, pitch: 0, vol: 1 }, model)
+        const { audio, usageCharacters } = await synthesise(line.text, { voiceId, speed: 1, vol: 1 }, model, 0)
         usage += usageCharacters
         write(join(ROOT, 'casting', voiceId, `${line.id}.mp3`), audio)
         console.log(`  ${line.text.padEnd(12)} ${line.shipping ? '' : '(non-shipping) '}→ casting/${voiceId}/${line.id}.mp3`)
@@ -178,21 +188,29 @@ async function main() {
   const dir = audioDirFor(gender)
   const entries = {}
   let usage = 0
-  console.log(`\n${gender} · ${profile.voiceId} · speed ${profile.speed} pitch ${profile.pitch} vol ${profile.vol}\n`)
+  console.log(
+    `\n${gender} · ${profile.voiceId} · speed ${profile.speed} vol ${profile.vol} · pitch PRIVATE ${pitchFor(
+      profile,
+      'PRIVATE',
+    )} / PUBLIC ${pitchFor(profile, 'PUBLIC')}\n`,
+  )
 
   for (const u of utterances) {
-    const { audio, durationMs, usageCharacters } = await synthesise(u.text, profile, model)
+    const pitch = pitchFor(profile, u.context)
+    const { audio, durationMs, usageCharacters } = await synthesise(u.text, profile, model, pitch)
     usage += usageCharacters
     const rel = `${dir}/${u.fileStem}.mp3`
     write(join(ROOT, 'public', rel), audio)
     entries[u.id] = {
       text: u.text,
       file: rel,
+      context: u.context,
+      pitch,
       sha256: createHash('sha256').update(audio).digest('hex'),
       bytes: audio.byteLength,
       durationMs,
     }
-    console.log(`  ${u.id.padEnd(32)} ${u.text.padEnd(12)} ${(durationMs / 1000).toFixed(2)}s`)
+    console.log(`  ${u.context.padEnd(8)} ${u.id.padEnd(32)} ${u.text.padEnd(12)} ${(durationMs / 1000).toFixed(2)}s`)
   }
 
   writeManifest(gender, profile, model, entries)

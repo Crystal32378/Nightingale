@@ -13,6 +13,9 @@ export interface VoiceManifestEntry {
   text: string
   /** path under the public audio root, e.g. audio/zh-TW/guidance.turn.right.mp3 */
   file: string
+  /** who it is spoken to — and therefore which pitch it was generated at */
+  context?: string
+  pitch?: number
   sha256: string
   bytes: number
   durationMs: number
@@ -24,8 +27,12 @@ export interface VoiceManifest {
   profile: string
   voiceId: string
   model: string
-  /** the settings that were approved by ear; recorded so a re-run sounds the same */
-  voiceSettings: { speed: number; pitch: number; vol: number }
+  /**
+   * The settings that were approved by ear, recorded so a re-run sounds the
+   * same. `pitch` is per listening context: the same speaker addresses a
+   * stranger across a counter differently from the person beside them.
+   */
+  voiceSettings: { speed: number; pitch: Record<string, number>; vol: number }
   generatedAt: string
   utterances: Record<string, VoiceManifestEntry>
 }

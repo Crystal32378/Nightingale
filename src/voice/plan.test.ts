@@ -17,15 +17,21 @@ const read = (name: string) =>
   JSON.parse(readFileSync(join(process.cwd(), 'scripts', 'plan', `${name}.json`), 'utf8'))
 
 describe('the exported canonical plan matches what the code derives', () => {
-  const plan = read('canonical') as Array<{ id: string; text: string; fileStem: string }>
+  const plan = read('canonical') as Array<{ id: string; text: string; context: string; fileStem: string }>
   const derived = canonicalUtterances()
 
   it('has the same number of utterances', () => {
     expect(plan).toHaveLength(derived.length)
   })
 
-  it('has the same id, text and filename for every one of them', () => {
-    expect(plan).toEqual(derived.map((u) => ({ id: u.id, text: u.text, fileStem: u.fileStem })))
+  it('has the same id, text, listener and filename for every one of them', () => {
+    expect(plan).toEqual(
+      derived.map((u) => ({ id: u.id, text: u.text, context: u.context, fileStem: u.fileStem })),
+    )
+  })
+
+  it('carries the listener, because the generator needs it to pick a pitch', () => {
+    for (const line of plan) expect(['PRIVATE', 'PUBLIC']).toContain(line.context)
   })
 })
 

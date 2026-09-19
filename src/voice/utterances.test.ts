@@ -74,7 +74,7 @@ describe('the manifest is checked against the renderer, not trusted', () => {
     profile: 'FEMALE',
     voiceId: 'test',
     model: 'test',
-    voiceSettings: { speed: 1, pitch: 0, vol: 1 },
+    voiceSettings: { speed: 1, pitch: { PRIVATE: 0, PUBLIC: 1 }, vol: 1 },
     generatedAt: '2026-09-19',
     utterances: Object.fromEntries(
       utterances.map((u) => [

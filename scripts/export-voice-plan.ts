@@ -13,7 +13,12 @@ import { CASTING_LINES } from './casting-lines'
 
 mkdirSync('scripts/plan', { recursive: true })
 
-const canonical = canonicalUtterances().map((u) => ({ id: u.id, text: u.text, fileStem: u.fileStem }))
+const canonical = canonicalUtterances().map((u) => ({
+  id: u.id,
+  text: u.text,
+  context: u.context,
+  fileStem: u.fileStem,
+}))
 writeFileSync('scripts/plan/canonical.json', `${JSON.stringify(canonical, null, 2)}\n`)
 writeFileSync('scripts/plan/casting.json', `${JSON.stringify(CASTING_LINES, null, 2)}\n`)
 writeFileSync('scripts/plan/profiles.json', `${JSON.stringify(VOICE_PROFILES, null, 2)}\n`)
@@ -36,14 +41,24 @@ const guide = [
   '',
   ...VOICE_GENDERS.map(
     (g) =>
-      `- **${g}** — 音色 \`${VOICE_PROFILES[g].voiceId}\`，speed ${VOICE_PROFILES[g].speed}、pitch ${VOICE_PROFILES[g].pitch}、volume ${VOICE_PROFILES[g].vol} → 存到 \`public/${audioDirFor(g)}/\``,
+      `- **${g}** — 音色 \`${VOICE_PROFILES[g].voiceId}\`，speed ${VOICE_PROFILES[g].speed}、volume ${VOICE_PROFILES[g].vol} → 存到 \`public/${audioDirFor(g)}/\``,
   ),
+  '',
+  '**pitch 跟著「講給誰聽」走**，所以每個聲音要分兩趟生成：',
+  '',
+  `- \`PRIVATE\`（陪著走的話，講給拿手機的人聽）→ **pitch ${VOICE_PROFILES.MALE.pitch.PRIVATE}**`,
+  `- \`PUBLIC\`（幫忙問路的話，講給櫃台對面的陌生人聽）→ **pitch ${VOICE_PROFILES.MALE.pitch.PUBLIC}**`,
+  '',
+  '同一支聲音、同樣語速、同樣用字，只有面對誰的時候語氣不同。',
   '',
   `共 ${canonical.length} 句，每個聲音一套。`,
   '',
-  '| # | 要生成的文字 | 存成這個檔名 |',
-  '| --- | --- | --- |',
-  ...canonical.map((u, i) => `| ${i + 1} | \`${u.text}\` | \`${u.fileStem}.mp3\` |`),
+  '| # | 對象 | pitch | 要生成的文字 | 存成這個檔名 |',
+  '| --- | --- | --- | --- | --- |',
+  ...canonical.map(
+    (u, i) =>
+      `| ${i + 1} | ${u.context} | ${VOICE_PROFILES.MALE.pitch[u.context]} | \`${u.text}\` | \`${u.fileStem}.mp3\` |`,
+  ),
   '',
   '檔名一個字都不能錯——manifest 是靠檔名對回句子的。',
   '',

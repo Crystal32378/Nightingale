@@ -1,6 +1,7 @@
 import { PLACE_REGISTRY, type PlaceRegistry } from '../registry/types'
 import { materialize } from '../render/renderer'
 import { PLACE_BEARING_SPOKEN_KEYS, SPOKEN_KEYS, type SpokenKey } from '../strings/keys'
+import { contextForKey, type ListeningContext } from './level'
 
 /**
  * The canonical set of things Nightingale can say out loud.
@@ -16,6 +17,11 @@ export interface CanonicalUtterance {
   key: SpokenKey
   placeId: string | null
   text: string
+  /**
+   * Who this line is spoken to. Derived from the key, never chosen per file.
+   * It decides both how loud it is played and which pitch it was generated at.
+   */
+  context: ListeningContext
   /** safe on every filesystem; `#` is not */
   fileStem: string
 }
@@ -46,7 +52,7 @@ export function canonicalUtterances(registry: PlaceRegistry = PLACE_REGISTRY): C
       const text = materialize({ key, params: placeId === null ? undefined : { placeId } }, { registry })
       if (text.trim().length === 0) continue // silence needs no file
       const id = utteranceId(key, placeId)
-      out.push({ id, key, placeId, text, fileStem: fileStemFor(id) })
+      out.push({ id, key, placeId, text, context: contextForKey(key), fileStem: fileStemFor(id) })
     }
   }
 
