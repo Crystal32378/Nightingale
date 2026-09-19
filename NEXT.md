@@ -8,22 +8,27 @@ Crystal 不是工程背景，**回覆請用中文**；程式碼、檔名、型�
 
 ## 現在在哪裡
 
-- 最新 commit：**`b3f98cc` Pitch follows who is being spoken to**
-- `npm test` → **175 passed**，`npx tsc --noEmit` 乾淨
-- 本地 `main` 領先 `origin/main` **6 個 commit**，落後 0
+- `HEAD` = `origin/main` = **`d2dd02c`**，ahead 0 / behind 0
+- 工作區乾淨（`git status --porcelain` 無輸出）
+- **push 已完成**，遠端已同步，沒有待推的 commit
+- `npm test` → **175 passed**，`npx tsc --noEmit` 乾淨（福獨立複驗過）
 
-### push 推不上去（唯一需要人類動手的事）
+以上是寫這份筆記當下實際查過的狀態，不是沿用前一輪的說法。
+**還是自己再查一次** —— 這份筆記本身也會過時：
 
-掛載資料夾的那個 Linux VM 讀不到 Mac 鑰匙圈的 GitHub 憑證：
-
+```bash
+git fetch origin && git rev-parse HEAD origin/main && git status --porcelain
 ```
-fatal: could not read Username for 'https://github.com'
-```
 
-**請 Crystal 或福在她自己的終端機跑 `git push origin main`。**
-是乾淨的快轉，不需要 rebase、不需要 force。
-（授權規則：不 rebase、不 force push、不改 commit history、不改作者。
- 作者 email 用 `223268516+Crystal32378@users.noreply.github.com`。）
+### 關於 push
+
+我（在掛載資料夾的那個 Linux VM 裡）推不上去 —— 那個 shell 讀不到 Mac
+鑰匙圈的 GitHub 憑證，會直接回
+`fatal: could not read Username for 'https://github.com'`。
+所以 push 這一步要請 Crystal 或福在她自己的終端機跑。這次已經跑完了。
+
+授權規則（沿用）：不 rebase、不 force push、不改 commit history、不改作者。
+作者 email 用 `223268516+Crystal32378@users.noreply.github.com`。
 
 ---
 
