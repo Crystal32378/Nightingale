@@ -1,0 +1,102 @@
+[
+  {
+    "id": "guidance.go",
+    "text": "往前走。",
+    "fileStem": "guidance.go"
+  },
+  {
+    "id": "guidance.turn.left",
+    "text": "往左手邊走。",
+    "fileStem": "guidance.turn.left"
+  },
+  {
+    "id": "guidance.turn.right",
+    "text": "往右手邊走。",
+    "fileStem": "guidance.turn.right"
+  },
+  {
+    "id": "guidance.uncertain",
+    "text": "我不確定。我陪你問。",
+    "fileStem": "guidance.uncertain"
+  },
+  {
+    "id": "guidance.arrived#CASHIER",
+    "text": "批價櫃台，到了。",
+    "fileStem": "guidance.arrived__CASHIER"
+  },
+  {
+    "id": "guidance.arrived#ELEVATOR_IN",
+    "text": "電梯口，到了。",
+    "fileStem": "guidance.arrived__ELEVATOR_IN"
+  },
+  {
+    "id": "guidance.arrived#ELEVATOR_OUT",
+    "text": "電梯出口，到了。",
+    "fileStem": "guidance.arrived__ELEVATOR_OUT"
+  },
+  {
+    "id": "guidance.arrived#ENTRANCE",
+    "text": "大門，到了。",
+    "fileStem": "guidance.arrived__ENTRANCE"
+  },
+  {
+    "id": "guidance.arrived#EXIT",
+    "text": "出口，到了。",
+    "fileStem": "guidance.arrived__EXIT"
+  },
+  {
+    "id": "guidance.arrived#NEUROSURGERY",
+    "text": "神經外科，到了。",
+    "fileStem": "guidance.arrived__NEUROSURGERY"
+  },
+  {
+    "id": "guidance.arrived#PHARMACY",
+    "text": "藥局，到了。",
+    "fileStem": "guidance.arrived__PHARMACY"
+  },
+  {
+    "id": "guidance.arrived#REGISTRATION",
+    "text": "掛號櫃台，到了。",
+    "fileStem": "guidance.arrived__REGISTRATION"
+  },
+  {
+    "id": "ask.utterance#CASHIER",
+    "text": "請問，批價櫃台？",
+    "fileStem": "ask.utterance__CASHIER"
+  },
+  {
+    "id": "ask.utterance#ELEVATOR_IN",
+    "text": "請問，電梯口？",
+    "fileStem": "ask.utterance__ELEVATOR_IN"
+  },
+  {
+    "id": "ask.utterance#ELEVATOR_OUT",
+    "text": "請問，電梯出口？",
+    "fileStem": "ask.utterance__ELEVATOR_OUT"
+  },
+  {
+    "id": "ask.utterance#ENTRANCE",
+    "text": "請問，大門？",
+    "fileStem": "ask.utterance__ENTRANCE"
+  },
+  {
+    "id": "ask.utterance#EXIT",
+    "text": "請問，出口？",
+    "fileStem": "ask.utterance__EXIT"
+  },
+  {
+    "id": "ask.utterance#NEUROSURGERY",
+    "text": "請問，神經外科？",
+    "fileStem": "ask.utterance__NEUROSURGERY"
+  },
+  {
+    "id": "ask.utterance#PHARMACY",
+    "text": "請問，藥局？",
+    "fileStem": "ask.utterance__PHARMACY"
+  },
+  {
+    "id": "ask.utterance#REGISTRATION",
+    "text": "請問，掛號櫃台？",
+    "fileStem": "ask.utterance__REGISTRATION"
+  }
+]
