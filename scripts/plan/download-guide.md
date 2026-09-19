@@ -13,8 +13,8 @@ node scripts/voice.mjs --from-files --profile=MALE
 
 兩個聲音用同一批文字，只是資料夾不同：
 
-- **FEMALE** — 音色 `Chinese_crisp_podcaster_nv1`，speed 1、pitch 1、volume 3 → 存到 `public/audio/zh-TW/female/`
-- **MALE** — 音色 `Chinese_calm_streamer_nv1`，speed 0.9、pitch 1、volume 3 → 存到 `public/audio/zh-TW/male/`
+- **FEMALE** — 音色 `Chinese_crisp_podcaster_nv1`，speed 1、pitch 1、volume 2 → 存到 `public/audio/zh-TW/female/`
+- **MALE** — 音色 `Chinese_calm_streamer_nv1`，speed 0.9、pitch 1、volume 2 → 存到 `public/audio/zh-TW/male/`
 
 共 20 句，每個聲音一套。
 

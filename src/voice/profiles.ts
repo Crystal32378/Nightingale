@@ -47,7 +47,7 @@ export const VOICE_PROFILES: Record<VoiceGender, VoiceProfile> = {
     voiceId: 'Chinese_crisp_podcaster_nv1',
     speed: 1,
     pitch: 1,
-    vol: 3,
+    vol: 2,
     note: '咬字清楚，不拖。門診大廳有底噪時仍聽得清。',
   },
   MALE: {
@@ -55,7 +55,7 @@ export const VOICE_PROFILES: Record<VoiceGender, VoiceProfile> = {
     voiceId: 'Chinese_calm_streamer_nv1',
     speed: 0.9,
     pitch: 1,
-    vol: 3,
+    vol: 2,
     note: '平穩，語速略慢。給聽女聲較吃力的人。',
   },
 }
