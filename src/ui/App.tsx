@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
 import type { Instruction } from '../engine/types'
 import { label, renderPlace } from '../render/renderer'
 import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
-import { AskCard } from './AskCard'
+import { AskCard, acknowledgeFocusReturn, wantFocusReturn } from './AskCard'
 import { DevPanel } from './DevPanel'
 import {
   IconAsk,
@@ -51,6 +51,7 @@ function InstructionArrow({ instruction }: { instruction: Instruction }) {
 
 export function App() {
   const adapter = useMemo(() => new VirtualBirdAdapter(), [])
+  const appRef = useRef<HTMLDivElement>(null)
   const ng = useNightingale(adapter)
   const { output, actions } = ng
 
@@ -75,12 +76,36 @@ export function App() {
     .filter(Boolean)
     .join(' ')
 
+  // While the ask card is open, the background goes inert: nothing behind the
+  // card can take focus, be clicked, or be announced. When it closes, the
+  // background wakes exactly as it was.
+  useEffect(() => {
+    const el = appRef.current
+    if (!el) return
+    if (ng.askOpen) {
+      el.setAttribute('inert', '')
+    } else {
+      el.removeAttribute('inert')
+    }
+  }, [ng.askOpen])
+
+  // The card and the inert background are a pair. Focus must come home only
+  // AFTER the inert flag lifts, or the focus attempt lands on an inert button
+  // and silently falls to <body>. The card asks; this effect answers.
+  useEffect(() => {
+    if (!ng.askOpen && wantFocusReturn) {
+      acknowledgeFocusReturn()
+      document.querySelector<HTMLElement>('[data-ask-trigger]')?.focus()
+    }
+  }, [ng.askOpen])
+
   // Three scenes, three protagonists. Idle: the bird. Guiding: the sentence.
   // Resting: the silence. The layout knows which scene it is in.
   const scene = !ng.started ? 'idle' : resting ? 'rest' : 'guide'
 
   return (
-    <div className="app" data-scene={scene}>
+    <>
+      <div className="app" data-scene={scene} ref={appRef}>
       <header className="masthead">
         <div className="brand">
           <LogoMark />
@@ -140,7 +165,7 @@ export function App() {
           </button>
         ) : (
           <>
-            <button className="primary" onClick={actions.askForMe}>
+            <button className="primary" data-ask-trigger onClick={actions.askForMe}>
               <IconAsk />
               {label('label.ask')}
             </button>
@@ -181,8 +206,9 @@ export function App() {
         onDecay={actions.decay}
         onReset={actions.reset}
       />
+      </div>
 
       {ng.askOpen ? <AskCard text={ng.ask.screen} onClose={actions.closeAsk} /> : null}
-    </div>
+    </>
   )
 }
