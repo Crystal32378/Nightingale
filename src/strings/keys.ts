@@ -31,6 +31,9 @@ export const STRING_KEYS = [
   'label.done',
   'label.underway',
   'label.arrived',
+  'label.volume.down',
+  'label.volume.up',
+  'label.volume.level',
   'fallback.safe',
 ] as const
 
@@ -94,5 +97,13 @@ export const STRING_NOTES: Record<StringKey, string> = {
   'label.done': '按鈕文字，不朗讀。',
   'label.underway': '狀態標籤，不朗讀。休息時不顯示任何狀態。',
   'label.arrived': '狀態標籤，不朗讀。',
+  // The only strings in this table that exist BECAUSE they are read aloud —
+  // by VoiceOver / TalkBack, and never drawn on screen. No recording: the
+  // phone's own voice reads them, so there is no audio file and no manifest
+  // entry. They are here rather than inline in a component because every word
+  // this product can say belongs in this table, screen reader included.
+  'label.volume.down': '讀屏用，不錄音，畫面不顯示。',
+  'label.volume.up': '讀屏用，不錄音，畫面不顯示。',
+  'label.volume.level': '讀屏用，不錄音，畫面不顯示。{n} 由程式代入目前級數。',
   'fallback.safe': 'validator 擋下輸出時的靜態退路。與 guidance.uncertain 同字。',
 }
