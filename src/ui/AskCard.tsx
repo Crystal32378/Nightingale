@@ -17,6 +17,22 @@ export function acknowledgeFocusReturn(): void {
 const FOCUSABLE =
   'button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
 
+/**
+ * Ask-for-me.
+ *
+ * The card shows the verified utterance and the phone says the same string —
+ * one string, from the verified registry, with no model anywhere in the path.
+ * Nothing is recorded and no reply is transcribed or parsed; what the member of
+ * staff says goes to the person, not to us.
+ *
+ * While this card is open, it is the whole world for the keyboard too. Focus
+ * moves to the card itself on open — never onto 好了, which must never fire by
+ * accident, and never onto 再說一遍, which raises the volume. Tab and
+ * Shift+Tab loop inside the card, Escape closes it, and the background stays
+ * inert for as long as the card is open. On close, focus goes home to the
+ * 幫我問 button that opened it — a person always knows where they came back
+ * to.
+ */
 export function AskCard({ text, onClose }: { text: string; onClose: () => void }) {
   const cardRef = useRef<HTMLDivElement>(null)
 
