@@ -1,8 +1,10 @@
 import { useEffect } from 'react'
 import { label } from '../render/renderer'
+import { IconAgain, IconDone } from './icons'
 import { NightingaleBird } from './NightingaleBird'
 import { speak } from './speech'
 import { raiseContext } from './volumeStore'
+import { visualLines } from './visualText'
 import { VolumeControl } from './VolumeControl'
 
 /**
@@ -24,7 +26,9 @@ export function AskCard({ text, onClose }: { text: string; onClose: () => void }
   }, [text])
 
   // The same string, broken where it is already punctuated. Not a second string.
-  const lines = text.split('，')
+  // The question mark is notation for the voice; on screen the upward arc of
+  // the question is carried by the layout, not by a glyph.
+  const lines = visualLines(text)
 
   const again = () => {
     // Asking to hear it again is evidence it was not heard: one step louder,
@@ -45,8 +49,12 @@ export function AskCard({ text, onClose }: { text: string; onClose: () => void }
       ))}
       <VolumeControl context="PUBLIC" />
       <div className="ask-actions">
-        <button onClick={again}>{label('label.again')}</button>
+        <button onClick={again}>
+          <IconAgain />
+          {label('label.again')}
+        </button>
         <button className="primary" onClick={onClose}>
+          <IconDone />
           {label('label.done')}
         </button>
       </div>

@@ -5,8 +5,19 @@ import { label, renderPlace } from '../render/renderer'
 import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
 import { AskCard } from './AskCard'
 import { DevPanel } from './DevPanel'
+import {
+  IconAsk,
+  IconCurrent,
+  IconDestination,
+  IconDone,
+  IconRest,
+  IconResume,
+  IconRoute,
+  LogoMark,
+} from './icons'
 import { NightingaleBird } from './NightingaleBird'
 import { useNightingale } from './useNightingale'
+import { visualLines } from './visualText'
 import { VolumeControl } from './VolumeControl'
 
 /**
@@ -71,14 +82,17 @@ export function App() {
   return (
     <div className="app" data-scene={scene}>
       <header className="masthead">
-        <div>
-          <h1 className="wordmark">Nightingale</h1>
-          <p className="tagline">Walk with you</p>
+        <div className="brand">
+          <LogoMark />
+          <div>
+            <h1 className="wordmark">Nightingale</h1>
+            <p className="tagline">Walk with you</p>
+          </div>
         </div>
         {/* Nothing is shown while resting. Silence includes the status line. */}
         {ng.started && !resting ? (
           <span className="status">
-            <span className="dot" />
+            {arrived ? <IconDone /> : <IconRoute />}
             {arrived ? label('label.arrived') : label('label.underway')}
           </span>
         ) : null}
@@ -97,17 +111,23 @@ export function App() {
 
       <div className={instructionClass}>
         <InstructionArrow instruction={output.instruction} />
-        {guidanceText.length > 0 ? <p className="text">{guidanceText}</p> : null}
+        {guidanceText.length > 0 ? <p className="text">{visualLines(guidanceText).join('\n')}</p> : null}
       </div>
 
       <div className="meta">
         <div>
-          <p className="label">{label('label.current')}</p>
+          <p className="label">
+            <IconCurrent />
+            {label('label.current')}
+          </p>
           <p className="value">{currentPlace ?? '—'}</p>
         </div>
         <div className="rule" />
         <div>
-          <p className="label">{label('label.destination')}</p>
+          <p className="label">
+            <IconDestination />
+            {label('label.destination')}
+          </p>
           <p className="value">{destinationPlace ?? '—'}</p>
         </div>
       </div>
@@ -115,17 +135,25 @@ export function App() {
       <div className="actions">
         {!ng.started ? (
           <button className="primary wide" onClick={actions.start}>
+            <IconResume />
             {label('label.start')}
           </button>
         ) : (
           <>
             <button className="primary" onClick={actions.askForMe}>
+              <IconAsk />
               {label('label.ask')}
             </button>
             {resting ? (
-              <button onClick={() => actions.setPosture('MOVING')}>{label('label.resume')}</button>
+              <button onClick={() => actions.setPosture('MOVING')}>
+                <IconResume />
+                {label('label.resume')}
+              </button>
             ) : (
-              <button onClick={() => actions.setPosture('RESTING')}>{label('label.rest')}</button>
+              <button onClick={() => actions.setPosture('RESTING')}>
+                <IconRest />
+                {label('label.rest')}
+              </button>
             )}
           </>
         )}

@@ -76,7 +76,52 @@ body {
   gap: 4px;
 }
 
-/* ---------- masthead ---------- */
+/* ---------- brand lockup ---------- */
+/* The mark and the wordmark read as one signature: the bird carries its lamp,
+   the name carries the room. */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-mark {
+  width: 30px;
+  height: 30px;
+  color: var(--green-deep);
+  flex: none;
+}
+
+/* ---------- icons ---------- */
+/* One stroke, one meaning. Icons sit beside words, never instead of them. */
+.icon {
+  width: 1.15em;
+  height: 1.15em;
+  flex: none;
+}
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.status .icon {
+  width: 13px;
+  height: 13px;
+}
+
+.meta .label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.meta .label .icon {
+  width: 15px;
+  height: 15px;
+}
 /*
   The masthead yields. In this product the four characters are the headline;
   the brand is a whisper. Wordmark shrinks to a caption and the status pill
@@ -123,13 +168,6 @@ body {
   color: var(--ink-faint);
   white-space: nowrap;
   box-shadow: var(--shadow-soft);
-}
-
-.status .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green);
 }
 
 /* ---------- bird ---------- */
@@ -380,6 +418,7 @@ body {
   color: var(--ink);
   text-wrap: balance;
   letter-spacing: 0.04em;
+  white-space: pre-line;
 }
 
 .instruction.uncertain .text {
@@ -585,6 +624,7 @@ button.wide {
   text-align: center;
   margin: 0;
   text-wrap: balance;
+  white-space: pre-line;
 }
 
 .ask-line.subject {
