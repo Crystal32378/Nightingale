@@ -1,12 +1,24 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
 import type { Instruction } from '../engine/types'
 import { label, renderPlace } from '../render/renderer'
 import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
-import { AskCard } from './AskCard'
+import { AskCard, acknowledgeFocusReturn, wantFocusReturn } from './AskCard'
 import { DevPanel } from './DevPanel'
+import {
+  IconAsk,
+  IconCurrent,
+  IconDestination,
+  IconDone,
+  IconRest,
+  IconResume,
+  IconRoute,
+  LogoMark,
+} from './icons'
 import { NightingaleBird } from './NightingaleBird'
 import { useNightingale } from './useNightingale'
+import { visualLines } from './visualText'
+import { VolumeControl } from './VolumeControl'
 
 /**
  * An arrow is a claim about direction, so it is drawn from the instruction and
@@ -39,6 +51,7 @@ function InstructionArrow({ instruction }: { instruction: Instruction }) {
 
 export function App() {
   const adapter = useMemo(() => new VirtualBirdAdapter(), [])
+  const appRef = useRef<HTMLDivElement>(null)
   const ng = useNightingale(adapter)
   const { output, actions } = ng
 
@@ -63,17 +76,48 @@ export function App() {
     .filter(Boolean)
     .join(' ')
 
+  // While the ask card is open, the background goes inert: nothing behind the
+  // card can take focus, be clicked, or be announced. When it closes, the
+  // background wakes exactly as it was.
+  useEffect(() => {
+    const el = appRef.current
+    if (!el) return
+    if (ng.askOpen) {
+      el.setAttribute('inert', '')
+    } else {
+      el.removeAttribute('inert')
+    }
+  }, [ng.askOpen])
+
+  // The card and the inert background are a pair. Focus must come home only
+  // AFTER the inert flag lifts, or the focus attempt lands on an inert button
+  // and silently falls to <body>. The card asks; this effect answers.
+  useEffect(() => {
+    if (!ng.askOpen && wantFocusReturn) {
+      acknowledgeFocusReturn()
+      document.querySelector<HTMLElement>('[data-ask-trigger]')?.focus()
+    }
+  }, [ng.askOpen])
+
+  // Three scenes, three protagonists. Idle: the bird. Guiding: the sentence.
+  // Resting: the silence. The layout knows which scene it is in.
+  const scene = !ng.started ? 'idle' : resting ? 'rest' : 'guide'
+
   return (
-    <div className="app">
+    <>
+      <div className="app" data-scene={scene} ref={appRef}>
       <header className="masthead">
-        <div>
-          <h1 className="wordmark">Nightingale</h1>
-          <p className="tagline">Walk with you</p>
+        <div className="brand">
+          <LogoMark />
+          <div>
+            <h1 className="wordmark">Nightingale</h1>
+            <p className="tagline">Walk with you</p>
+          </div>
         </div>
         {/* Nothing is shown while resting. Silence includes the status line. */}
         {ng.started && !resting ? (
           <span className="status">
-            <span className="dot" />
+            {arrived ? <IconDone /> : <IconRoute />}
             {arrived ? label('label.arrived') : label('label.underway')}
           </span>
         ) : null}
@@ -92,17 +136,23 @@ export function App() {
 
       <div className={instructionClass}>
         <InstructionArrow instruction={output.instruction} />
-        {guidanceText.length > 0 ? <p className="text">{guidanceText}</p> : null}
+        {guidanceText.length > 0 ? <p className="text">{visualLines(guidanceText).join('\n')}</p> : null}
       </div>
 
       <div className="meta">
         <div>
-          <p className="label">{label('label.current')}</p>
+          <p className="label">
+            <IconCurrent />
+            {label('label.current')}
+          </p>
           <p className="value">{currentPlace ?? '—'}</p>
         </div>
         <div className="rule" />
         <div>
-          <p className="label">{label('label.destination')}</p>
+          <p className="label">
+            <IconDestination />
+            {label('label.destination')}
+          </p>
           <p className="value">{destinationPlace ?? '—'}</p>
         </div>
       </div>
@@ -110,21 +160,34 @@ export function App() {
       <div className="actions">
         {!ng.started ? (
           <button className="primary wide" onClick={actions.start}>
+            <IconResume />
             {label('label.start')}
           </button>
         ) : (
           <>
-            <button className="primary" onClick={actions.askForMe}>
+            <button className="primary" data-ask-trigger onClick={actions.askForMe}>
+              <IconAsk />
               {label('label.ask')}
             </button>
             {resting ? (
-              <button onClick={() => actions.setPosture('MOVING')}>{label('label.resume')}</button>
+              <button onClick={() => actions.setPosture('MOVING')}>
+                <IconResume />
+                {label('label.resume')}
+              </button>
             ) : (
-              <button onClick={() => actions.setPosture('RESTING')}>{label('label.rest')}</button>
+              <button onClick={() => actions.setPosture('RESTING')}>
+                <IconRest />
+                {label('label.rest')}
+              </button>
             )}
           </>
         )}
       </div>
+
+      {/* The bird's voice, one reach above the thumb's resting place. Always
+          visible: a volume control you must go find is one you never adjust.
+          Icon and bars only — no words to misread. */}
+      <VolumeControl context="PRIVATE" />
 
       <DevPanel
         output={output}
@@ -143,8 +206,9 @@ export function App() {
         onDecay={actions.decay}
         onReset={actions.reset}
       />
+      </div>
 
       {ng.askOpen ? <AskCard text={ng.ask.screen} onClose={actions.closeAsk} /> : null}
-    </div>
+    </>
   )
 }

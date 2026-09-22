@@ -14,6 +14,11 @@ import canonicalBird from '../assets/nightingale-canonical.png'
  * artwork — it is the only part that ever changes, exactly as on the physical
  * bird. There is no alarm state and no red anywhere: while someone is resting
  * the bird is indistinguishable from idle, from across a waiting room.
+ *
+ * The same discipline holds for motion and expression (the ask-breath below):
+ * on an ASK cue the bird must not look pleased with itself, and it must not
+ * look sorry. Saying "I don't know" and staying is its strongest moment, so
+ * the most it ever does is slow down and lean in — company, not performance.
  */
 export function NightingaleBird({ cue }: { cue: Cue }) {
   const facing = birdFacing(cue)

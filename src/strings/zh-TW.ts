@@ -32,5 +32,12 @@ export const ZH_TW: Record<StringKey, string> = {
   'label.done': '好了',
   'label.underway': '路線進行中',
   'label.arrived': '已抵達',
+  // Read aloud by VoiceOver and TalkBack, never drawn on screen: the control
+  // itself is an icon and four bars. Someone who cannot see the bars still has
+  // to know which button is louder and where the level stands, and they must
+  // hear it in the language the rest of the product speaks.
+  'label.volume.down': '降低音量',
+  'label.volume.up': '提高音量',
+  'label.volume.level': '音量第 {n} 級，共 4 級',
   'fallback.safe': '我不確定。我陪你問。',
 }
