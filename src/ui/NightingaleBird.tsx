@@ -3,6 +3,7 @@ import type { Cue } from '../engine/types'
 import { birdFacing, lampState } from './birdPresentation'
 import canonicalBird from '../assets/nightingale-canonical.png'
 import { motionFrame, type MotionInput, type MotionFrame, type MotionSprite } from './birdMotion'
+import { startMotionDriver } from './motionDriver'
 import './birdMotion.css'
 
 /**
@@ -46,20 +47,16 @@ export function NightingaleBird({ cue, motionInput }: { cue: Cue; motionInput?: 
   const [motion, setMotion] = useState<MotionFrame>(() => resolveMotion(cue, motionInput))
 
   // Drive the state machine at render frequency. The state machine is
-  // pure; calling it once per frame is cheap. Reads from motionInput so
-  // the parent owns cue / listenActive / triggers / sequenceStartedAtMs.
+  // pure; calling it once per frame is cheap. The parent owns cue /
+  // listenActive / triggers / sequenceStartedAtMs; the DRIVER owns `now` —
+  // motionInput.now is a render-time snapshot and must not be replayed
+  // every frame, or L1/L2 freeze on their first frame.
   useEffect(() => {
     if (!motionInput) {
       setMotion(resolveMotion(cue, undefined))
       return
     }
-    let raf = 0
-    const tick = () => {
-      setMotion(resolveMotion(cue, motionInput))
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    return startMotionDriver(() => ({ ...motionInput, cue }), setMotion)
   }, [cue, motionInput])
 
   // For IDLE_L0 ambient breath we let the CSS keyframe drive; JS does not
@@ -110,7 +107,9 @@ function resolveMotion(cue: Cue, motionInput: MotionInput | undefined): MotionFr
       reducedMotion: false,
     })
   }
-  return motionFrame({ ...motionInput, cue })
+  // Initial render only — the driver takes over from the first rAF tick.
+  // Same clock source as the driver, so the first frame is already current.
+  return motionFrame({ ...motionInput, cue, now: Date.now() })
 }
 
 function spriteAttr(sprite: MotionFrame['sprite']): string {
