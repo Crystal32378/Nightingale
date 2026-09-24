@@ -1,0 +1,76 @@
+/*
+  Nightingale bird motion — Phase 1 CSS.
+
+  Two layers, by design:
+    Layer A — ambient: a single breath keyframe, driven by CSS animation.
+              The state machine sets animation-play-state / animation: none
+              when L1/L2 HOLD needs ambient to stop (real animals hold
+              their breath when listening).
+    Layer B — sprite swap: data-sprite on .bird-art declares which sprite
+              the bird is currently using. The pixel artist will draw 8
+              additional sprites at 64x64 native (BASE + INHALE / EXHALE /
+              BLINK / ATTEND_HEAD / ATTEND_TILT / GAZE_UP / GAZE_AWAY),
+              all sharing >=95% of BASE's pixels. Until those PNGs ship,
+              every sprite slot falls back to BASE — only the breath moves.
+
+  Pixel-art discipline:
+    image-rendering: pixelated preserves pixel-step edges when the bird
+    is upscaled from native grid to display size (~280 / 152 / 128 px).
+    Without this, the browser smooths the pixels back into a cartoon and
+    the 1-pixel motion vocabulary disappears.
+
+  Reduced motion:
+    prefers-reduced-motion: reduce stops the breath animation entirely.
+    The bird returns to its base pose, indistinguishable from a paused
+    video. State-change data attributes still update so semantically the
+    bird is still tracking the human.
+*/
+
+.bird-art {
+  /* Layer A — ambient breath. translateY 0 → -1px → 0. */
+  animation: ng-bird-breath var(--bird-breath-cycle, 5400ms) ease-in-out infinite;
+  animation-delay: var(--bird-breath-jitter, 0ms);
+  /* CSS variables for jitter come from React via inline style, seeded
+     from BREATH_CYCLE_MS. See NightingaleBird.tsx for the picker. */
+  will-change: transform;
+}
+
+@keyframes ng-bird-breath {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1px); }
+}
+
+/* Layer A — pause during L1/L2 HOLD. The state machine flips this when
+   ambientBreathingPaused is true (real animals don't breathe while
+   listening carefully). */
+.bird-art[data-paused="true"] {
+  animation: none;
+}
+
+/* Layer B — sprite placeholder. The current implementation uses one PNG
+   for every sprite slot. When the pixel artist ships the real sprites,
+   each rule below points to its own file. Until then the rules are
+   intentionally no-ops so the bird does not look broken. */
+.bird-art[data-sprite="base"] { /* BASE PNG, default */ }
+.bird-art[data-sprite="inhale"] { /* INHALE PNG */ }
+.bird-art[data-sprite="exhale"] { /* EXHALE PNG */ }
+.bird-art[data-sprite="blink"] { /* BLINK PNG */ }
+.bird-art[data-sprite="attend_head"] { /* ATTEND_HEAD PNG */ }
+.bird-art[data-sprite="attend_tilt"] { /* ATTEND_TILT PNG */ }
+.bird-art[data-sprite="gaze_up"] { /* GAZE_UP PNG */ }
+.bird-art[data-sprite="gaze_away"] { /* GAZE_AWAY PNG */ }
+
+/* The state machine also returns a CSS transform (translateY for breath,
+   rotate for head tilt). This composes on top of the keyframe via inline
+   style on .bird-art. When the keyframe is paused (data-paused="true"),
+   the inline transform is the only thing driving the bird. */
+.bird-art[style] {
+  /* Nothing — inline style already wins specificity over animation when
+     the animation is none. */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bird-art {
+    animation: none !important;
+  }
+}

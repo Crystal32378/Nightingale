@@ -239,6 +239,12 @@ button {
   height: auto;
   user-select: none;
   -webkit-user-drag: none;
+  /* Pixel-art discipline. Without this the browser bilinear-smooths the
+     sprite and 1-pixel motion becomes invisible. Honored only when the
+     sprite ships at a native pixel grid (target 64×64); the bird is
+     upscaled ~4–5× to its display size. */
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
 }
 
 .bird-ground {
