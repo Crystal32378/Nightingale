@@ -6,6 +6,10 @@ import type { Cue } from '../engine/types'
  * Kept as pure functions, away from React, so the rule can be tested: the bird's
  * facing is a function of the cue and of nothing else.
  *
+ * Ownership boundary: this file owns FACING and LAMP only. Body motion
+ * (breath, attention, gaze — the six IDLE/LISTEN studies) lives in
+ * birdMotion.ts. The two never drive the same property.
+ *
  * IMPORTANT — what the mirroring means.
  *
  * The canonical artwork faces to the viewer's right. On a LEFT cue it is

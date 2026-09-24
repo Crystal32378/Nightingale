@@ -1,15 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Cue } from '../engine/types'
 import { birdFacing, lampState } from './birdPresentation'
-import spriteBase from '../assets/sprites/base.png'
-import spriteInhale from '../assets/sprites/inhale.png'
-import spriteExhale from '../assets/sprites/exhale.png'
-import spriteBlink from '../assets/sprites/blink.png'
-import spriteAttendHead from '../assets/sprites/attend-head.png'
-import spriteAttendTilt from '../assets/sprites/attend-tilt.png'
-import spriteGazeUp from '../assets/sprites/gaze-up.png'
-import spriteGazeAway from '../assets/sprites/gaze-away.png'
-import spriteShoulderDrop from '../assets/sprites/shoulder-drop.png'
+import canonicalBird from '../assets/nightingale-canonical.png'
 import { motionFrame, type MotionInput, type MotionFrame, type MotionSprite } from './birdMotion'
 import './birdMotion.css'
 
@@ -30,21 +22,23 @@ import './birdMotion.css'
  * Body motion (Phase 1): driven by the birdMotion.ts pure state machine.
  * Six motion studies — IDLE L0 / L1 / L2 and LISTEN L0 / L1 / L2.
  *
- * Each sprite in src/assets/sprites/ shares >=95% of BASE pixels and was
- * generated procedurally from BASE (pixel-pushing, not redrawn). They are
- * 96x96 native RGBA with transparent background.
+ * Sprite frames have not shipped in this branch: every sprite slot falls
+ * back to the canonical artwork (BASE), so only the ambient breath is
+ * visible. When the pixel artist ships the real frames (≥95% shared pixels,
+ * transparent RGBA at native grid), point each slot at its own file.
  */
 
+// Placeholder: all slots map to BASE until the sprite sheet ships.
+// See docs/motion-treatment-phase1.md §1 for the frame spec.
 const SPRITE_URLS: Record<MotionSprite, string> = {
-  BASE: spriteBase,
-  INHALE: spriteInhale,
-  EXHALE: spriteExhale,
-  BLINK: spriteBlink,
-  ATTEND_HEAD: spriteAttendHead,
-  ATTEND_TILT: spriteAttendTilt,
-  GAZE_UP: spriteGazeUp,
-  GAZE_AWAY: spriteGazeAway,
-  SHOULDER_DROP: spriteShoulderDrop,
+  BASE: canonicalBird,
+  INHALE: canonicalBird,
+  EXHALE: canonicalBird,
+  BLINK: canonicalBird,
+  ATTEND_HEAD: canonicalBird,
+  ATTEND_TILT: canonicalBird,
+  GAZE_UP: canonicalBird,
+  GAZE_AWAY: canonicalBird,
 }
 
 export function NightingaleBird({ cue, motionInput }: { cue: Cue; motionInput?: MotionInput }) {

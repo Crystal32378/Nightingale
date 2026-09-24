@@ -257,13 +257,13 @@ button {
   z-index: 0;
 }
 
-/* chest lamp — centred on the mark on the bird's breast */
+/* chest lamp — centred on the leaf mark on the pixel bird's breast */
 .bird-lamp {
   position: absolute;
-  left: 65.2%;
-  top: 52.4%;
-  width: 23%;
-  height: 23%;
+  left: 67%;
+  top: 54%;
+  width: 20%;
+  height: 20%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   pointer-events: none;
