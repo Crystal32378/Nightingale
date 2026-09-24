@@ -1,5 +1,6 @@
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
+import { acknowledgeFocusReturn, AskCard, wantFocusReturn } from '../ui/AskCard'
 import { NightingaleBird } from '../ui/NightingaleBird'
 import { Last300mClient } from './last300mClient'
 import { RemoteGuidanceText } from './RemoteGuidanceText'
@@ -25,6 +26,25 @@ export function Last300mPage() {
   const client = useMemo(() => new Last300mClient(API_BASE), [])
   const { state, start, observe } = useLast300m(client, bird, ROUTE_ID)
   const [draft, setDraft] = useState('')
+  const [askOpen, setAskOpen] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const helpRef = useRef<HTMLButtonElement>(null)
+
+  // Same pair as the indoor App: while the ask card is open the page behind
+  // it is inert, and focus comes home to 幫我問 only after inert lifts.
+  useEffect(() => {
+    const el = contentRef.current
+    if (!el) return
+    if (askOpen) el.setAttribute('inert', '')
+    else el.removeAttribute('inert')
+  }, [askOpen])
+
+  useEffect(() => {
+    if (!askOpen && wantFocusReturn) {
+      acknowledgeFocusReturn()
+      helpRef.current?.focus()
+    }
+  }, [askOpen])
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
@@ -48,7 +68,8 @@ export function Last300mPage() {
   }
 
   return (
-    <div className="l3-page">
+    <>
+    <div className="l3-page" ref={contentRef}>
       <header className="l3-header">
         <h1 className="l3-title">Nightingale</h1>
       </header>
@@ -74,11 +95,10 @@ export function Last300mPage() {
               {LAST300M_ZH['l3.input.send']}
             </button>
           </form>
-          <button
-            className="l3-secondary"
-            onClick={() => void observe(LAST300M_ZH['l3.help.utterance'])}
-            disabled={state.busy}
-          >
+          {/* 幫我問 is Nightingale's ask-a-person move: it opens the question
+              card a passerby can read (and the phone can say). It never calls
+              the backend, records nothing, and parses no reply. */}
+          <button ref={helpRef} className="l3-secondary" onClick={() => setAskOpen(true)}>
             {LAST300M_ZH['l3.button.help']}
           </button>
         </>
@@ -86,5 +106,9 @@ export function Last300mPage() {
 
       {state.notice ? <p className="l3-notice">{state.notice}</p> : null}
     </div>
+    {askOpen ? (
+      <AskCard text={LAST300M_ZH['l3.ask.utterance']} onClose={() => setAskOpen(false)} />
+    ) : null}
+    </>
   )
 }

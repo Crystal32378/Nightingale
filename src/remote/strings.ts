@@ -19,7 +19,7 @@ export const LAST300M_ZH = {
   'l3.arrived.headline': '醫院入口，到了。',
   'l3.arrived.handoff': '進門之後，服務台可以帶你到下一站。',
   'l3.notice.offline': '剛剛沒有連上。稍等一下，再說一次就可以。',
-  'l3.help.utterance': '我不太確定現在的位置。',
+  'l3.ask.utterance': '請問，醫院的正門要怎麼走？',
 } as const
 
 export type Last300mStringKey = keyof typeof LAST300M_ZH
