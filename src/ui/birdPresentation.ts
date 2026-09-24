@@ -51,3 +51,43 @@ export function lampState(cue: Cue): LampState {
 export function isDirectionalCue(cue: Cue): boolean {
   return cue === 'LEFT' || cue === 'RIGHT'
 }
+
+/**
+ * Body motion — the smallest signal that the bird is alive.
+ *
+ * Placeholder for the pixel-sprite work in docs/motion-study-brief.md: these
+ * tokens map 1:1 onto the future sprite sheet ({ row, fps, mode }). Until that
+ * sheet exists they drive CSS-only motion on the canonical artwork, at L0
+ * (Quiet) intensity — the bird never seeks the viewer's attention here.
+ *
+ * Amplitude budget: ≤ 1.5% scale, ≤ 1.5° tilt, biological (not metronomic)
+ * timing. Motion is ambient and self-directed; it carries no information —
+ * facing, lamp and sentence do that — so prefers-reduced-motion can silence
+ * it entirely without the product losing anything. Blinks and eye direction
+ * need the sprite's eye frames and are deliberately absent from CSS.
+ */
+export type BirdMotionKind = 'BREATHE' | 'ATTEND' | 'SETTLE' | 'REST'
+
+export type BirdMotionMode = 'LOOP' | 'ONCE'
+
+export interface BirdMotion {
+  kind: BirdMotionKind
+  mode: BirdMotionMode
+}
+
+export function birdMotion(cue: Cue): BirdMotion {
+  switch (cue) {
+    case 'ASK':
+      // Listening reads as oriented stillness, not as activity.
+      return { kind: 'ATTEND', mode: 'LOOP' }
+    case 'LEFT':
+    case 'RIGHT':
+      // One small settle after the turn gesture, then hold. Never loops.
+      return { kind: 'SETTLE', mode: 'ONCE' }
+    case 'ARRIVED':
+      // Arrival reads as rest, not celebration: one exhale, then stillness.
+      return { kind: 'REST', mode: 'ONCE' }
+    default:
+      return { kind: 'BREATHE', mode: 'LOOP' }
+  }
+}

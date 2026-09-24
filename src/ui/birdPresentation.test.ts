@@ -3,7 +3,7 @@ import { deriveCue } from '../engine/cues'
 import { step, TURN_GUIDANCE_TTL_MS } from '../engine/engine'
 import type { Cue, Observation } from '../engine/types'
 import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
-import { birdFacing, isDirectionalCue, lampState } from './birdPresentation'
+import { birdFacing, birdMotion, isDirectionalCue, lampState } from './birdPresentation'
 
 const ALL_CUES: Cue[] = ['QUIET', 'READY', 'LEFT', 'RIGHT', 'ASK', 'ARRIVED']
 
@@ -77,5 +77,30 @@ describe('the lamp is the only part that changes', () => {
     const states = ALL_CUES.map(lampState)
     expect(states).not.toContain('ALARM')
     expect(new Set(states).size).toBe(4)
+  })
+})
+
+describe('body motion is ambient and never carries information', () => {
+  it('is a function of the cue and nothing else', () => {
+    expect(birdMotion('ASK')).toEqual(birdMotion('ASK'))
+    expect(birdMotion('QUIET')).toEqual({ kind: 'BREATHE', mode: 'LOOP' })
+  })
+
+  it('gestures and arrivals are one-shot; ambient states loop', () => {
+    expect(birdMotion('LEFT')).toEqual({ kind: 'SETTLE', mode: 'ONCE' })
+    expect(birdMotion('RIGHT')).toEqual({ kind: 'SETTLE', mode: 'ONCE' })
+    expect(birdMotion('ARRIVED')).toEqual({ kind: 'REST', mode: 'ONCE' })
+    for (const cue of ['QUIET', 'READY', 'ASK'] as Cue[]) {
+      expect(birdMotion(cue).mode).toBe('LOOP')
+    }
+  })
+
+  it('listening reads as attention, not activity', () => {
+    expect(birdMotion('ASK').kind).toBe('ATTEND')
+  })
+
+  it('has no alarm or celebration motion vocabulary at all', () => {
+    const kinds = [...new Set(ALL_CUES.map((cue) => birdMotion(cue).kind))].sort()
+    expect(kinds).toEqual(['ATTEND', 'BREATHE', 'REST', 'SETTLE'])
   })
 })

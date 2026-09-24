@@ -128,6 +128,77 @@ body {
   height: auto;
   user-select: none;
   -webkit-user-drag: none;
+  image-rendering: pixelated;
+  /* Motion plays on the img so it composes with the mirror flip on .bird. */
+  transform-origin: 50% 100%;
+}
+
+/*
+  Body motion — placeholder for the pixel sprite (docs/motion-study-brief.md).
+  L0 intensity only: ambient, self-directed, ≤1.5% scale / ≤1.5° tilt. It
+  carries no information, so reduced-motion silences it without loss.
+*/
+.motion-breathe .bird-art {
+  animation: ng-body-breathe 6s ease-in-out infinite;
+}
+
+.motion-attend .bird-art {
+  /* Listening: a slight lift of the head, then slower, quieter breathing. */
+  animation: ng-body-attend 7.5s ease-in-out infinite;
+}
+
+.motion-settle .bird-art {
+  /* One small settle after a turn gesture, then hold. */
+  animation: ng-body-settle 320ms ease-out 1;
+}
+
+.motion-rest .bird-art {
+  /* Arrival: a single exhale, then stillness. */
+  animation: ng-body-rest 650ms ease-in-out 1;
+}
+
+@keyframes ng-body-breathe {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.025);
+  }
+}
+
+@keyframes ng-body-attend {
+  0%,
+  100% {
+    transform: rotate(-1.2deg) scaleY(1);
+  }
+  50% {
+    transform: rotate(-1.2deg) scaleY(1.015);
+  }
+}
+
+@keyframes ng-body-settle {
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(0.8%) scaleY(0.995);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes ng-body-rest {
+  0% {
+    transform: scaleY(1);
+  }
+  45% {
+    transform: scaleY(0.99) translateY(0.5%);
+  }
+  100% {
+    transform: scaleY(1);
+  }
 }
 
 .bird-ground {
@@ -140,13 +211,13 @@ body {
   z-index: 0;
 }
 
-/* chest lamp — centred on the mark on the bird's breast */
+/* chest lamp — centred on the leaf mark on the pixel bird's breast */
 .bird-lamp {
   position: absolute;
-  left: 65.2%;
-  top: 52.4%;
-  width: 23%;
-  height: 23%;
+  left: 67%;
+  top: 54%;
+  width: 20%;
+  height: 20%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   pointer-events: none;
@@ -201,6 +272,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .bird,
+  .bird-art,
   .bird-lamp {
     transition: none;
     animation: none;
