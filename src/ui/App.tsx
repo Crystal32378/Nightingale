@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
 import type { Instruction } from '../engine/types'
 import { label, renderPlace } from '../render/renderer'
@@ -15,10 +15,34 @@ import {
   IconRoute,
   LogoMark,
 } from './icons'
+import type { MotionInput } from './birdMotion'
+import { reduceIdleTrigger, type IdleTrigger } from './motionTrigger'
 import { NightingaleBird } from './NightingaleBird'
 import { useNightingale } from './useNightingale'
 import { visualLines } from './visualText'
 import { VolumeControl } from './VolumeControl'
+
+/**
+ * Reads the OS reduced-motion preference once per render and re-renders the
+ * moment the user flips the switch — so the bird goes quiet immediately,
+ * without waiting for the next cue change.
+ */
+function useReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const onChange = (event: MediaQueryListEvent) => setReduced(event.matches)
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
+  }, [])
+  return reduced
+}
 
 /**
  * An arrow is a claim about direction, so it is drawn from the instruction and
@@ -54,6 +78,24 @@ export function App() {
   const appRef = useRef<HTMLDivElement>(null)
   const ng = useNightingale(adapter)
   const { output, actions } = ng
+
+  // Dev-only IDLE motion triggers (L1 glance / L2 gaze). Sealed inside App:
+  // never derived from engine state, never forwarded to the engine. Each
+  // trigger is single-shot — armed on press, consumed by the sequence.
+  const [idleTrigger, setIdleTrigger] = useState<IdleTrigger | null>(null)
+  const armIdleTrigger = (kind: IdleTrigger['kind']) => {
+    const now = Date.now()
+    setIdleTrigger((current) => reduceIdleTrigger(current, { kind, pressedAtMs: now }, now))
+  }
+  const motionInput: MotionInput = {
+    cue: ng.cue,
+    listenActive: false,
+    l1Triggered: idleTrigger?.kind === 'L1',
+    l2Triggered: idleTrigger?.kind === 'L2',
+    sequenceStartedAtMs: idleTrigger?.startedAtMs ?? 0,
+    now: Date.now(),
+    reducedMotion: useReducedMotion(),
+  }
 
   const leg = DEMO_VISIT[ng.visit ? Math.min(ng.visit.legIndex, DEMO_VISIT.length - 1) : 0]
   const resting = output.state.posture === 'RESTING'
@@ -123,7 +165,7 @@ export function App() {
         ) : null}
       </header>
 
-      <NightingaleBird cue={ng.cue} />
+      <NightingaleBird cue={ng.cue} motionInput={motionInput} />
 
       <div className="next">
         {nextParts && nextParts.length === 2 ? (
@@ -204,6 +246,8 @@ export function App() {
         onShortPress={actions.simulateShortPress}
         onLongPress={actions.simulateLongPress}
         onDecay={actions.decay}
+        onTriggerIdleGlance={() => armIdleTrigger('L1')}
+        onTriggerIdleGaze={() => armIdleTrigger('L2')}
         onReset={actions.reset}
       />
       </div>
