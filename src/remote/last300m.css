@@ -1,0 +1,147 @@
+/* Last-300m flow. Same quiet palette family as the main app; scoped l3- classes. */
+
+.l3-page {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px;
+  background: #f6f4ee;
+  color: #2c3a33;
+  font-size: 17px;
+}
+
+.l3-cover {
+  justify-content: center;
+  text-align: center;
+  gap: 24px;
+}
+
+.l3-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.l3-promise {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.l3-guidance {
+  background: #dfe8df;
+  border-radius: 16px;
+  padding: 20px 18px;
+  text-align: center;
+}
+
+.l3-headline {
+  font-size: 1.35rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.l3-lookfor {
+  margin: 10px 0 0;
+  font-size: 1rem;
+  color: #4c5e54;
+}
+
+.l3-observe {
+  display: flex;
+  gap: 10px;
+}
+
+.l3-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 1rem;
+  padding: 14px 16px;
+  border: 1px solid #c8d2c8;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.l3-primary,
+.l3-secondary {
+  font-size: 1.05rem;
+  padding: 14px 22px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  min-height: 48px;
+}
+
+.l3-primary {
+  background: #2f5d50;
+  color: #ffffff;
+}
+
+.l3-primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.l3-secondary {
+  background: #ffffff;
+  border: 1px solid #c8d2c8;
+  color: #2c3a33;
+}
+
+.l3-handoff {
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.l3-notice {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #6b5d4a;
+  margin: 0;
+}
+
+/* Route frame: origin → destination, straight from route truth. */
+.l3-route {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e0e4dc;
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-align: left;
+}
+
+.l3-route-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.l3-route-row dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  font-size: 0.85rem;
+  color: #4c5e54;
+}
+
+.l3-route-row dt svg {
+  width: 16px;
+  height: 16px;
+}
+
+.l3-route-row dd {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
