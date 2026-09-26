@@ -106,3 +106,42 @@
   color: #6b5d4a;
   margin: 0;
 }
+
+/* Route frame: origin → destination, straight from route truth. */
+.l3-route {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e0e4dc;
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-align: left;
+}
+
+.l3-route-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.l3-route-row dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  font-size: 0.85rem;
+  color: #4c5e54;
+}
+
+.l3-route-row dt svg {
+  width: 16px;
+  height: 16px;
+}
+
+.l3-route-row dd {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}

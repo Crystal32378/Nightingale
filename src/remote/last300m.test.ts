@@ -84,4 +84,32 @@ describe('Last300mClient', () => {
     )
     await expect(client.createSession('r1')).rejects.toThrow(RemoteProtocolError)
   })
+
+  it('reads the route frame for the requested route only', async () => {
+    const routes = [
+      { routeId: 'other', origin: { name: 'x' }, destination: { name: 'y' } },
+      {
+        routeId: 'renai-001',
+        origin: { type: 'transit_exit', name: '捷運忠孝復興站 出口2（無障礙電梯）' },
+        destination: { type: 'hospital_entrance', name: '臺北市立聯合醫院仁愛院區 大廳入口（無台階）' },
+      },
+    ]
+    const client = new Last300mClient('https://api.example', fetchReturning(200, routes))
+    const info = await client.routeInfo('renai-001')
+    expect(info.originName).toContain('出口2')
+    expect(info.destinationName).toContain('大廳入口')
+  })
+
+  it('fails closed when the route frame is missing or malformed', async () => {
+    const cases: FetchLike[] = [
+      fetchReturning(200, []),
+      fetchReturning(200, [{ routeId: 'renai-001', origin: {}, destination: { name: 'y' } }]),
+      fetchReturning(200, { not: 'an array' }),
+      fetchReturning(500, []),
+    ]
+    for (const fetchImpl of cases) {
+      const client = new Last300mClient('https://api.example', fetchImpl)
+      await expect(client.routeInfo('renai-001')).rejects.toThrow(RemoteProtocolError)
+    }
+  })
 })

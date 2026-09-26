@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
 import { acknowledgeFocusReturn, AskCard, wantFocusReturn } from '../ui/AskCard'
+import { IconCurrent, IconDestination } from '../ui/icons'
 import { NightingaleBird } from '../ui/NightingaleBird'
-import { Last300mClient } from './last300mClient'
+import { Last300mClient, RemoteProtocolError, type RouteInfo } from './last300mClient'
 import { RemoteGuidanceText } from './RemoteGuidanceText'
 import { LAST300M_ZH } from './strings'
 import { useLast300m } from './useLast300m'
@@ -18,8 +19,38 @@ import './last300m.css'
  * evidence, and indoor wayfinding is the next chapter, not this page's job.
  */
 
-const API_BASE = (import.meta.env.VITE_LAST300M_API as string | undefined) ?? 'http://localhost:8080'
-const ROUTE_ID = (import.meta.env.VITE_LAST300M_ROUTE as string | undefined) ?? 'fixture-hospital-001'
+const API_BASE =
+  (import.meta.env.VITE_LAST300M_API as string | undefined) ??
+  'https://nightingale-160543130573.asia-east1.run.app'
+const ROUTE_ID = (import.meta.env.VITE_LAST300M_ROUTE as string | undefined) ?? 'renai-001'
+
+/**
+ * The route frame: origin → destination, straight from route truth. These are
+ * display metadata, not a live position claim — that is why the first row says
+ * 起點 and never 目前位置. Fetched once; on failure no rows render, because a
+ * failed fetch must never invent place names.
+ */
+function RouteFrame({ info }: { info: RouteInfo | null }) {
+  if (!info) return null
+  return (
+    <dl className="l3-route">
+      <div className="l3-route-row">
+        <dt>
+          <IconCurrent />
+          {LAST300M_ZH['l3.label.origin']}
+        </dt>
+        <dd>{info.originName}</dd>
+      </div>
+      <div className="l3-route-row">
+        <dt>
+          <IconDestination />
+          {LAST300M_ZH['l3.label.destination']}
+        </dt>
+        <dd>{info.destinationName}</dd>
+      </div>
+    </dl>
+  )
+}
 
 export function Last300mPage() {
   const bird = useMemo(() => new VirtualBirdAdapter(), [])
@@ -27,6 +58,23 @@ export function Last300mPage() {
   const { state, start, observe } = useLast300m(client, bird, ROUTE_ID)
   const [draft, setDraft] = useState('')
   const [askOpen, setAskOpen] = useState(false)
+  const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null)
+
+  // Route frame is display metadata; a failure just means no rows.
+  useEffect(() => {
+    let cancelled = false
+    client.routeInfo(ROUTE_ID).then(
+      (info) => {
+        if (!cancelled) setRouteInfo(info)
+      },
+      (err) => {
+        if (!(err instanceof RemoteProtocolError)) throw err
+      },
+    )
+    return () => {
+      cancelled = true
+    }
+  }, [client])
   const contentRef = useRef<HTMLDivElement>(null)
   const helpRef = useRef<HTMLButtonElement>(null)
 
@@ -59,6 +107,7 @@ export function Last300mPage() {
         <h1 className="l3-title">Nightingale</h1>
         <p className="l3-promise">{LAST300M_ZH['l3.start.promise']}</p>
         <NightingaleBird cue="QUIET" />
+        <RouteFrame info={routeInfo} />
         <button className="l3-primary" onClick={() => void start()} disabled={state.busy}>
           {LAST300M_ZH['l3.start.button']}
         </button>
@@ -103,6 +152,8 @@ export function Last300mPage() {
           </button>
         </>
       )}
+
+      <RouteFrame info={routeInfo} />
 
       {state.notice ? <p className="l3-notice">{state.notice}</p> : null}
     </div>

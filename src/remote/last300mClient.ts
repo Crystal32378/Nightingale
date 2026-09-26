@@ -36,6 +36,12 @@ export interface StepResult {
   action: RemoteAction
 }
 
+export interface RouteInfo {
+  routeId: string
+  originName: string
+  destinationName: string
+}
+
 export class RemoteProtocolError extends Error {}
 
 const SESSION_STATES = new Set(['AT_CHECKPOINT', 'AMBIGUOUS', 'RECOVERING', 'ARRIVED'])
@@ -99,6 +105,39 @@ export class Last300mClient {
       throw new RemoteProtocolError('malformed session response')
     }
     return { sessionId: b.sessionId, session: b.session, action: b.action }
+  }
+
+  /**
+   * Route frame for the header rows (origin → destination). Display metadata
+   * from route truth — validated like everything else; on failure the caller
+   * shows no rows rather than invented ones.
+   */
+  async routeInfo(routeId: string): Promise<RouteInfo> {
+    let res: Response
+    try {
+      res = await this.fetchImpl(`${this.baseUrl}/api/routes`)
+    } catch (err) {
+      throw new RemoteProtocolError(`network failure: ${String(err)}`)
+    }
+    if (!res.ok) throw new RemoteProtocolError(`server answered ${res.status}`)
+    let body: unknown
+    try {
+      body = await res.json()
+    } catch {
+      throw new RemoteProtocolError('server answered non-JSON')
+    }
+    if (!Array.isArray(body)) throw new RemoteProtocolError('malformed routes response')
+    const row = body.find(
+      (r): r is Record<string, unknown> =>
+        typeof r === 'object' && r !== null && (r as Record<string, unknown>).routeId === routeId,
+    )
+    if (!row) throw new RemoteProtocolError(`route ${routeId} not listed`)
+    const origin = row.origin as Record<string, unknown> | undefined
+    const destination = row.destination as Record<string, unknown> | undefined
+    if (typeof origin?.name !== 'string' || typeof destination?.name !== 'string') {
+      throw new RemoteProtocolError('malformed routes response')
+    }
+    return { routeId, originName: origin.name, destinationName: destination.name }
   }
 
   async observe(sessionId: string, text: string): Promise<StepResult> {

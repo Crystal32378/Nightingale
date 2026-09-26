@@ -9,7 +9,7 @@ export const LAST300M_ZH = {
   'l3.start.promise': '牠知道就帶你。牠不知道，就陪你問。',
   'l3.start.button': '開始',
   'l3.label.next': '下一個地點',
-  'l3.label.current': '目前位置',
+  'l3.label.origin': '起點',
   'l3.label.destination': '目的地',
   'l3.input.placeholder': '跟我說你看到什麼',
   'l3.input.send': '傳送',
