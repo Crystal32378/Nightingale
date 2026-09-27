@@ -11,7 +11,9 @@
 
 ### 0.1 鳥**就是** pixel art — 但要對齊 native grid
 
-`src/assets/nightingale-canonical.png` 是 **900×900 RGBA 的 PNG，native pixel grid 大約是 64×64**。檔案本身是 pixel art：放大到 900×900 是因為檔案被拿來做大尺寸顯示，瀏覽器的 bilinear smoothing 把 pixel-step 邊緣糊成「看起來像 3D 渲染」的視覺（這是我第一輪誤判的原因 — 我看 read tool 渲染的 900×900，沒意識到那是放大平滑後的結果）。
+`src/assets/nightingale-canonical.png` 是 **1254×1254 RGBA、透明背景的胖像素鳥**（已定為 canonical 最終造型）。瀏覽器以 `image-rendering: pixelated` 顯示，避免 bilinear smoothing 把 pixel-step 邊緣糊掉。
+
+> 校正注（2026-09-25）：本節初版曾寫 900×900，那是舊瘦版的尺寸；現行檔案為 1254×1254 胖版。歷史推論段落保留，數字以檔案為準。
 
 驗證方式：把 PNG 縮到 64×64 native grid 看就是清楚的 pixel art — 邊緣是 step 形狀、翅膀是 blocky patches、爪是 pixel blocks、胸口 leaf 是 flat color 區塊。縮到 16px 時只有 53 個 unique colors（純3D 渲染在 16px 會有 100–500 個 AA artifacts 顏色）。
 
@@ -80,9 +82,11 @@ brief §7 說「Phase 1 only studies IDLE × L0/L1/L2 and LISTEN × L0/L1/L2」�
 | **ATTEND_TILT** | LISTEN L1 / L2 | 頭向右（朝人）傾 1px | ~96% |
 | **GAZE_UP** | IDLE L1、IDLE L2、LISTEN L1 / L2 | 瞳孔 +1px 上 | ~98%（只動 1 個像素） |
 | **GAZE_AWAY** | IDLE L2 結尾、LISTEN L2 結尾 | 瞳孔回到 BASE 或往下 1px | ~98% |
-| **SHOULDER_DROP** | IDLE L2 / LISTEN L2 結尾釋放 | 兩邊翼緣 −1px（鳥微微「呼出」） | ~95% |
+| **SHOULDER_DROP** | （已從執行程式移除，未實作；保留為未來 frame 規格候選） | 兩邊翼緣 −1px（鳥微微「呼出」） | ~95% |
 
-**9 個 frame。** 不是 24。不是 12。是 9。其中只有 INHALE / BLINK / ATTEND_TILT / SHOULDER_DROP 是真的「重畫」，其餘 5 個是 BASE 裡挪 1–2 個像素區塊。
+**8 個已實作 frame（BASE 計入共 8 格 sprite slot）。** 不是 24。不是 12。其中只有 INHALE / BLINK / ATTEND_TILT 是真的「重畫」，其餘是 BASE 裡挪 1–2 個像素區塊。
+
+> 校正注（2026-09-25）：初版寫 9 個 frame 含 SHOULDER_DROP；該格已從 `MotionSprite` 型別與執行程式移除（shadow 需求未定，不在本輪），文件列為候選，總數改為 8。
 
 identity lock 不會被打破：每個 frame 共享 ≥95% 像素。讀者不會認不出同一隻鳥。
 
@@ -328,7 +332,7 @@ L1 觸發間隔 2–6s → 寫死一組 5 個值（2.5, 4.0, 6.0, 3.5, 5.0）。
 
 1. **先決定路徑 A 或 B**（§0.1）。我推薦 A。
 3. 如果 A：重畫 BASE 在 48×48 或 64×64 native grid，**保留同色、同比例、同 chest leaf 位置**。
-4. 從 BASE 出發畫 8 個 frame（INHALE / EXHALE / BLINK / ATTEND_HEAD / ATTEND_TILT / GAZE_UP / GAZE_AWAY / SHOULDER_DROP）。每個 frame 共享 ≥95% 像素。**不要重新設計鳥**。**不要新增裝飾**。
+4. 從 BASE 出發畫 7 個 frame（INHALE / EXHALE / BLINK / ATTEND_HEAD / ATTEND_TILT / GAZE_UP / GAZE_AWAY）。每個 frame 共享 ≥95% 像素。**不要重新設計鳥**。**不要新增裝飾**。（SHOULDER_DROP 已移出執行程式，列為候選，見 §1 校正注。）
 5. CSS 部分：
    - `.bird-base { transition: transform 250ms cubic-bezier(0.22, 0.61, 0.36, 1); }`
    - `.bird-breathing { animation: ng-breath 5.4s ease-in-out infinite; animation-delay: var(--breath-jitter); }`
