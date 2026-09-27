@@ -10,3 +10,6 @@ tsconfig.tsbuildinfo
 .env
 casting/
 vite.config.ts.timestamp-*
+
+.firebase/
+firebase-debug.log
