@@ -25,6 +25,42 @@ const API_BASE =
 const ROUTE_ID = (import.meta.env.VITE_LAST300M_ROUTE as string | undefined) ?? 'renai-001'
 
 /**
+ * The photo button stays off until 福 passes the three photo gates on the
+ * live page; ?photo=1 turns it on for review.
+ */
+const PHOTO_ENABLED = new URLSearchParams(window.location.search).get('photo') === '1'
+
+/**
+ * Photo input. The camera opens only when the person presses the button (a
+ * file input cannot open itself), and the two disclosure lines sit above it
+ * every time, not behind a one-off dialog. The chosen file is handed straight
+ * to the hook and the input is cleared, so nothing lingers on the page.
+ */
+function PhotoInput({ disabled, onPhoto }: { disabled: boolean; onPhoto: (file: File) => void }) {
+  return (
+    <section className="l3-photo" aria-labelledby="l3-photo-button">
+      <p className="l3-photo-hint">{LAST300M_ZH['l3.photo.hint']}</p>
+      <p className="l3-photo-privacy">{LAST300M_ZH['l3.photo.privacy']}</p>
+      <label id="l3-photo-button" className={`l3-secondary l3-photo-button${disabled ? ' is-disabled' : ''}`}>
+        {LAST300M_ZH['l3.photo.button']}
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          disabled={disabled}
+          className="l3-photo-file"
+          onChange={(e) => {
+            const file = e.currentTarget.files?.[0]
+            e.currentTarget.value = ''
+            if (file) onPhoto(file)
+          }}
+        />
+      </label>
+    </section>
+  )
+}
+
+/**
  * The route frame: origin → destination, straight from route truth. These are
  * display metadata, not a live position claim — that is why the first row says
  * 起點 and never 目前位置. Fetched once; on failure no rows render, because a
@@ -55,7 +91,7 @@ function RouteFrame({ info }: { info: RouteInfo | null }) {
 export function Last300mPage() {
   const bird = useMemo(() => new VirtualBirdAdapter(), [])
   const client = useMemo(() => new Last300mClient(API_BASE), [])
-  const { state, start, observe } = useLast300m(client, bird, ROUTE_ID)
+  const { state, start, observe, observePhoto } = useLast300m(client, bird, ROUTE_ID)
   const [draft, setDraft] = useState('')
   const [askOpen, setAskOpen] = useState(false)
   const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null)
@@ -144,6 +180,9 @@ export function Last300mPage() {
               {LAST300M_ZH['l3.input.send']}
             </button>
           </form>
+          {PHOTO_ENABLED ? (
+            <PhotoInput disabled={state.busy} onPhoto={(file) => void observePhoto(file)} />
+          ) : null}
           {/* 幫我問 is Nightingale's ask-a-person move: it opens the question
               card a passerby can read (and the phone can say). It never calls
               the backend, records nothing, and parses no reply. */}

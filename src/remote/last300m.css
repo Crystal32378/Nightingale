@@ -145,3 +145,49 @@
   font-size: 0.98rem;
   line-height: 1.5;
 }
+
+.l3-photo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.l3-photo-hint {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.l3-photo-privacy {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #4c5e54;
+}
+
+.l3-photo-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.l3-photo-button.is-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.l3-photo-button:focus-within {
+  outline: 3px solid #2c3a33;
+  outline-offset: 2px;
+}
+
+/* Visually hidden but still reachable by keyboard and screen readers through the label. */
+.l3-photo-file {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}

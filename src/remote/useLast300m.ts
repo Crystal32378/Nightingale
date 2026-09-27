@@ -7,6 +7,7 @@ import {
   type RemoteAction,
   type RemoteSession,
 } from './last300mClient'
+import { PhotoPrepareError, preparePhoto } from './photo'
 import { LAST300M_ZH } from './strings'
 
 /**
@@ -86,5 +87,29 @@ export function useLast300m(client: Last300mClient, bird: BirdCueSink, routeId: 
     [apply, client, sessionId],
   )
 
-  return { state, start, observe }
+  const observePhoto = useCallback(
+    async (file: Blob) => {
+      if (sessionId === null) return
+      setState((s) => ({ ...s, busy: true, notice: LAST300M_ZH['l3.photo.reading'] }))
+      try {
+        const photo = await preparePhoto(file)
+        const result = await client.observePhoto(sessionId, photo)
+        apply(result.session, result.action)
+      } catch (err) {
+        const notice =
+          err instanceof PhotoPrepareError
+            ? LAST300M_ZH['l3.photo.unreadable']
+            : err instanceof RemoteProtocolError && err.status === 429
+              ? LAST300M_ZH['l3.photo.limit']
+              : err instanceof RemoteProtocolError
+                ? LAST300M_ZH['l3.notice.offline']
+                : null
+        if (notice === null) throw err
+        setState((s) => ({ ...s, busy: false, notice }))
+      }
+    },
+    [apply, client, sessionId],
+  )
+
+  return { state, start, observe, observePhoto }
 }

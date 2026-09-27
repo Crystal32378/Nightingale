@@ -20,6 +20,12 @@ export const LAST300M_ZH = {
   'l3.arrived.handoff': '進門之後，服務台可以帶你到下一站。',
   'l3.notice.offline': '剛剛沒有連上。稍等一下，再說一次就可以。',
   'l3.ask.utterance': '請問，醫院的正門要怎麼走？',
+  'l3.photo.button': '拍招牌給我看',
+  'l3.photo.hint': '請只拍招牌，避免人臉、車牌與病患資料。',
+  'l3.photo.privacy': 'Nightingale 不保存原始照片；照片會傳送給 Google Vertex AI 辨識，系統只保留結構化的路線判斷。',
+  'l3.photo.reading': '我看一下這張照片。',
+  'l3.photo.unreadable': '這張照片我打不開。用文字跟我說也可以。',
+  'l3.photo.limit': '照片先休息一下。用文字跟我說也可以。',
 } as const
 
 export type Last300mStringKey = keyof typeof LAST300M_ZH

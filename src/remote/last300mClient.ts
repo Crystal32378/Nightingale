@@ -42,7 +42,15 @@ export interface RouteInfo {
   destinationName: string
 }
 
-export class RemoteProtocolError extends Error {}
+export class RemoteProtocolError extends Error {
+  constructor(
+    message: string,
+    /** HTTP status when the server answered; 429 means a photo limit, not a broken link. */
+    readonly status?: number,
+  ) {
+    super(message)
+  }
+}
 
 const SESSION_STATES = new Set(['AT_CHECKPOINT', 'AMBIGUOUS', 'RECOVERING', 'ARRIVED'])
 const ACTION_TYPES = new Set(['GUIDE', 'ASK', 'RECOVER', 'REANCHOR', 'CONFIRM_ARRIVAL'])
@@ -84,7 +92,7 @@ async function post(fetchImpl: FetchLike, url: string, body: unknown): Promise<u
   } catch (err) {
     throw new RemoteProtocolError(`network failure: ${String(err)}`)
   }
-  if (!res.ok) throw new RemoteProtocolError(`server answered ${res.status}`)
+  if (!res.ok) throw new RemoteProtocolError(`server answered ${res.status}`, res.status)
   try {
     return await res.json()
   } catch {
@@ -141,10 +149,19 @@ export class Last300mClient {
   }
 
   async observe(sessionId: string, text: string): Promise<StepResult> {
+    return this.step(sessionId, { text })
+  }
+
+  /** Photo is already downsized and stripped by preparePhoto; the server reads it and keeps none of it. */
+  async observePhoto(sessionId: string, photo: { mimeType: 'image/jpeg'; data: string }): Promise<StepResult> {
+    return this.step(sessionId, { photo })
+  }
+
+  private async step(sessionId: string, payload: unknown): Promise<StepResult> {
     const body = await post(
       this.fetchImpl,
       `${this.baseUrl}/api/sessions/${encodeURIComponent(sessionId)}/observations`,
-      { text },
+      payload,
     )
     const b = body as Record<string, unknown>
     if (!isSession(b?.session) || !isAction(b?.action)) {
