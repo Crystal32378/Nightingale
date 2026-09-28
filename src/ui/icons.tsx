@@ -101,6 +101,46 @@ export function IconRoute({ className = 'icon' }: IconProps) {
   )
 }
 
+/** 過馬路 — a zebra crossing seen from above: the two kerbs, stripes between them. */
+export function IconCrossing({ className = 'icon' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" {...stroke}>
+      <path d="M3 5h18M3 19h18" />
+      <path d="M6.5 8.5v7M10.2 8.5v7M13.8 8.5v7M17.5 8.5v7" strokeWidth={2.6} />
+    </svg>
+  )
+}
+
+/** 沿路直走 — footsteps, one after the other. No arrow: outdoors we never know which way the person faces. */
+export function IconWalk({ className = 'icon' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" {...stroke}>
+      <ellipse cx="8.5" cy="16" rx="2.3" ry="3.3" />
+      <ellipse cx="15.5" cy="8" rx="2.3" ry="3.3" />
+    </svg>
+  )
+}
+
+/** 醫院 — an H in a rounded square, the sign on every hospital pylon. */
+export function IconHospital({ className = 'icon' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" {...stroke}>
+      <rect x="4" y="4" width="16" height="16" rx="3.5" />
+      <path d="M9 8.5v7M15 8.5v7M9 12h6" />
+    </svg>
+  )
+}
+
+/** 出站 — a doorway. */
+export function IconExit({ className = 'icon' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" {...stroke}>
+      <path d="M5 21V4.5h10V21M3 21h18" />
+      <circle cx="12" cy="13" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
 /** The Nightingale mark. */
 export function LogoMark({ className = 'logo-mark' }: IconProps) {
   return (

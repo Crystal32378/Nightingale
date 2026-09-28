@@ -57,9 +57,11 @@ describe('photo upload', () => {
     expect(LAST300M_ZH['l3.photo.privacy']).toBe(
       'Nightingale 不保存原始照片；照片會傳送給 Google Vertex AI 辨識，系統只保留結構化的路線判斷。',
     )
-    expect(LAST300M_ZH['l3.photo.hint']).toContain('人臉')
-    expect(LAST300M_ZH['l3.photo.hint']).toContain('車牌')
-    expect(LAST300M_ZH['l3.photo.hint']).toContain('病患資料')
+    for (const key of ['l3.photo.small', 'l3.photo.remind'] as const) {
+      expect(LAST300M_ZH[key]).toContain('人臉')
+      expect(LAST300M_ZH[key]).toContain('車牌')
+      expect(LAST300M_ZH[key]).toContain('病患資料')
+    }
     expect(Object.values(LAST300M_ZH).join('')).not.toMatch(/絕不|永不|不會被任何/)
   })
 })

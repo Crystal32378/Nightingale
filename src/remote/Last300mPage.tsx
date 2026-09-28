@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
 import { acknowledgeFocusReturn, AskCard, wantFocusReturn } from '../ui/AskCard'
-import { IconCurrent, IconDestination } from '../ui/icons'
+import { IconCrossing, IconCurrent, IconDestination, IconExit, IconHospital, IconWalk } from '../ui/icons'
 import { NightingaleBird } from '../ui/NightingaleBird'
-import { Last300mClient, RemoteProtocolError, type RouteInfo } from './last300mClient'
+import { Last300mClient, RemoteProtocolError, type LocationReport, type RemoteAction, type RouteInfo } from './last300mClient'
 import { RemoteGuidanceText } from './RemoteGuidanceText'
+import { stepCardFor, type StepIcon } from './stepCard'
 import { LAST300M_ZH } from './strings'
 import { useLast300m } from './useLast300m'
+import { UNKNOWN_ZONE, zoneFor, type RouteZone } from './zone'
 import './last300m.css'
 
 /**
@@ -31,33 +33,108 @@ const ROUTE_ID = (import.meta.env.VITE_LAST300M_ROUTE as string | undefined) ?? 
 const PHOTO_ENABLED = new URLSearchParams(window.location.search).get('photo') === '1'
 
 /**
- * Photo input. The camera opens only when the person presses the button (a
- * file input cannot open itself), and the two disclosure lines sit above it
- * every time, not behind a one-off dialog. The chosen file is handed straight
- * to the hook and the input is cleared, so nothing lingers on the page.
+ * Photo input. The first press only reminds (the bird's one spoken line, shown
+ * as its words until the recording is wired); the camera opens on the
+ * person's next press, never by itself. A small line stays under the button,
+ * and the full privacy sentence is one tap away. The chosen file goes
+ * straight to the hook and the input is cleared, so nothing lingers.
  */
 function PhotoInput({ disabled, onPhoto }: { disabled: boolean; onPhoto: (file: File) => void }) {
+  const [reminded, setReminded] = useState(false)
+  const [open, setOpen] = useState(false)
+  const camera = (label: string) => (
+    <label className={`l3-secondary l3-photo-button${disabled ? ' is-disabled' : ''}`}>
+      {label}
+      <input
+        type="file"
+        accept="image/*"
+        capture="environment"
+        disabled={disabled}
+        className="l3-photo-file"
+        onChange={(e) => {
+          const file = e.currentTarget.files?.[0]
+          e.currentTarget.value = ''
+          setOpen(false)
+          if (file) onPhoto(file)
+        }}
+      />
+    </label>
+  )
   return (
-    <section className="l3-photo" aria-labelledby="l3-photo-button">
-      <p className="l3-photo-hint">{LAST300M_ZH['l3.photo.hint']}</p>
-      <p className="l3-photo-privacy">{LAST300M_ZH['l3.photo.privacy']}</p>
-      <label id="l3-photo-button" className={`l3-secondary l3-photo-button${disabled ? ' is-disabled' : ''}`}>
-        {LAST300M_ZH['l3.photo.button']}
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
+    <section className="l3-photo">
+      {open ? (
+        <div className="l3-photo-remind" role="status">
+          <p>{LAST300M_ZH['l3.photo.remind']}</p>
+          {camera(LAST300M_ZH['l3.photo.go'])}
+        </div>
+      ) : reminded ? (
+        camera(LAST300M_ZH['l3.photo.button'])
+      ) : (
+        <button
+          className="l3-secondary"
           disabled={disabled}
-          className="l3-photo-file"
-          onChange={(e) => {
-            const file = e.currentTarget.files?.[0]
-            e.currentTarget.value = ''
-            if (file) onPhoto(file)
+          onClick={() => {
+            setReminded(true)
+            setOpen(true)
           }}
-        />
-      </label>
+        >
+          {LAST300M_ZH['l3.photo.button']}
+        </button>
+      )}
+      <p className="l3-photo-small">{LAST300M_ZH['l3.photo.small']}</p>
+      <details className="l3-photo-details">
+        <summary>ⓘ {LAST300M_ZH['l3.photo.more']}</summary>
+        <p>{LAST300M_ZH['l3.photo.privacy']}</p>
+      </details>
     </section>
   )
+}
+
+const ICONS: Record<StepIcon, () => JSX.Element> = {
+  exit: () => <IconExit className="l3-step-icon" />,
+  crossing: () => <IconCrossing className="l3-step-icon" />,
+  walk: () => <IconWalk className="l3-step-icon" />,
+  hospital: () => <IconHospital className="l3-step-icon" />,
+}
+
+/**
+ * One step on screen: the verified short label and its icon when the step has
+ * one; otherwise the server's bounded text. Questions and recoveries always
+ * keep their words — they are what the person has to answer or do.
+ */
+function StepView({ action }: { action: RemoteAction }) {
+  const card = stepCardFor(ROUTE_ID, action)
+  if (!card) return <RemoteGuidanceText action={action} />
+  return (
+    <div className="l3-guidance l3-step">
+      {ICONS[card.icon]()}
+      <p className="l3-step-label">{card.label}</p>
+    </div>
+  )
+}
+
+/**
+ * Keeps the latest route zone while a walk is on. Asked only after 開始, so the
+ * permission prompt follows the person's own press. Coordinates are turned
+ * into a zone id here and dropped; a denied permission just means no location
+ * is ever sent.
+ */
+function useRouteZone(zones: RouteZone[], active: boolean): () => LocationReport | undefined {
+  const zone = useRef<string | null>(null)
+  useEffect(() => {
+    if (!active || zones.length === 0 || !('geolocation' in navigator)) return
+    const id = navigator.geolocation.watchPosition(
+      (p) => {
+        zone.current = zoneFor(zones, p.coords.latitude, p.coords.longitude, p.coords.accuracy)
+      },
+      () => {
+        zone.current = zone.current === null ? null : UNKNOWN_ZONE
+      },
+      { enableHighAccuracy: true, maximumAge: 10_000, timeout: 20_000 },
+    )
+    return () => navigator.geolocation.clearWatch(id)
+  }, [active, zones])
+  return useMemo(() => () => (zone.current === null ? undefined : { zone: zone.current }), [])
 }
 
 /**
@@ -91,10 +168,13 @@ function RouteFrame({ info }: { info: RouteInfo | null }) {
 export function Last300mPage() {
   const bird = useMemo(() => new VirtualBirdAdapter(), [])
   const client = useMemo(() => new Last300mClient(API_BASE), [])
-  const { state, start, observe, observePhoto } = useLast300m(client, bird, ROUTE_ID)
+  const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null)
+  const [walking, setWalking] = useState(false)
+  const zones = useMemo(() => routeInfo?.zones ?? [], [routeInfo])
+  const location = useRouteZone(zones, walking)
+  const { state, start, observe, observePhoto, crossed } = useLast300m(client, bird, ROUTE_ID, location)
   const [draft, setDraft] = useState('')
   const [askOpen, setAskOpen] = useState(false)
-  const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null)
 
   // Route frame is display metadata; a failure just means no rows.
   useEffect(() => {
@@ -144,7 +224,14 @@ export function Last300mPage() {
         <p className="l3-promise">{LAST300M_ZH['l3.start.promise']}</p>
         <NightingaleBird cue="QUIET" />
         <RouteFrame info={routeInfo} />
-        <button className="l3-primary" onClick={() => void start()} disabled={state.busy}>
+        <button
+          className="l3-primary"
+          onClick={() => {
+            setWalking(true)
+            void start()
+          }}
+          disabled={state.busy}
+        >
           {LAST300M_ZH['l3.start.button']}
         </button>
         {state.notice ? <p className="l3-notice">{state.notice}</p> : null}
@@ -161,10 +248,15 @@ export function Last300mPage() {
 
       <NightingaleBird cue={state.cue} />
 
-      {state.action ? <RemoteGuidanceText action={state.action} /> : null}
+      {state.action ? <StepView action={state.action} /> : null}
 
       {state.phase === 'ARRIVED' ? (
         <p className="l3-handoff">{LAST300M_ZH['l3.arrived.handoff']}</p>
+      ) : state.expects === 'walker' ? (
+        // Crossing: one button, nothing else on screen or in the ear until it is pressed.
+        <button className="l3-primary l3-crossed" onClick={() => void crossed()} disabled={state.busy}>
+          {LAST300M_ZH['l3.crossed.button']}
+        </button>
       ) : (
         <>
           <form className="l3-observe" onSubmit={submit}>
@@ -192,7 +284,7 @@ export function Last300mPage() {
         </>
       )}
 
-      <RouteFrame info={routeInfo} />
+      {state.expects === 'walker' ? null : <RouteFrame info={routeInfo} />}
 
       {state.notice ? <p className="l3-notice">{state.notice}</p> : null}
     </div>

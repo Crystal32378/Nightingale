@@ -1,4 +1,5 @@
 import type { RemoteActionType } from './cueMap'
+import type { RouteZone } from './zone'
 
 /**
  * Typed client for the last-300m route server (Cloud Run).
@@ -25,21 +26,32 @@ export interface RemoteAction {
   lookFor?: string[]
 }
 
+/** What the next confirmation has to be: evidence, or the walker saying a crossing is done. */
+export type Expects = 'evidence' | 'walker'
+
 export interface SessionStart {
   sessionId: string
   session: RemoteSession
   action: RemoteAction
+  expects: Expects
 }
 
 export interface StepResult {
   session: RemoteSession
   action: RemoteAction
+  expects: Expects
+}
+
+/** The phone's zone, computed on the phone. Omitted when the page has no location at all. */
+export interface LocationReport {
+  zone: string
 }
 
 export interface RouteInfo {
   routeId: string
   originName: string
   destinationName: string
+  zones: RouteZone[]
 }
 
 export class RemoteProtocolError extends Error {
@@ -79,6 +91,21 @@ function isAction(v: unknown): v is RemoteAction {
   return true
 }
 
+function isZone(v: unknown): v is RouteZone {
+  if (typeof v !== 'object' || v === null) return false
+  const z = v as Record<string, unknown>
+  return (
+    typeof z.id === 'string' &&
+    [z.lat, z.lon, z.radiusM].every((n) => typeof n === 'number' && Number.isFinite(n)) &&
+    (z.radiusM as number) > 0
+  )
+}
+
+/** An older server says nothing: treat every step as evidence-confirmed, as before. */
+function readExpects(v: unknown): Expects {
+  return v === 'walker' ? 'walker' : 'evidence'
+}
+
 export type FetchLike = (input: string, init?: RequestInit) => Promise<Response>
 
 async function post(fetchImpl: FetchLike, url: string, body: unknown): Promise<unknown> {
@@ -112,7 +139,7 @@ export class Last300mClient {
     if (typeof b?.sessionId !== 'string' || !isSession(b.session) || !isAction(b.action)) {
       throw new RemoteProtocolError('malformed session response')
     }
-    return { sessionId: b.sessionId, session: b.session, action: b.action }
+    return { sessionId: b.sessionId, session: b.session, action: b.action, expects: readExpects(b.expects) }
   }
 
   /**
@@ -145,28 +172,39 @@ export class Last300mClient {
     if (typeof origin?.name !== 'string' || typeof destination?.name !== 'string') {
       throw new RemoteProtocolError('malformed routes response')
     }
-    return { routeId, originName: origin.name, destinationName: destination.name }
+    // Zones are optional: a route without them simply never sends a location.
+    const zones = Array.isArray(row.zones) ? row.zones.filter(isZone) : []
+    return { routeId, originName: origin.name, destinationName: destination.name, zones }
   }
 
-  async observe(sessionId: string, text: string): Promise<StepResult> {
-    return this.step(sessionId, { text })
+  async observe(sessionId: string, text: string, location?: LocationReport): Promise<StepResult> {
+    return this.step(sessionId, { text }, location)
   }
 
   /** Photo is already downsized and stripped by preparePhoto; the server reads it and keeps none of it. */
-  async observePhoto(sessionId: string, photo: { mimeType: 'image/jpeg'; data: string }): Promise<StepResult> {
-    return this.step(sessionId, { photo })
+  async observePhoto(
+    sessionId: string,
+    photo: { mimeType: 'image/jpeg'; data: string },
+    location?: LocationReport,
+  ): Promise<StepResult> {
+    return this.step(sessionId, { photo }, location)
   }
 
-  private async step(sessionId: string, payload: unknown): Promise<StepResult> {
+  /** The walker says a crossing is done. Nothing else moves a crossing step on. */
+  async confirmCrossed(sessionId: string): Promise<StepResult> {
+    return this.step(sessionId, { confirm: 'crossed' })
+  }
+
+  private async step(sessionId: string, payload: Record<string, unknown>, location?: LocationReport): Promise<StepResult> {
     const body = await post(
       this.fetchImpl,
       `${this.baseUrl}/api/sessions/${encodeURIComponent(sessionId)}/observations`,
-      payload,
+      location ? { ...payload, location } : payload,
     )
     const b = body as Record<string, unknown>
     if (!isSession(b?.session) || !isAction(b?.action)) {
       throw new RemoteProtocolError('malformed step response')
     }
-    return { session: b.session, action: b.action }
+    return { session: b.session, action: b.action, expects: readExpects(b.expects) }
   }
 }

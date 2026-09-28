@@ -17,15 +17,20 @@ export const LAST300M_ZH = {
   'l3.reanchor.question': '你附近看得到什麼？跟我說就可以。',
   'l3.lookfor.prefix': '找找看：',
   'l3.arrived.headline': '醫院入口，到了。',
-  'l3.arrived.handoff': '進門之後，服務台可以帶你到下一站。',
+  'l3.arrived.handoff': '進門之後，服務台在左手邊。',
   'l3.notice.offline': '剛剛沒有連上。稍等一下，再說一次就可以。',
   'l3.ask.utterance': '請問，醫院的正門要怎麼走？',
-  'l3.photo.button': '拍招牌給我看',
-  'l3.photo.hint': '請只拍招牌，避免人臉、車牌與病患資料。',
+  'l3.photo.button': '拍招牌',
+  'l3.photo.small': '只拍招牌，避開人臉、車牌和病患資料。',
+  'l3.photo.more': '照片怎麼處理',
   'l3.photo.privacy': 'Nightingale 不保存原始照片；照片會傳送給 Google Vertex AI 辨識，系統只保留結構化的路線判斷。',
+  'l3.photo.remind': '只拍招牌就好，別拍到人臉、車牌和病患資料。照片會交給 Google 辨識，我們不保存原始照片。',
+  'l3.photo.go': '好，拍照',
   'l3.photo.reading': '我看一下這張照片。',
+  'l3.photo.stillWorking': '快好了。',
   'l3.photo.unreadable': '這張照片我打不開。用文字跟我說也可以。',
   'l3.photo.limit': '照片先休息一下。用文字跟我說也可以。',
+  'l3.crossed.button': '過完了',
 } as const
 
 export type Last300mStringKey = keyof typeof LAST300M_ZH
