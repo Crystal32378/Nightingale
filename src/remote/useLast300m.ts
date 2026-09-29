@@ -32,7 +32,7 @@ export interface Last300mState {
   cue: Cue
   busy: boolean
   notice: string | null
-  /** 'walker': a crossing is under way — the page shows only 過完了 and the bird stays quiet. */
+  /** 'walker': the step waits for the walker's own word (exit reached, road crossed) — one button, bird quiet. */
   expects: Expects
 }
 
@@ -109,11 +109,11 @@ export function useLast300m(
     [apply, client, fail, location, sessionId],
   )
 
-  const crossed = useCallback(async () => {
+  const done = useCallback(async () => {
     if (sessionId === null) return
     setState((s) => ({ ...s, busy: true, notice: null }))
     try {
-      const result = await client.confirmCrossed(sessionId)
+      const result = await client.confirmDone(sessionId)
       apply(result.session, result.action, result.expects)
     } catch (err) {
       if (!(err instanceof RemoteProtocolError)) throw err
@@ -149,5 +149,5 @@ export function useLast300m(
     [apply, client, fail, location, sessionId],
   )
 
-  return { state, start, observe, observePhoto, crossed }
+  return { state, start, observe, observePhoto, done }
 }

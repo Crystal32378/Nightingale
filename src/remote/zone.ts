@@ -26,12 +26,20 @@ export function distanceM(aLat: number, aLon: number, bLat: number, bLon: number
   return 2 * r * Math.asin(Math.sqrt(h))
 }
 
+/**
+ * A zone only when the whole error circle fits inside exactly one zone and
+ * touches no other. Anything less — a rough fix, a circle straddling the ER
+ * driveway and the lobby, open ground — is unknown. Location can veto a
+ * step, so it has to fail closed.
+ */
 export function zoneFor(zones: RouteZone[], lat: number, lon: number, accuracyM: number): string {
-  if (!Number.isFinite(accuracyM) || accuracyM > MAX_ACCURACY_M) return UNKNOWN_ZONE
-  let best: { id: string; d: number } | null = null
+  if (!Number.isFinite(accuracyM) || accuracyM < 0 || accuracyM > MAX_ACCURACY_M) return UNKNOWN_ZONE
+  const inside: string[] = []
+  let touching = 0
   for (const z of zones) {
     const d = distanceM(lat, lon, z.lat, z.lon)
-    if (d <= z.radiusM && (!best || d < best.d)) best = { id: z.id, d }
+    if (d + accuracyM <= z.radiusM) inside.push(z.id)
+    if (d < z.radiusM + accuracyM) touching++
   }
-  return best?.id ?? UNKNOWN_ZONE
+  return inside.length === 1 && touching === 1 ? inside[0]! : UNKNOWN_ZONE
 }

@@ -190,9 +190,9 @@ export class Last300mClient {
     return this.step(sessionId, { photo }, location)
   }
 
-  /** The walker says a crossing is done. Nothing else moves a crossing step on. */
-  async confirmCrossed(sessionId: string): Promise<StepResult> {
-    return this.step(sessionId, { confirm: 'crossed' })
+  /** The walker says this step is done (at exit 2, across the road). Nothing else moves such a step on. */
+  async confirmDone(sessionId: string): Promise<StepResult> {
+    return this.step(sessionId, { confirm: 'done' })
   }
 
   private async step(sessionId: string, payload: Record<string, unknown>, location?: LocationReport): Promise<StepResult> {

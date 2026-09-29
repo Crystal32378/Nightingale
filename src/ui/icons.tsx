@@ -121,12 +121,28 @@ export function IconWalk({ className = 'icon' }: IconProps) {
   )
 }
 
-/** 醫院 — an H in a rounded square, the sign on every hospital pylon. */
+/**
+ * 醫院 — a building with a plus above its door, like the hospital emoji, in
+ * one colour. The bare H of road signs is not read as "hospital" by
+ * everyone; a building is.
+ */
 export function IconHospital({ className = 'icon' }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" aria-hidden="true" {...stroke}>
-      <rect x="4" y="4" width="16" height="16" rx="3.5" />
-      <path d="M9 8.5v7M15 8.5v7M9 12h6" />
+      <path d="M3 21h18M5 21V8h14v13" />
+      <path d="M12 3.5v6M9 6.5h6" strokeWidth={2.4} />
+      <path d="M10 21v-4.5h4V21" />
+      <path d="M7.5 12.5h1.5M15 12.5h1.5" />
+    </svg>
+  )
+}
+
+/** 拍照 — a camera body and its lens. */
+export function IconCamera({ className = 'icon' }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" {...stroke}>
+      <path d="M3.5 8.5h3.5l1.8-2.5h6.4l1.8 2.5h3.5V19h-17z" />
+      <circle cx="12" cy="13.5" r="3.3" />
     </svg>
   )
 }

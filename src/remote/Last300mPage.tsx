@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
 import { acknowledgeFocusReturn, AskCard, wantFocusReturn } from '../ui/AskCard'
-import { IconCrossing, IconCurrent, IconDestination, IconExit, IconHospital, IconWalk } from '../ui/icons'
+import { IconAsk, IconCamera, IconCrossing, IconCurrent, IconDestination, IconExit, IconHospital, IconWalk } from '../ui/icons'
 import { NightingaleBird } from '../ui/NightingaleBird'
 import { Last300mClient, RemoteProtocolError, type LocationReport, type RemoteAction, type RouteInfo } from './last300mClient'
 import { RemoteGuidanceText } from './RemoteGuidanceText'
-import { stepCardFor, type StepIcon } from './stepCard'
+import { doneLabelFor, stepCardFor, type StepIcon } from './stepCard'
 import { LAST300M_ZH } from './strings'
 import { useLast300m } from './useLast300m'
 import { UNKNOWN_ZONE, zoneFor, type RouteZone } from './zone'
@@ -44,6 +44,7 @@ function PhotoInput({ disabled, onPhoto }: { disabled: boolean; onPhoto: (file: 
   const [open, setOpen] = useState(false)
   const camera = (label: string) => (
     <label className={`l3-secondary l3-photo-button${disabled ? ' is-disabled' : ''}`}>
+      <IconCamera className="l3-btn-icon" />
       {label}
       <input
         type="file"
@@ -71,13 +72,14 @@ function PhotoInput({ disabled, onPhoto }: { disabled: boolean; onPhoto: (file: 
         camera(LAST300M_ZH['l3.photo.button'])
       ) : (
         <button
-          className="l3-secondary"
+          className="l3-secondary l3-icon-button"
           disabled={disabled}
           onClick={() => {
             setReminded(true)
             setOpen(true)
           }}
         >
+          <IconCamera className="l3-btn-icon" />
           {LAST300M_ZH['l3.photo.button']}
         </button>
       )}
@@ -105,10 +107,19 @@ const ICONS: Record<StepIcon, () => JSX.Element> = {
 function StepView({ action }: { action: RemoteAction }) {
   const card = stepCardFor(ROUTE_ID, action)
   if (!card) return <RemoteGuidanceText action={action} />
+  const full = card.speech.join('')
   return (
-    <div className="l3-guidance l3-step">
+    <div className="l3-guidance l3-step" role="group" aria-label={full}>
       {ICONS[card.icon]()}
-      <p className="l3-step-label">{card.label}</p>
+      <p className="l3-step-label" aria-hidden="true">
+        {card.label}
+      </p>
+      <details className="l3-step-full">
+        <summary>{LAST300M_ZH['l3.step.full']}</summary>
+        {card.speech.map((line) => (
+          <p key={line}>{line}</p>
+        ))}
+      </details>
     </div>
   )
 }
@@ -172,7 +183,7 @@ export function Last300mPage() {
   const [walking, setWalking] = useState(false)
   const zones = useMemo(() => routeInfo?.zones ?? [], [routeInfo])
   const location = useRouteZone(zones, walking)
-  const { state, start, observe, observePhoto, crossed } = useLast300m(client, bird, ROUTE_ID, location)
+  const { state, start, observe, observePhoto, done } = useLast300m(client, bird, ROUTE_ID, location)
   const [draft, setDraft] = useState('')
   const [askOpen, setAskOpen] = useState(false)
 
@@ -253,9 +264,9 @@ export function Last300mPage() {
       {state.phase === 'ARRIVED' ? (
         <p className="l3-handoff">{LAST300M_ZH['l3.arrived.handoff']}</p>
       ) : state.expects === 'walker' ? (
-        // Crossing: one button, nothing else on screen or in the ear until it is pressed.
-        <button className="l3-primary l3-crossed" onClick={() => void crossed()} disabled={state.busy}>
-          {LAST300M_ZH['l3.crossed.button']}
+        // Waiting for the walker (at exit 2, mid-crossing): one button, nothing else until it is pressed.
+        <button className="l3-primary l3-crossed" onClick={() => void done()} disabled={state.busy}>
+          {doneLabelFor(ROUTE_ID, state.session?.checkpointId, LAST300M_ZH['l3.crossed.button'])}
         </button>
       ) : (
         <>
@@ -278,7 +289,8 @@ export function Last300mPage() {
           {/* 幫我問 is Nightingale's ask-a-person move: it opens the question
               card a passerby can read (and the phone can say). It never calls
               the backend, records nothing, and parses no reply. */}
-          <button ref={helpRef} className="l3-secondary" onClick={() => setAskOpen(true)}>
+          <button ref={helpRef} className="l3-secondary l3-icon-button" onClick={() => setAskOpen(true)}>
+            <IconAsk className="l3-btn-icon" />
             {LAST300M_ZH['l3.button.help']}
           </button>
         </>

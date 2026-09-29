@@ -244,3 +244,33 @@
   margin: 0;
   line-height: 1.7;
 }
+
+.l3-icon-button,
+.l3-photo-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.l3-btn-icon {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+.l3-step-full {
+  font-size: 0.95rem;
+  color: #4c5e54;
+}
+
+.l3-step-full summary {
+  cursor: pointer;
+  min-height: 32px;
+  line-height: 32px;
+}
+
+.l3-step-full p {
+  margin: 2px 0;
+  line-height: 1.6;
+}

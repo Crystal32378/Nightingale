@@ -31,6 +31,7 @@ export const LAST300M_ZH = {
   'l3.photo.unreadable': '這張照片我打不開。用文字跟我說也可以。',
   'l3.photo.limit': '照片先休息一下。用文字跟我說也可以。',
   'l3.crossed.button': '過完了',
+  'l3.step.full': '全文',
 } as const
 
 export type Last300mStringKey = keyof typeof LAST300M_ZH
