@@ -1,0 +1,75 @@
+{
+  "audio": [
+    {
+      "url": "http://127.0.0.1:5178/audio/outdoor/renai-001/leda/cp1.guide.wav",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5178/audio/outdoor/renai-001/leda/cp1.exit.wav",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5178/audio/outdoor/renai-001/leda/cp2.cross.wav",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5178/audio/outdoor/renai-001/leda/cp2.after.wav",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5178/audio/outdoor/renai-001/leda/cp2.along.wav",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5178/audio/outdoor/renai-001/puck/cp2.after.wav",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:5178/audio/outdoor/renai-001/puck/photo.remind.wav",
+      "status": 200
+    }
+  ],
+  "played": [
+    {
+      "duration": 6.090958333333333,
+      "time": 1791385628867
+    },
+    {
+      "duration": 4.090958333333333,
+      "time": 1791385628948
+    },
+    {
+      "duration": 3.6509583333333335,
+      "time": 1791385628999
+    },
+    {
+      "duration": 3.4909583333333334,
+      "time": 1791385634152
+    },
+    {
+      "duration": 3.4109583333333333,
+      "time": 1791385637648
+    },
+    {
+      "duration": 3.4109583333333333,
+      "time": 1791385638012
+    },
+    {
+      "duration": 13.170958333333333,
+      "time": 1791385642089
+    }
+  ],
+  "stopped": [
+    1791385628912,
+    1791385628979,
+    1791385637958,
+    1791385638213
+  ],
+  "errors": [],
+  "overflow": false,
+  "helpDialogLateResponse": "pass",
+  "audioBatch": "自然國語版",
+  "changedAudioFiles": 22,
+  "unchangedInheritedAudioFiles": 22,
+  "auditionClipsLoaded": 22
+}

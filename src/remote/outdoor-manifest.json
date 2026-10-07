@@ -1,0 +1,557 @@
+{
+  "routeId": "renai-001",
+  "model": "gemini-2.5-flash-tts",
+  "utterances": {
+    "cp1.guide": {
+      "text": "搭1號電梯到一樓。出電梯，就是出口2。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp1.guide.wav",
+          "sha256": "90918d572ac1f94e64cbf68f8d38269749c52fa4a7885aeb9779e078069a6fda",
+          "seconds": 6.090958333333333,
+          "source": "01-cp1.guide.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp1.guide.wav",
+          "sha256": "1c53e2c86734c09f3171ea76b3657f3a2d331835183d8acfd214f084a0ea5ab5",
+          "seconds": 6.010958333333333,
+          "source": "01-cp1.guide.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "cp1.board": {
+      "text": "到了出口2，先看看旁邊的告示板。上面有寫「聯合醫院仁愛院區」，就是這個出口。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp1.board.wav",
+          "sha256": "49d6d8f47cb5c54284b51d02537cc350ebcf9ac1780637fe09da68d709c43672",
+          "seconds": 11.410958333333333,
+          "source": "01b-cp1.board.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp1.board.wav",
+          "sha256": "83267ca6788ea46a8cf17e1f37de65c51824099f5deeee800a8020698af41c6a",
+          "seconds": 11.130958333333334,
+          "source": "01b-cp1.board.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "cp1.exit": {
+      "text": "出口2出來，往右轉。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp1.exit.wav",
+          "sha256": "eb180ab613b8b4b8f80fac07f7ea3229ebe2c1a28972add872fd8bba66fdeb92",
+          "seconds": 4.090958333333333,
+          "generatedAt": "2026-10-07T14:59:17.509308+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp1.exit.wav",
+          "sha256": "95c0c9dd9fda0d16bfbb1bd319524b792c20e8beba0e48829bac7f4d054a0799",
+          "seconds": 4.010958333333333,
+          "generatedAt": "2026-10-07T15:01:41.890669+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    },
+    "cp2.cross": {
+      "text": "等綠燈，過復興南路。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp2.cross.wav",
+          "sha256": "8f8dd5c68e217da1f41ba30954070446ebb40a4c156739226aa2ebef31da4132",
+          "seconds": 3.6509583333333335,
+          "generatedAt": "2026-10-07T14:59:22.626028+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp2.cross.wav",
+          "sha256": "4ef8727002267bdadcabc30899c1d331aca0218a8891e5225117ffc34e8c121b",
+          "seconds": 4.090958333333333,
+          "generatedAt": "2026-10-07T15:05:05.294189+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    },
+    "cp2.after": {
+      "text": "過完馬路，往右轉。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp2.after.wav",
+          "sha256": "2db7ee29e90bf742a8c5981aeef32385f67bebfa44de8761bc3794a215e4a576",
+          "seconds": 3.4909583333333334,
+          "generatedAt": "2026-10-07T14:59:27.642876+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp2.after.wav",
+          "sha256": "80e7c4feb6017c32b85ad1568de6dbad9a0cb76759651577c17798ec08e5a3ae",
+          "seconds": 3.4109583333333333,
+          "generatedAt": "2026-10-07T15:05:10.717983+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    },
+    "cp2.along": {
+      "text": "沿復興南路直走。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp2.along.wav",
+          "sha256": "1fc612f614cfa033811d512bbd939444f29594d68d04b17222517d59f274af68",
+          "seconds": 3.4109583333333333,
+          "generatedAt": "2026-10-07T14:54:10.325167+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "reviewedBy": "Crystal",
+          "styleApprovedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp2.along.wav",
+          "sha256": "ab3d13a5c4b2ea0d7f22e17a37fbffa79d4124df36c4ced2c42f3b210c8b0140",
+          "seconds": 3.0509583333333334,
+          "generatedAt": "2026-10-07T14:54:14.883030+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "reviewedBy": "Crystal",
+          "styleApprovedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    },
+    "cp2.bike": {
+      "text": "這段人行道，腳踏車也會騎。靠內側走。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp2.bike.wav",
+          "sha256": "fcf7721e016b9255a4be036cd5c70dc1b0b89824459f6538b3a059874555a3c0",
+          "seconds": 6.450958333333333,
+          "generatedAt": "2026-10-07T14:59:35.079574+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp2.bike.wav",
+          "sha256": "832fbc7b992f0a7ae916c7a44d3b61b54f9d93248a3fd24ff41d5056e3947354",
+          "seconds": 7.170958333333333,
+          "generatedAt": "2026-10-07T15:02:01.276455+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    },
+    "cp2.water": {
+      "text": "沿路有全家，可以買水。不用趕。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp2.water.wav",
+          "sha256": "57bda5465bbde83b68322a29f2d9ad785fe986b4d4f247790da3d752a2f30e2f",
+          "seconds": 5.490958333333333,
+          "generatedAt": "2026-10-07T14:59:41.494292+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp2.water.wav",
+          "sha256": "3efa4fe4ddfed7ee7113d18d83fa43dba7a3d2c8f9f7837e26932c7b7995a752",
+          "seconds": 5.5709583333333335,
+          "generatedAt": "2026-10-07T15:02:09.845034+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    },
+    "cp3.cross": {
+      "text": "等綠燈，過仁愛路。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp3.cross.wav",
+          "sha256": "83658162ea47a17533306b7cd9dfb39877e5735b70dc9728688f7bc30c88899c",
+          "seconds": 3.4909583333333334,
+          "generatedAt": "2026-10-07T14:59:46.296049+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp3.cross.wav",
+          "sha256": "4309706c2fc6af43b767132ae104b2fc56304353c47c98d36170949a4df78714",
+          "seconds": 3.6109583333333335,
+          "generatedAt": "2026-10-07T15:02:17.500196+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    },
+    "cp3.after": {
+      "text": "過完左轉，醫院在這一側。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp3.after.wav",
+          "sha256": "e31811a6a324889c7a4cfb870b72e7f48b71454d9bbbb78fa816b5eeeb795937",
+          "seconds": 4.330958333333333,
+          "generatedAt": "2026-10-07T14:59:51.506489+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp3.after.wav",
+          "sha256": "90e1e0e814030ba50c3218b17cebf04debbfc06662ae57df951a1fe59a695774",
+          "seconds": 3.9709583333333334,
+          "generatedAt": "2026-10-07T15:05:16.351615+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    },
+    "cp4.driveway": {
+      "text": "紅色「急診」和「P」的車道口，是給車子用的。大廳入口還在前面一點。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp4.driveway.wav",
+          "sha256": "ae128e96f633a1aff9b91b87ef9680cbca57e97b44ccd46ea0ed027e105118f4",
+          "seconds": 9.130958333333334,
+          "source": "08-cp4.driveway.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp4.driveway.wav",
+          "sha256": "417857e2c9944a32fe911890580569e3334d625ee66ea1b0534c5db9f4cdd609",
+          "seconds": 9.490958333333333,
+          "source": "08-cp4.driveway.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "ask.entrance": {
+      "text": "你前面的門，上面寫「急診」嗎？一般門診，要走大廳的玻璃自動門。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/ask.entrance.wav",
+          "sha256": "1bd018f35d9c9cd51efe56570ae45f489ec59b3e2be4c58648cc994b88495295",
+          "seconds": 9.450958333333332,
+          "source": "09-ask.entrance.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/ask.entrance.wav",
+          "sha256": "9bdf198462b29b495860f428ed86dfacf68293cbcf441925a08c5c7c522b2dad",
+          "seconds": 10.010958333333333,
+          "source": "09-ask.entrance.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "cp5.lobby": {
+      "text": "往一整排玻璃自動門進去，就是大廳的入口。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/cp5.lobby.wav",
+          "sha256": "296cd1ed58c62f80ae59004ff09c65d6b8b549e7d4a85849789cfcc434a5e88f",
+          "seconds": 6.130958333333333,
+          "source": "10-cp5.lobby.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/cp5.lobby.wav",
+          "sha256": "e465c85567d10e2ce866ba2ead399bbd93a450e4dee6dbdae931094f03b58820",
+          "seconds": 6.770958333333334,
+          "source": "10-cp5.lobby.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "recover.er": {
+      "text": "那是急診的車道口。大廳入口還在前面一點。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/recover.er.wav",
+          "sha256": "dfe279cd8f1c4c215f75dccbda0edac850e2a1dc37f843d4827c173ebb1c8951",
+          "seconds": 6.010958333333333,
+          "source": "11-recover.er.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/recover.er.wav",
+          "sha256": "64b1dde160c678c71e5ff8c6bbcb5e23cafa005f5e8401e8f7f0c19dd05340b7",
+          "seconds": 6.530958333333333,
+          "source": "11-recover.er.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "recover.daan.a": {
+      "text": "這條路會通到大安路。我們先轉身。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/recover.daan.a.wav",
+          "sha256": "948cb596e015dd713d69165bd813a3cab4bf477399dc43aef84ca4e641aa4fba",
+          "seconds": 4.810958333333334,
+          "source": "12-recover.daan.a.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/recover.daan.a.wav",
+          "sha256": "bf5a7c80226dde5f04f037e56690c8354272a6bfd2ed69dd49f74c39fd735ce4",
+          "seconds": 4.970958333333333,
+          "source": "12-recover.daan.a.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "recover.daan.b": {
+      "text": "再沿著醫院牆面往回走，會看到玻璃自動門。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/recover.daan.b.wav",
+          "sha256": "bf98152606d0f15f85a96a7df9389b274df643ed22d6dd5181cc6168aa8ab81e",
+          "seconds": 6.490958333333333,
+          "source": "13-recover.daan.b.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/recover.daan.b.wav",
+          "sha256": "bc56d7f95c6b15b81b97daf1b31e771aca7e2177c8a6004519b4c379f6d21992",
+          "seconds": 6.6509583333333335,
+          "source": "13-recover.daan.b.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "recover.canopy": {
+      "text": "綠色頂棚的長廊是側邊通道。左轉往仁愛路走2分鐘，大廳入口就在前面。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/recover.canopy.wav",
+          "sha256": "57dbf60b418c3181da4ab6acb62615dd8e9672ad3acfcbe6bab5617dfacb97f1",
+          "seconds": 10.210958333333334,
+          "source": "14-recover.canopy.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/recover.canopy.wav",
+          "sha256": "2839a102bebbc3f61e0d64bfb108dd85f97b667eb97b998a01cc6e0494187c63",
+          "seconds": 10.690958333333333,
+          "source": "14-recover.canopy.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "arrived": {
+      "text": "醫院入口，到了。進門之後，服務台在左手邊，可以帶你到下一站。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/arrived.wav",
+          "sha256": "07ee32a9db6b38dac48fcb96273bfa297ec6c01e2c462275db51574979d34243",
+          "seconds": 8.810958333333334,
+          "source": "15-arrived.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/arrived.wav",
+          "sha256": "1443e554f585589af31df49f4a1162c089d8cacadaf9652fe2034cb4127cd628",
+          "seconds": 9.490958333333333,
+          "source": "15-arrived.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "reanchor": {
+      "text": "你附近看得到什麼？跟我說就可以。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/reanchor.wav",
+          "sha256": "9ec33cd54889e51cc60bd48a85ff37b91b9eb1688a68b815818e7f653ce5a93d",
+          "seconds": 4.890958333333334,
+          "source": "16-reanchor.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/reanchor.wav",
+          "sha256": "7466fa1b29b7e76f1edd6b6621d652daebfc988168a863cd99bbdcb00d555b11",
+          "seconds": 4.6509583333333335,
+          "source": "16-reanchor.wav",
+          "sourceBatch": "Nightingale 室外語音 Leda+Puck 2026-09-27",
+          "listeningReview": "inherited"
+        }
+      }
+    },
+    "photo.remind": {
+      "text": "只拍招牌就好，別拍到人臉、車牌和病患資料。照片會交給 Google 辨識，我們不保存原始照片。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/photo.remind.wav",
+          "sha256": "66b758cb5a9ac8458a89f197653ecbcd05d1eab5d882a4392b6118e6189facf4",
+          "seconds": 13.730958333333334,
+          "generatedAt": "2026-10-07T15:00:02.002347+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/photo.remind.wav",
+          "sha256": "105be74bfb1790405a427a24d6eae85c6fd02599762205cdec2d7cb32798639b",
+          "seconds": 13.170958333333333,
+          "generatedAt": "2026-10-07T15:02:33.870220+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    },
+    "photo.wait": {
+      "text": "我看一下這張照片。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/photo.wait.wav",
+          "sha256": "55f9ab71a1084d91c39adbafba646e93e4654af540eca6c06ecec1ad3fa16ae4",
+          "seconds": 3.1309583333333335,
+          "generatedAt": "2026-10-07T15:00:06.340301+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/photo.wait.wav",
+          "sha256": "bbbd15a05a0853daeb287d9fc36ee6cea410f265d8e17342d84cd2b05cbf80e9",
+          "seconds": 3.0509583333333334,
+          "generatedAt": "2026-10-07T15:25:41.618033+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Use a natural adult male voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "takeSource": "Puck-photo.wait-明確男聲/Puck/photo.wait.wav",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    },
+    "photo.wait2": {
+      "text": "快好了。",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/photo.wait2.wav",
+          "sha256": "b9a64ac4466421e35bbbd8ec227d19615082fcaf160f3b33257925ad3ba63469",
+          "seconds": 1.4109583333333333,
+          "generatedAt": "2026-10-07T15:00:09.887102+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/photo.wait2.wav",
+          "sha256": "a60d84bbbac5be2b7e0d7fbd547457eac220a1e132c5ceb56c1882fad9447983",
+          "seconds": 1.6109583333333333,
+          "generatedAt": "2026-10-07T15:02:42.869243+00:00",
+          "sourceBatch": "自然國語版",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "approved",
+          "styleApprovedBy": "Crystal",
+          "reviewedBy": "Crystal",
+          "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
+        }
+      }
+    }
+  }
+}

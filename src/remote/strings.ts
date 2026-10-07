@@ -32,6 +32,13 @@ export const LAST300M_ZH = {
   'l3.photo.limit': '照片先休息一下。用文字跟我說也可以。',
   'l3.crossed.button': '過完了',
   'l3.step.full': '全文',
+  'l3.voice.label': '聲音',
+  'l3.voice.female': '女聲',
+  'l3.voice.male': '男聲',
+  'l3.voice.quiet': '靜音',
+  'l3.voice.repeat': '我在哪',
+  'l3.voice.bike': '注意單車',
+  'l3.voice.water': '沿路補水',
 } as const
 
 export type Last300mStringKey = keyof typeof LAST300M_ZH

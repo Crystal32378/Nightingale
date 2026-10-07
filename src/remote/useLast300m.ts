@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Cue } from '../engine/types'
 import { cueForAction } from './cueMap'
 import {
@@ -39,11 +39,18 @@ export interface Last300mState {
 /** After this long a photo reading gets one more line, so the wait never feels like a hang. */
 export const PHOTO_STILL_WORKING_MS = 10_000
 
+export interface OutdoorFeedback {
+  action(action: RemoteAction): void
+  photo(key: 'photo.wait' | 'photo.wait2'): void
+  stop(): void
+}
+
 export function useLast300m(
   client: Last300mClient,
   bird: BirdCueSink,
   routeId: string,
   location: () => LocationReport | undefined = () => undefined,
+  feedback?: OutdoorFeedback,
 ) {
   const [state, setState] = useState<Last300mState>({
     phase: 'IDLE',
@@ -56,6 +63,11 @@ export function useLast300m(
   })
   const stillWorking = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [sessionId, setSessionId] = useState<string | null>(null)
+
+  useEffect(() => () => {
+    if (stillWorking.current) clearTimeout(stillWorking.current)
+    feedback?.stop()
+  }, [feedback])
 
   const apply = useCallback(
     (session: RemoteSession, action: RemoteAction, expects: Expects) => {
@@ -72,16 +84,19 @@ export function useLast300m(
         notice: null,
         expects,
       })
+      feedback?.action(action)
     },
-    [bird],
+    [bird, feedback],
   )
 
   const fail = useCallback((notice: string) => {
     if (stillWorking.current) clearTimeout(stillWorking.current)
+    feedback?.stop()
     setState((s) => ({ ...s, busy: false, notice }))
-  }, [])
+  }, [feedback])
 
   const start = useCallback(async () => {
+    feedback?.stop()
     setState((s) => ({ ...s, busy: true, notice: null }))
     try {
       const started = await client.createSession(routeId)
@@ -91,12 +106,13 @@ export function useLast300m(
       if (!(err instanceof RemoteProtocolError)) throw err
       fail(LAST300M_ZH['l3.notice.offline'])
     }
-  }, [apply, client, fail, routeId])
+  }, [apply, client, fail, feedback, routeId])
 
   const observe = useCallback(
     async (text: string) => {
       const trimmed = text.trim()
       if (trimmed.length === 0 || sessionId === null) return
+      feedback?.stop()
       setState((s) => ({ ...s, busy: true, notice: null }))
       try {
         const result = await client.observe(sessionId, trimmed, location())
@@ -106,11 +122,12 @@ export function useLast300m(
         fail(LAST300M_ZH['l3.notice.offline'])
       }
     },
-    [apply, client, fail, location, sessionId],
+    [apply, client, fail, feedback, location, sessionId],
   )
 
   const done = useCallback(async () => {
     if (sessionId === null) return
+    feedback?.stop()
     setState((s) => ({ ...s, busy: true, notice: null }))
     try {
       const result = await client.confirmDone(sessionId)
@@ -119,14 +136,18 @@ export function useLast300m(
       if (!(err instanceof RemoteProtocolError)) throw err
       fail(LAST300M_ZH['l3.notice.offline'])
     }
-  }, [apply, client, fail, sessionId])
+  }, [apply, client, fail, feedback, sessionId])
 
   const observePhoto = useCallback(
     async (file: Blob) => {
       if (sessionId === null) return
+      feedback?.photo('photo.wait')
       setState((s) => ({ ...s, busy: true, notice: LAST300M_ZH['l3.photo.reading'] }))
       stillWorking.current = setTimeout(
-        () => setState((s) => (s.busy ? { ...s, notice: LAST300M_ZH['l3.photo.stillWorking'] } : s)),
+        () => {
+          feedback?.photo('photo.wait2')
+          setState((s) => (s.busy ? { ...s, notice: LAST300M_ZH['l3.photo.stillWorking'] } : s))
+        },
         PHOTO_STILL_WORKING_MS,
       )
       try {
@@ -146,7 +167,7 @@ export function useLast300m(
         fail(notice)
       }
     },
-    [apply, client, fail, location, sessionId],
+    [apply, client, fail, feedback, location, sessionId],
   )
 
   return { state, start, observe, observePhoto, done }

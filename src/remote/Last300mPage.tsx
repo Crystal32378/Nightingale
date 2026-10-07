@@ -8,6 +8,7 @@ import { RemoteGuidanceText } from './RemoteGuidanceText'
 import { doneLabelFor, stepCardFor, type StepIcon } from './stepCard'
 import { LAST300M_ZH } from './strings'
 import { useLast300m } from './useLast300m'
+import { createOutdoorPlayer, outdoorKeysFor, type OutdoorVoice } from './outdoorVoice'
 import { UNKNOWN_ZONE, zoneFor, type RouteZone } from './zone'
 import './last300m.css'
 
@@ -34,12 +35,12 @@ const PHOTO_ENABLED = new URLSearchParams(window.location.search).get('photo') =
 
 /**
  * Photo input. The first press only reminds (the bird's one spoken line, shown
- * as its words until the recording is wired); the camera opens on the
+ * as its words and played from the fixed recording); the camera opens on the
  * person's next press, never by itself. A small line stays under the button,
  * and the full privacy sentence is one tap away. The chosen file goes
  * straight to the hook and the input is cleared, so nothing lingers.
  */
-function PhotoInput({ disabled, onPhoto }: { disabled: boolean; onPhoto: (file: File) => void }) {
+function PhotoInput({ disabled, onPhoto, onRemind }: { disabled: boolean; onPhoto: (file: File) => void; onRemind: () => void }) {
   const [reminded, setReminded] = useState(false)
   const [open, setOpen] = useState(false)
   const camera = (label: string) => (
@@ -77,6 +78,7 @@ function PhotoInput({ disabled, onPhoto }: { disabled: boolean; onPhoto: (file: 
           onClick={() => {
             setReminded(true)
             setOpen(true)
+            onRemind()
           }}
         >
           <IconCamera className="l3-btn-icon" />
@@ -183,9 +185,45 @@ export function Last300mPage() {
   const [walking, setWalking] = useState(false)
   const zones = useMemo(() => routeInfo?.zones ?? [], [routeInfo])
   const location = useRouteZone(zones, walking)
-  const { state, start, observe, observePhoto, done } = useLast300m(client, bird, ROUTE_ID, location)
+  const player = useMemo(() => createOutdoorPlayer(), [])
+  const [voice, setVoice] = useState<OutdoorVoice>('Leda')
+  const voiceRef = useRef<OutdoorVoice>('Leda')
+  const helpActive = useRef(false)
+  const feedback = useMemo(() => ({
+    action: (action: RemoteAction) => {
+      if (!helpActive.current) void player.play(outdoorKeysFor(ROUTE_ID, action), voiceRef.current)
+    },
+    photo: (key: 'photo.wait' | 'photo.wait2') => {
+      if (ROUTE_ID === 'renai-001' && !helpActive.current) void player.play([key], voiceRef.current)
+    },
+    stop: () => player.stop(),
+  }), [player])
+  const { state, start, observe, observePhoto, done } = useLast300m(client, bird, ROUTE_ID, location, feedback)
   const [draft, setDraft] = useState('')
   const [askOpen, setAskOpen] = useState(false)
+  useEffect(() => () => player.dispose(), [player])
+  const unlock = () => { if (voiceRef.current !== 'quiet') player.unlock() }
+  const playLocal = (keys: string[]) => {
+    if (ROUTE_ID !== 'renai-001') return
+    unlock()
+    void player.play(keys, voiceRef.current)
+  }
+  const voiceControl = (
+    <label className="l3-voice">
+      {LAST300M_ZH['l3.voice.label']}
+      <select value={voice} onChange={(event) => {
+        const next = event.target.value as OutdoorVoice
+        player.stop()
+        voiceRef.current = next
+        setVoice(next)
+        if (next !== 'quiet') player.unlock()
+      }}>
+        <option value="Leda">{LAST300M_ZH['l3.voice.female']}</option>
+        <option value="Puck">{LAST300M_ZH['l3.voice.male']}</option>
+        <option value="quiet">{LAST300M_ZH['l3.voice.quiet']}</option>
+      </select>
+    </label>
+  )
 
   // Route frame is display metadata; a failure just means no rows.
   useEffect(() => {
@@ -224,6 +262,7 @@ export function Last300mPage() {
   const submit = (e: FormEvent) => {
     e.preventDefault()
     if (state.busy) return
+    unlock()
     void observe(draft)
     setDraft('')
   }
@@ -235,10 +274,12 @@ export function Last300mPage() {
         <p className="l3-promise">{LAST300M_ZH['l3.start.promise']}</p>
         <NightingaleBird cue="QUIET" />
         <RouteFrame info={routeInfo} />
+        {voiceControl}
         <button
           className="l3-primary"
           onClick={() => {
             setWalking(true)
+            unlock()
             void start()
           }}
           disabled={state.busy}
@@ -265,7 +306,7 @@ export function Last300mPage() {
         <p className="l3-handoff">{LAST300M_ZH['l3.arrived.handoff']}</p>
       ) : state.expects === 'walker' ? (
         // Waiting for the walker (at exit 2, mid-crossing): one button, nothing else until it is pressed.
-        <button className="l3-primary l3-crossed" onClick={() => void done()} disabled={state.busy}>
+        <button className="l3-primary l3-crossed" onClick={() => { unlock(); void done() }} disabled={state.busy}>
           {doneLabelFor(ROUTE_ID, state.session?.checkpointId, LAST300M_ZH['l3.crossed.button'])}
         </button>
       ) : (
@@ -284,24 +325,42 @@ export function Last300mPage() {
             </button>
           </form>
           {PHOTO_ENABLED ? (
-            <PhotoInput disabled={state.busy} onPhoto={(file) => void observePhoto(file)} />
+            <PhotoInput disabled={state.busy} onRemind={() => playLocal(['photo.remind'])} onPhoto={(file) => { unlock(); void observePhoto(file) }} />
           ) : null}
           {/* 幫我問 is Nightingale's ask-a-person move: it opens the question
               card a passerby can read (and the phone can say). It never calls
               the backend, records nothing, and parses no reply. */}
-          <button ref={helpRef} className="l3-secondary l3-icon-button" onClick={() => setAskOpen(true)}>
+          <button ref={helpRef} className="l3-secondary l3-icon-button" onClick={() => { helpActive.current = true; player.stop(); setAskOpen(true) }}>
             <IconAsk className="l3-btn-icon" />
             {LAST300M_ZH['l3.button.help']}
           </button>
         </>
       )}
 
+      {state.expects !== 'walker' ? (
+        <>
+          {voiceControl}
+          {state.action && outdoorKeysFor(ROUTE_ID, state.action).length > 0 ? (
+            <button className="l3-secondary l3-icon-button" disabled={state.busy || voice === 'quiet'}
+              onClick={() => { if (state.action) playLocal(outdoorKeysFor(ROUTE_ID, state.action)) }}>
+              <IconCurrent className="l3-btn-icon" />{LAST300M_ZH['l3.voice.repeat']}
+            </button>
+          ) : null}
+          {ROUTE_ID === 'renai-001' && state.action?.type === 'GUIDE' && state.action.checkpointId === 'cp2x' ? (
+            <div className="l3-voice-extras">
+              <button className="l3-secondary" disabled={state.busy || voice === 'quiet'} onClick={() => playLocal(['cp2.bike'])}>{LAST300M_ZH['l3.voice.bike']}</button>
+              <button className="l3-secondary" disabled={state.busy || voice === 'quiet'} onClick={() => playLocal(['cp2.water'])}>{LAST300M_ZH['l3.voice.water']}</button>
+            </div>
+          ) : null}
+        </>
+      ) : null}
+
       {state.expects === 'walker' ? null : <RouteFrame info={routeInfo} />}
 
       {state.notice ? <p className="l3-notice">{state.notice}</p> : null}
     </div>
     {askOpen ? (
-      <AskCard text={LAST300M_ZH['l3.ask.utterance']} onClose={() => setAskOpen(false)} />
+      <AskCard text={LAST300M_ZH['l3.ask.utterance']} onClose={() => { helpActive.current = false; setAskOpen(false) }} />
     ) : null}
     </>
   )
