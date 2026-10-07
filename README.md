@@ -11,9 +11,19 @@ It grows out of the Walk Me There principle:
 
 When the system knows, it guides. When it does not know, it says so — and helps the person ask for the next step instead of pretending.
 
+## Current Chinese outdoor preview — AI Builder Cup
+
+The reviewed outdoor flow is opened with `?flow=last300m`; its route/API/evaluation source lives in [Nightingale-Walk-with-Me](https://github.com/Crystal32378/Nightingale-Walk-with-Me). This repository provides the React interface, bird and 44 fixed Chinese recordings (Leda/Puck). The outdoor backend uses Gemini on Vertex AI; the earlier indoor prototype below remains documented as project history.
+
+The paired `zh-tw-preview-2026-10-08` tags preserve the Chinese checkpoint. The deployed frontend code is `f4016ba8b0b009aa209cbbcfc72b5487823da913`; later source-publication documentation does not change the deployed UI or audio.
+
+[Phone-test preview](https://nightingale-walk-with-me--photo-guard-20261008-lb1kvmut.web.app/?flow=last300m&photo=1) — expires **2026-10-15 01:09 Asia/Taipei**. Narrow fix and limited preview accepted; full/live release remains HOLD pending phone/field results. The existing live site was not promoted by this GitHub publication.
+
+Continue from the [shared handoff](https://github.com/Crystal32378/Nightingale-Walk-with-Me/blob/zh-tw-preview-2026-10-08/HANDOFF.md) and [English preparation](https://github.com/Crystal32378/Nightingale-Walk-with-Me/blob/zh-tw-preview-2026-10-08/docs/english-preparation.md). The Chinese audio is accepted and should not be regenerated for the English phase.
+
 ---
 
-## Phase 1 — software spine (this repo, today)
+## Earlier indoor prototype — historical software spine
 
 The whole product loop runs in a phone browser with **no LLM, no Nemotron, no
 BLE and no hardware**:
