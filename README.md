@@ -15,15 +15,17 @@ When the system knows, it guides. When it does not know, it says so — and help
 
 The reviewed outdoor flow is opened with `?flow=last300m`; its route/API/evaluation source lives in [Nightingale-Walk-with-Me](https://github.com/Crystal32378/Nightingale-Walk-with-Me). This repository provides the React interface, bird and 44 fixed Chinese recordings (Leda/Puck). The outdoor backend uses Gemini on Vertex AI; the earlier indoor prototype below remains documented as project history.
 
-[Chinese voice-input preview](https://nightingale-walk-with-me--voice-input-20261008-oajxumay.web.app/?flow=last300m&photo=1) — expires **2026-10-15 12:17 Asia/Taipei**. Backend runtime `03bc45e`; frontend runtime `5d11a50`. Independent code review and hosted evidence passed. Crystal reports that recording, editing and sending through iPhone LINE all succeeded. Full outdoor navigation and production promotion remain HOLD.
+[English / Chinese prototype](https://nightingale-walk-with-me--english-20261008-q4gion1y.web.app/?flow=last300m&photo=1&lang=en) — expires **2026-11-07 13:27 Asia/Taipei**. Backend runtime `34bc9be`; frontend runtime `cdb9da5`. The language switch preserves the active session and pending confirmation.
 
-The short recording starts only on a press, returns editable text, and never submits a route observation automatically. It stops fixed playback during recording; both crossings hide the recording control. Permission/error/cancel paths leave typing available. The 44 accepted Chinese WAVs are unchanged. Frontend checks: 337 tests, typecheck, explicit tagged-API build, desktop Chromium/WebKit native MediaRecorder tests and hosted Vertex integration using synthetic speech.
+The English flow covers the full route UI, voice input/error states, photos, cp2 follow-up, explicit confirmations, recovery, arrival and the help card. Actual Chinese sign characters remain visible beside English explanations. The 44 English WAVs use Crystal's accepted normal conversational pace. Six clips have individual human listening acceptance; the remainder have machine text/hash checks. The original 44 accepted Chinese WAVs remain unchanged.
 
-The original paired `zh-tw-preview-2026-10-08` tags stay fixed. Source/evidence commits after the runtime versions do not change the deployed bundle. The existing live Hosting release and production traffic were not promoted.
+354 frontend tests, typecheck/build, independent code/assets review, desktop Chromium/WebKit playback/cancellation checks and hosted English integration passed. The earlier Chinese iPhone LINE record/edit/send flow passed by Crystal's report; English phone/teammate acceptance and full outdoor navigation are separate. Production navigation remains HOLD, with the original live site/traffic unchanged.
 
-[Current shared handoff](https://github.com/Crystal32378/Nightingale-Walk-with-Me/blob/main/HANDOFF.md) · [Architecture source / SVG / PNG](https://github.com/Crystal32378/Nightingale-Walk-with-Me/tree/main/docs/architecture) · [Deployment receipt](https://github.com/Crystal32378/Nightingale-Walk-with-Me/tree/main/docs/deployment/2026-10-08-voice-preview) · [English preparation](https://github.com/Crystal32378/Nightingale-Walk-with-Me/blob/main/docs/english-preparation.md).
+The original `zh-tw-preview-2026-10-08` and `zh-tw-voice-preview-2026-10-08` tags stay fixed. Source/evidence commits after the runtime SHA do not change the deployed bundle.
 
-For the paired preview build, use `VITE_LAST300M_API=https://voice-input-20261008---nightingale-uwker3cn5a-de.a.run.app npm run build`. Do not use `build:hosting`, which clears that explicit API setting.
+[Shared handoff](https://github.com/Crystal32378/Nightingale-Walk-with-Me/blob/main/HANDOFF.md) · [Architecture source / SVG / PNG](https://github.com/Crystal32378/Nightingale-Walk-with-Me/tree/main/docs/architecture) · [English deployment receipt](https://github.com/Crystal32378/Nightingale-Walk-with-Me/tree/main/docs/deployment/2026-10-08-english-preview).
+
+For this paired preview, use `VITE_LAST300M_API=https://english-20261008---nightingale-uwker3cn5a-de.a.run.app npm run dev` or the same environment variable with `npm run build`. Do not use `build:hosting`, which clears the explicit API setting. Open `?flow=last300m&lang=en` for English.
 
 ---
 
