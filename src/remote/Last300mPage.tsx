@@ -198,7 +198,7 @@ export function Last300mPage() {
     },
     stop: () => player.stop(),
   }), [player])
-  const { state, start, observe, observePhoto, done } = useLast300m(client, bird, ROUTE_ID, location, feedback)
+  const { state, start, observe, observePhoto, done, confirmContinuation } = useLast300m(client, bird, ROUTE_ID, location, feedback)
   const [draft, setDraft] = useState('')
   const [askOpen, setAskOpen] = useState(false)
   useEffect(() => () => player.dispose(), [player])
@@ -311,22 +311,37 @@ export function Last300mPage() {
         </button>
       ) : (
         <>
-          <form className="l3-observe" onSubmit={submit}>
-            <input
-              className="l3-input"
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder={LAST300M_ZH['l3.input.placeholder']}
-              disabled={state.busy}
-              autoComplete="off"
-            />
-            <button className="l3-primary" type="submit" disabled={state.busy || draft.trim().length === 0}>
-              {LAST300M_ZH['l3.input.send']}
-            </button>
-          </form>
-          {PHOTO_ENABLED ? (
-            <PhotoInput disabled={state.busy} onRemind={() => playLocal(['photo.remind'])} onPhoto={(file) => { unlock(); void observePhoto(file) }} />
-          ) : null}
+          {state.action?.confirmation ? (
+            <div className="l3-confirmation" role="group" aria-label="確認目前位置">
+              <button className="l3-primary" disabled={state.busy}
+                onClick={() => { unlock(); void confirmContinuation('confirm') }}>
+                {LAST300M_ZH['l3.confirmation.yes']}
+              </button>
+              <button className="l3-secondary" disabled={state.busy}
+                onClick={() => { unlock(); void confirmContinuation('cancel') }}>
+                {LAST300M_ZH['l3.confirmation.cancel']}
+              </button>
+            </div>
+          ) : (
+            <>
+              <form className="l3-observe" onSubmit={submit}>
+                <input
+                  className="l3-input"
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder={LAST300M_ZH['l3.input.placeholder']}
+                  disabled={state.busy}
+                  autoComplete="off"
+                />
+                <button className="l3-primary" type="submit" disabled={state.busy || draft.trim().length === 0}>
+                  {LAST300M_ZH['l3.input.send']}
+                </button>
+              </form>
+              {PHOTO_ENABLED ? (
+                <PhotoInput disabled={state.busy} onRemind={() => playLocal(['photo.remind'])} onPhoto={(file) => { unlock(); void observePhoto(file) }} />
+              ) : null}
+            </>
+          )}
           {/* 幫我問 is Nightingale's ask-a-person move: it opens the question
               card a passerby can read (and the phone can say). It never calls
               the backend, records nothing, and parses no reply. */}
@@ -357,7 +372,7 @@ export function Last300mPage() {
 
       {state.expects === 'walker' ? null : <RouteFrame info={routeInfo} />}
 
-      {state.notice ? <p className="l3-notice">{state.notice}</p> : null}
+      {state.notice ? <p className="l3-notice" role="status">{state.notice}</p> : null}
     </div>
     {askOpen ? (
       <AskCard text={LAST300M_ZH['l3.ask.utterance']} onClose={() => { helpActive.current = false; setAskOpen(false) }} />

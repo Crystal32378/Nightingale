@@ -57,6 +57,12 @@
   gap: 10px;
 }
 
+.l3-confirmation {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
 .l3-input {
   flex: 1;
   min-width: 0;

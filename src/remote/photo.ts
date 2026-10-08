@@ -1,9 +1,9 @@
 /**
  * Turns the camera's file into what the server may see: a JPEG no larger than
- * PHOTO_MAX_EDGE on its long side, re-encoded from pixels. Re-encoding through
- * a canvas carries no metadata across, so EXIF — GPS position, device, time —
- * never leaves the phone. The original file is not kept anywhere; only the
- * re-encoded bytes are handed to the caller, once.
+ * PHOTO_MAX_EDGE on its long side, re-encoded from pixels. The original file's
+ * metadata is not copied. Some browsers add fresh metadata while encoding, so
+ * that output is cleaned and checked before being handed to the caller.
+ * The original file is not kept anywhere or returned for upload.
  */
 
 export const PHOTO_MAX_EDGE = 1280
@@ -23,18 +23,76 @@ export function fitWithin(width: number, height: number, max: number): { width: 
   return { width: Math.max(1, Math.round(width * scale)), height: Math.max(1, Math.round(height * scale)) }
 }
 
-/** True if the JPEG bytes carry an APP1 Exif or XMP segment before the image data. */
-export function hasJpegMetadata(bytes: Uint8Array): boolean {
-  if (bytes[0] !== 0xff || bytes[1] !== 0xd8) return false
+interface MetadataSegment { start: number; end: number }
+
+/** Walk framing, including multiple scans; never interpret compressed pixels as headers. */
+function jpegMetadataSegments(bytes: Uint8Array): MetadataSegment[] {
+  const invalid = () => new PhotoPrepareError('invalid encoded JPEG')
+  if (bytes[0] !== 0xff || bytes[1] !== 0xd8) throw invalid()
+  const metadata: MetadataSegment[] = []
   let i = 2
-  while (i + 4 <= bytes.length && bytes[i] === 0xff) {
-    const marker = bytes[i + 1]!
-    if (marker === 0xda) return false // start of scan: headers are over
-    const length = (bytes[i + 2]! << 8) | bytes[i + 3]!
-    if (marker === 0xe1) return true
-    i += 2 + length
+  let inScan = false
+  let sawScan = false
+  while (i < bytes.length) {
+    if (bytes[i] !== 0xff) {
+      if (!inScan) throw invalid()
+      i++
+      continue
+    }
+    const start = i++
+    while (bytes[i] === 0xff) i++ // legal fill bytes before a marker
+    if (i >= bytes.length) throw invalid()
+    const marker = bytes[i++]!
+    if (inScan && (marker === 0x00 || marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7))) {
+      // Stuffed FF, standalone TEM and restart markers stay in the scan.
+      continue
+    }
+    if (marker === 0xd9) {
+      if (!sawScan || i !== bytes.length) throw invalid()
+      return metadata
+    }
+    if (marker === 0x01) continue // TEM has no length field
+    if (marker < 0xc0 || marker === 0xd8 || (marker >= 0xd0 && marker <= 0xd7)) throw invalid()
+    if (i + 2 > bytes.length) throw invalid()
+    const length = (bytes[i]! << 8) | bytes[i + 1]!
+    const end = i + length
+    if (length < 2 || end > bytes.length) throw invalid()
+    if (marker === 0xda) {
+      const components = bytes[i + 2]!
+      if (components < 1 || components > 4 || length !== 6 + components * 2) throw invalid()
+      sawScan = true
+    }
+    if (marker === 0xdc && length !== 4) throw invalid()
+    if (marker === 0xe1 || marker === 0xed || marker === 0xfe) metadata.push({ start, end })
+    // DNL may define the height inside an entropy-coded scan without ending it.
+    inScan = marker === 0xda || (inScan && marker === 0xdc)
+    i = end
   }
-  return false
+  throw invalid() // missing end-of-image marker
+}
+
+/** True for EXIF/XMP, IPTC or comments; malformed framing also fails closed. */
+export function hasJpegMetadata(bytes: Uint8Array): boolean {
+  try {
+    return jpegMetadataSegments(bytes).length > 0
+  } catch {
+    return true
+  }
+}
+
+/** Removes private metadata from a JPEG freshly encoded by our canvas. */
+export function stripCanvasJpegMetadata(bytes: Uint8Array): Uint8Array {
+  const metadata = jpegMetadataSegments(bytes)
+  const output = new Uint8Array(bytes.length - metadata.reduce((total, segment) => total + segment.end - segment.start, 0))
+  let source = 0
+  let target = 0
+  for (const segment of metadata) {
+    output.set(bytes.subarray(source, segment.start), target)
+    target += segment.start - source
+    source = segment.end
+  }
+  output.set(bytes.subarray(source), target)
+  return output
 }
 
 function toBase64(bytes: Uint8Array): string {
@@ -65,7 +123,8 @@ export async function preparePhoto(file: Blob): Promise<PreparedPhoto> {
   canvas.width = 0
   canvas.height = 0
   if (!blob) throw new PhotoPrepareError('encode failed')
-  const bytes = new Uint8Array(await blob.arrayBuffer())
+  // Clean only the newly encoded pixels, never the camera's original file.
+  const bytes = stripCanvasJpegMetadata(new Uint8Array(await blob.arrayBuffer()))
   if (hasJpegMetadata(bytes)) throw new PhotoPrepareError('metadata survived re-encoding')
   return { mimeType: 'image/jpeg', data: toBase64(bytes) }
 }

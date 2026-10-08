@@ -8,6 +8,7 @@ import {
   type LocationReport,
   type RemoteAction,
   type RemoteSession,
+  type TextContinuationAnswer,
 } from './last300mClient'
 import { PhotoPrepareError, preparePhoto } from './photo'
 import { LAST300M_ZH } from './strings'
@@ -62,6 +63,9 @@ export function useLast300m(
     expects: 'evidence',
   })
   const stillWorking = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // State disables visible controls; the ref also catches repeated taps
+  // before React has painted that disabled state.
+  const inFlight = useRef(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
 
   useEffect(() => () => {
@@ -96,6 +100,8 @@ export function useLast300m(
   }, [feedback])
 
   const start = useCallback(async () => {
+    if (inFlight.current) return
+    inFlight.current = true
     feedback?.stop()
     setState((s) => ({ ...s, busy: true, notice: null }))
     try {
@@ -105,28 +111,35 @@ export function useLast300m(
     } catch (err) {
       if (!(err instanceof RemoteProtocolError)) throw err
       fail(LAST300M_ZH['l3.notice.offline'])
+    } finally {
+      inFlight.current = false
     }
   }, [apply, client, fail, feedback, routeId])
 
   const observe = useCallback(
     async (text: string) => {
       const trimmed = text.trim()
-      if (trimmed.length === 0 || sessionId === null) return
+      if (trimmed.length === 0 || sessionId === null || inFlight.current) return
+      inFlight.current = true
       feedback?.stop()
-      setState((s) => ({ ...s, busy: true, notice: null }))
+      setState((s) => ({ ...s, busy: true, notice: null,
+        action: s.action?.confirmation ? { ...s.action, confirmation: undefined } : s.action }))
       try {
         const result = await client.observe(sessionId, trimmed, location())
         apply(result.session, result.action, result.expects)
       } catch (err) {
         if (!(err instanceof RemoteProtocolError)) throw err
         fail(LAST300M_ZH['l3.notice.offline'])
+      } finally {
+        inFlight.current = false
       }
     },
     [apply, client, fail, feedback, location, sessionId],
   )
 
   const done = useCallback(async () => {
-    if (sessionId === null) return
+    if (sessionId === null || inFlight.current || state.expects !== 'walker' || state.action?.confirmation) return
+    inFlight.current = true
     feedback?.stop()
     setState((s) => ({ ...s, busy: true, notice: null }))
     try {
@@ -135,14 +148,43 @@ export function useLast300m(
     } catch (err) {
       if (!(err instanceof RemoteProtocolError)) throw err
       fail(LAST300M_ZH['l3.notice.offline'])
+    } finally {
+      inFlight.current = false
     }
-  }, [apply, client, fail, feedback, sessionId])
+  }, [apply, client, fail, feedback, sessionId, state.action, state.expects])
+
+  const confirmContinuation = useCallback(async (answer: TextContinuationAnswer['answer']) => {
+    const confirmation = state.action?.confirmation
+    if (sessionId === null || inFlight.current || !confirmation || state.expects !== 'evidence') return
+    inFlight.current = true
+    feedback?.stop()
+    setState((s) => ({ ...s, busy: true, notice: null }))
+    try {
+      const result = await client.confirmContinuation(sessionId, { id: confirmation.id, answer }, location())
+      apply(result.session, result.action, result.expects)
+    } catch (err) {
+      if (!(err instanceof RemoteProtocolError)) throw err
+      if (err.status === 409) {
+        feedback?.stop()
+        setState((s) => ({ ...s, busy: false,
+          action: s.action ? { ...s.action, confirmation: undefined, question: LAST300M_ZH['l3.reanchor.question'] } : null,
+          notice: LAST300M_ZH['l3.confirmation.expired'],
+        }))
+      } else {
+        fail(LAST300M_ZH['l3.notice.offline'])
+      }
+    } finally {
+      inFlight.current = false
+    }
+  }, [apply, client, fail, feedback, location, sessionId, state.action, state.expects])
 
   const observePhoto = useCallback(
     async (file: Blob) => {
-      if (sessionId === null) return
+      if (sessionId === null || inFlight.current) return
+      inFlight.current = true
       feedback?.photo('photo.wait')
-      setState((s) => ({ ...s, busy: true, notice: LAST300M_ZH['l3.photo.reading'] }))
+      setState((s) => ({ ...s, busy: true, notice: LAST300M_ZH['l3.photo.reading'],
+        action: s.action?.confirmation ? { ...s.action, confirmation: undefined } : s.action }))
       stillWorking.current = setTimeout(
         () => {
           feedback?.photo('photo.wait2')
@@ -165,10 +207,12 @@ export function useLast300m(
                 : null
         if (notice === null) throw err
         fail(notice)
+      } finally {
+        inFlight.current = false
       }
     },
     [apply, client, fail, feedback, location, sessionId],
   )
 
-  return { state, start, observe, observePhoto, done }
+  return { state, start, observe, observePhoto, done, confirmContinuation }
 }

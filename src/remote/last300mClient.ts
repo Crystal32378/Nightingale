@@ -24,6 +24,18 @@ export interface RemoteAction {
   instruction?: string
   question?: string
   lookFor?: string[]
+  confirmation?: TextContinuation
+}
+
+/** A server-issued question, separate from the walker's ordinary crossing-done button. */
+export interface TextContinuation {
+  id: string
+  kind: 'renai-before-second-crossing'
+}
+
+export interface TextContinuationAnswer {
+  id: string
+  answer: 'confirm' | 'cancel'
 }
 
 /** What the next confirmation has to be: evidence, or the walker saying a crossing is done. */
@@ -88,7 +100,23 @@ function isAction(v: unknown): v is RemoteAction {
   if (a.question !== undefined && typeof a.question !== 'string') return false
   if (a.lookFor !== undefined && (!Array.isArray(a.lookFor) || a.lookFor.some((x) => typeof x !== 'string')))
     return false
+  if (a.confirmation !== undefined) {
+    if (a.type !== 'ASK' || a.checkpointId !== 'cp2') return false
+    // The complete question must fit the guidance view; never show a yes
+    // button under a missing or truncated condition.
+    if (typeof a.question !== 'string' || !a.question.trim() || a.question.length > 140) return false
+    const c = a.confirmation
+    if (typeof c !== 'object' || c === null || Array.isArray(c)) return false
+    const confirmation = c as Record<string, unknown>
+    if (confirmation.kind !== 'renai-before-second-crossing'
+      || typeof confirmation.id !== 'string' || confirmation.id.length === 0
+      || confirmation.id.length > 80 || /[\s\u0000-\u001f\u007f]/.test(confirmation.id)) return false
+  }
   return true
+}
+
+function hasValidConfirmationContext(session: RemoteSession, action: RemoteAction, expects: unknown): boolean {
+  return !action.confirmation || (session.routeId === 'renai-001' && session.checkpointId === 'cp2' && expects === 'evidence')
 }
 
 function isZone(v: unknown): v is RouteZone {
@@ -136,7 +164,8 @@ export class Last300mClient {
   async createSession(routeId: string): Promise<SessionStart> {
     const body = await post(this.fetchImpl, `${this.baseUrl}/api/sessions`, { routeId })
     const b = body as Record<string, unknown>
-    if (typeof b?.sessionId !== 'string' || !isSession(b.session) || !isAction(b.action)) {
+    if (typeof b?.sessionId !== 'string' || !isSession(b.session) || !isAction(b.action)
+      || !hasValidConfirmationContext(b.session, b.action, b.expects)) {
       throw new RemoteProtocolError('malformed session response')
     }
     return { sessionId: b.sessionId, session: b.session, action: b.action, expects: readExpects(b.expects) }
@@ -195,6 +224,14 @@ export class Last300mClient {
     return this.step(sessionId, { confirm: 'done' })
   }
 
+  async confirmContinuation(
+    sessionId: string,
+    confirmation: TextContinuationAnswer,
+    location?: LocationReport,
+  ): Promise<StepResult> {
+    return this.step(sessionId, { confirmation }, location)
+  }
+
   private async step(sessionId: string, payload: Record<string, unknown>, location?: LocationReport): Promise<StepResult> {
     const body = await post(
       this.fetchImpl,
@@ -202,7 +239,8 @@ export class Last300mClient {
       location ? { ...payload, location } : payload,
     )
     const b = body as Record<string, unknown>
-    if (!isSession(b?.session) || !isAction(b?.action)) {
+    if (!isSession(b?.session) || !isAction(b?.action)
+      || !hasValidConfirmationContext(b.session, b.action, b.expects)) {
       throw new RemoteProtocolError('malformed step response')
     }
     return { session: b.session, action: b.action, expects: readExpects(b.expects) }
