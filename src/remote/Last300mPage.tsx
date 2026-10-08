@@ -10,6 +10,8 @@ import { LAST300M_ZH } from './strings'
 import { useLast300m } from './useLast300m'
 import { createOutdoorPlayer, outdoorKeysFor, type OutdoorVoice } from './outdoorVoice'
 import { UNKNOWN_ZONE, zoneFor, type RouteZone } from './zone'
+import { VoiceInput } from './VoiceInput'
+import type { VoiceCapture } from './voiceCapture'
 import './last300m.css'
 
 /**
@@ -190,29 +192,32 @@ export function Last300mPage() {
   const [voice, setVoice] = useState<OutdoorVoice>('Leda')
   const voiceRef = useRef<OutdoorVoice>('Leda')
   const helpActive = useRef(false)
+  const inputActive = useRef(false)
+  const voiceInput = useRef<VoiceCapture | null>(null)
+  const [inputBusy, setInputBusy] = useState(false)
   const feedback = useMemo(() => ({
     action: (action: RemoteAction) => {
-      if (!helpActive.current) void player.play(outdoorKeysFor(ROUTE_ID, action), voiceRef.current)
+      if (!helpActive.current && !inputActive.current) void player.play(outdoorKeysFor(ROUTE_ID, action), voiceRef.current)
     },
     photo: (key: 'photo.wait' | 'photo.wait2') => {
-      if (ROUTE_ID === 'renai-001' && !helpActive.current) void player.play([key], voiceRef.current)
+      if (ROUTE_ID === 'renai-001' && !helpActive.current && !inputActive.current) void player.play([key], voiceRef.current)
     },
     stop: () => player.stop(),
   }), [player])
-  const { state, start, observe, observePhoto, done, confirmContinuation } = useLast300m(client, bird, ROUTE_ID, location, feedback, PHOTO_CHECK)
+  const { state, sessionId, start, observe, observePhoto, done, confirmContinuation } = useLast300m(client, bird, ROUTE_ID, location, feedback, PHOTO_CHECK)
   const [draft, setDraft] = useState('')
   const [askOpen, setAskOpen] = useState(false)
   useEffect(() => () => player.dispose(), [player])
   const unlock = () => { if (voiceRef.current !== 'quiet') player.unlock() }
   const playLocal = (keys: string[]) => {
-    if (ROUTE_ID !== 'renai-001') return
+    if (ROUTE_ID !== 'renai-001' || inputActive.current) return
     unlock()
     void player.play(keys, voiceRef.current)
   }
   const voiceControl = (
     <label className="l3-voice">
       {LAST300M_ZH['l3.voice.label']}
-      <select value={voice} onChange={(event) => {
+      <select value={voice} disabled={inputBusy} onChange={(event) => {
         const next = event.target.value as OutdoorVoice
         player.stop()
         voiceRef.current = next
@@ -262,7 +267,8 @@ export function Last300mPage() {
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
-    if (state.busy) return
+    if (state.busy || inputActive.current || !draft.trim()) return
+    voiceInput.current?.cancel()
     unlock()
     void observe(draft)
     setDraft('')
@@ -328,25 +334,31 @@ export function Last300mPage() {
               <form className="l3-observe" onSubmit={submit}>
                 <input
                   className="l3-input"
+                  aria-label="你看到什麼"
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
                   placeholder={LAST300M_ZH['l3.input.placeholder']}
-                  disabled={state.busy}
+                  disabled={state.busy || inputBusy}
                   autoComplete="off"
                 />
-                <button className="l3-primary" type="submit" disabled={state.busy || draft.trim().length === 0}>
+                <button className="l3-primary" type="submit" disabled={state.busy || inputBusy || draft.trim().length === 0}>
                   {LAST300M_ZH['l3.input.send']}
                 </button>
               </form>
+              {sessionId ? <VoiceInput key={`${state.session?.checkpointId}:${JSON.stringify(state.action)}`}
+                baseUrl={API_BASE} sessionId={sessionId} control={voiceInput} disabled={state.busy || askOpen}
+                beforeStart={() => { player.stop(); window.speechSynthesis?.cancel() }}
+                onActive={active => { inputActive.current = active; setInputBusy(active) }}
+                onTranscript={setDraft} /> : null}
               {PHOTO_ENABLED ? (
-                <PhotoInput disabled={state.busy} onRemind={() => playLocal(['photo.remind'])} onPhoto={(file) => { unlock(); void observePhoto(file) }} />
+                <PhotoInput disabled={state.busy || inputBusy} onRemind={() => playLocal(['photo.remind'])} onPhoto={(file) => { voiceInput.current?.cancel(); unlock(); void observePhoto(file) }} />
               ) : null}
             </>
           )}
           {/* 幫我問 is Nightingale's ask-a-person move: it opens the question
               card a passerby can read (and the phone can say). It never calls
               the backend, records nothing, and parses no reply. */}
-          <button ref={helpRef} className="l3-secondary l3-icon-button" onClick={() => { helpActive.current = true; player.stop(); setAskOpen(true) }}>
+          <button ref={helpRef} className="l3-secondary l3-icon-button" onClick={() => { voiceInput.current?.cancel(); helpActive.current = true; player.stop(); setAskOpen(true) }}>
             <IconAsk className="l3-btn-icon" />
             {LAST300M_ZH['l3.button.help']}
           </button>
@@ -357,15 +369,15 @@ export function Last300mPage() {
         <>
           {voiceControl}
           {state.action && outdoorKeysFor(ROUTE_ID, state.action).length > 0 ? (
-            <button className="l3-secondary l3-icon-button" disabled={state.busy || voice === 'quiet'}
+            <button className="l3-secondary l3-icon-button" disabled={state.busy || inputBusy || voice === 'quiet'}
               onClick={() => { if (state.action) playLocal(outdoorKeysFor(ROUTE_ID, state.action)) }}>
               <IconCurrent className="l3-btn-icon" />{LAST300M_ZH['l3.voice.repeat']}
             </button>
           ) : null}
           {ROUTE_ID === 'renai-001' && state.action?.type === 'GUIDE' && state.action.checkpointId === 'cp2x' ? (
             <div className="l3-voice-extras">
-              <button className="l3-secondary" disabled={state.busy || voice === 'quiet'} onClick={() => playLocal(['cp2.bike'])}>{LAST300M_ZH['l3.voice.bike']}</button>
-              <button className="l3-secondary" disabled={state.busy || voice === 'quiet'} onClick={() => playLocal(['cp2.water'])}>{LAST300M_ZH['l3.voice.water']}</button>
+              <button className="l3-secondary" disabled={state.busy || inputBusy || voice === 'quiet'} onClick={() => playLocal(['cp2.bike'])}>{LAST300M_ZH['l3.voice.bike']}</button>
+              <button className="l3-secondary" disabled={state.busy || inputBusy || voice === 'quiet'} onClick={() => playLocal(['cp2.water'])}>{LAST300M_ZH['l3.voice.water']}</button>
             </div>
           ) : null}
         </>

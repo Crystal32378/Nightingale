@@ -217,5 +217,5 @@ export function useLast300m(
     [apply, client, fail, feedback, location, photoCheck, sessionId],
   )
 
-  return { state, start, observe, observePhoto, done, confirmContinuation }
+  return { state, sessionId, start, observe, observePhoto, done, confirmContinuation }
 }
