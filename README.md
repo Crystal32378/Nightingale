@@ -15,11 +15,15 @@ When the system knows, it guides. When it does not know, it says so — and help
 
 The reviewed outdoor flow is opened with `?flow=last300m`; its route/API/evaluation source lives in [Nightingale-Walk-with-Me](https://github.com/Crystal32378/Nightingale-Walk-with-Me). This repository provides the React interface, bird and 44 fixed Chinese recordings (Leda/Puck). The outdoor backend uses Gemini on Vertex AI; the earlier indoor prototype below remains documented as project history.
 
-The paired `zh-tw-preview-2026-10-08` tags preserve the Chinese checkpoint. The deployed frontend code is `f4016ba8b0b009aa209cbbcfc72b5487823da913`; later source-publication documentation does not change the deployed UI or audio.
+[Chinese voice-input preview](https://nightingale-walk-with-me--voice-input-20261008-oajxumay.web.app/?flow=last300m&photo=1) — expires **2026-10-15 12:17 Asia/Taipei**. Backend runtime `03bc45e`; frontend runtime `5d11a50`. Independent code review and hosted evidence passed. Crystal reports that recording, editing and sending through iPhone LINE all succeeded. Full outdoor navigation and production promotion remain HOLD.
 
-[Phone-test preview](https://nightingale-walk-with-me--photo-guard-20261008-lb1kvmut.web.app/?flow=last300m&photo=1) — expires **2026-10-15 01:09 Asia/Taipei**. Narrow fix and limited preview accepted; full/live release remains HOLD pending phone/field results. The existing live site was not promoted by this GitHub publication.
+The short recording starts only on a press, returns editable text, and never submits a route observation automatically. It stops fixed playback during recording; both crossings hide the recording control. Permission/error/cancel paths leave typing available. The 44 accepted Chinese WAVs are unchanged. Frontend checks: 337 tests, typecheck, explicit tagged-API build, desktop Chromium/WebKit native MediaRecorder tests and hosted Vertex integration using synthetic speech.
 
-Continue from the [shared handoff](https://github.com/Crystal32378/Nightingale-Walk-with-Me/blob/zh-tw-preview-2026-10-08/HANDOFF.md) and [English preparation](https://github.com/Crystal32378/Nightingale-Walk-with-Me/blob/zh-tw-preview-2026-10-08/docs/english-preparation.md). The Chinese audio is accepted and should not be regenerated for the English phase.
+The original paired `zh-tw-preview-2026-10-08` tags stay fixed. Source/evidence commits after the runtime versions do not change the deployed bundle. The existing live Hosting release and production traffic were not promoted.
+
+[Current shared handoff](https://github.com/Crystal32378/Nightingale-Walk-with-Me/blob/main/HANDOFF.md) · [Architecture source / SVG / PNG](https://github.com/Crystal32378/Nightingale-Walk-with-Me/tree/main/docs/architecture) · [Deployment receipt](https://github.com/Crystal32378/Nightingale-Walk-with-Me/tree/main/docs/deployment/2026-10-08-voice-preview) · [English preparation](https://github.com/Crystal32378/Nightingale-Walk-with-Me/blob/main/docs/english-preparation.md).
+
+For the paired preview build, use `VITE_LAST300M_API=https://voice-input-20261008---nightingale-uwker3cn5a-de.a.run.app npm run build`. Do not use `build:hosting`, which clears that explicit API setting.
 
 ---
 
