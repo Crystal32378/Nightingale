@@ -25,6 +25,7 @@ export interface RemoteAction {
   question?: string
   lookFor?: string[]
   confirmation?: TextContinuation
+  messageKey?: string
 }
 
 /** A server-issued question, separate from the walker's ordinary crossing-done button. */
@@ -96,6 +97,12 @@ function isAction(v: unknown): v is RemoteAction {
   const a = v as Record<string, unknown>
   if (typeof a.type !== 'string' || !ACTION_TYPES.has(a.type)) return false
   if (typeof a.checkpointId !== 'string') return false
+  if (a.messageKey !== undefined) {
+    if (typeof a.messageKey !== 'string' || a.messageKey.length > 80 || !/^[a-z][a-z.-]*$/.test(a.messageKey)) return false
+    if (a.messageKey.startsWith('recover.') && (a.type !== 'RECOVER' || a.checkpointId !== 'cp5')) return false
+    if (a.messageKey === 'ask.entrance' && (a.type !== 'ASK' || !['cp4', 'cp5'].includes(a.checkpointId))) return false
+    if (['ask.youbike', 'ask.crossing-history', 'ask.location-veto'].includes(a.messageKey) && (a.type !== 'ASK' || a.checkpointId !== 'cp2')) return false
+  }
   if (a.instruction !== undefined && typeof a.instruction !== 'string') return false
   if (a.question !== undefined && typeof a.question !== 'string') return false
   if (a.lookFor !== undefined && (!Array.isArray(a.lookFor) || a.lookFor.some((x) => typeof x !== 'string')))

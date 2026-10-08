@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-08T04:59:34.922Z",
+  "results": [
+    {
+      "engine": "chromium",
+      "version": "154.0.8037.98",
+      "status": "PASS",
+      "requests": 17,
+      "scope": "Desktop mocked API, actual React UI; language switch, full route, help focus/speech locale, confirmation/cancel and recoveries"
+    },
+    {
+      "engine": "webkit",
+      "version": "26.5",
+      "status": "PASS",
+      "requests": 17,
+      "scope": "Desktop mocked API, actual React UI; language switch, full route, help focus/speech locale, confirmation/cancel and recoveries"
+    }
+  ]
+}

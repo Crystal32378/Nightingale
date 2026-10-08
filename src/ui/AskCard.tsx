@@ -33,12 +33,12 @@ const FOCUSABLE =
  * 幫我問 button that opened it — a person always knows where they came back
  * to.
  */
-export function AskCard({ text, onClose }: { text: string; onClose: () => void }) {
+export function AskCard({ text, onClose, lang = 'zh-TW', labels }: { text: string; onClose: () => void; lang?: string; labels?: { again: string; done: string; volume: { level: string; down: string; up: string } } }) {
   const cardRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    speak(text, 'ask.utterance')
-  }, [text])
+    speak(text, 'ask.utterance', lang)
+  }, [text, lang])
 
   // Focus goes in on open. Coming home is a two-body problem: the background
   // is inert until the card unmounts, so the card cannot focus anything in
@@ -82,18 +82,19 @@ export function AskCard({ text, onClose }: { text: string; onClose: () => void }
   // The same string, broken where it is already punctuated. Not a second string.
   // The question mark is notation for the voice; on screen the upward arc of
   // the question is carried by the layout, not by a glyph.
-  const lines = visualLines(text)
+  const lines = lang.startsWith('en') ? (text.match(/[^.!?]+[.!?]?/g) ?? [text]).map(line => line.trim()) : visualLines(text)
 
   const again = () => {
     // Asking to hear it again is evidence it was not heard: one step louder,
     // and it stays there (levelAfterRepeat in voice/level.ts).
     raiseContext('PUBLIC')
-    speak(text, 'ask.utterance')
+    speak(text, 'ask.utterance', lang)
   }
 
   return (
     <div
       className="ask-card"
+      lang={lang.startsWith('en') ? 'en' : lang}
       role="dialog"
       aria-modal="true"
       aria-label={text}
@@ -109,15 +110,15 @@ export function AskCard({ text, onClose }: { text: string; onClose: () => void }
           {line}
         </p>
       ))}
-      <VolumeControl context="PUBLIC" />
+      <VolumeControl context="PUBLIC" labels={labels?.volume} />
       <div className="ask-actions">
         <button onClick={again}>
           <IconAgain />
-          {label('label.again')}
+          {labels?.again ?? label('label.again')}
         </button>
         <button className="primary" onClick={onClose}>
           <IconDone />
-          {label('label.done')}
+          {labels?.done ?? label('label.done')}
         </button>
       </div>
     </div>

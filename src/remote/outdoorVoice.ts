@@ -1,10 +1,13 @@
 import manifest from './outdoor-manifest.json'
+import englishManifest from './outdoor-manifest.en.json'
 import type { RemoteAction } from './last300mClient'
+import type { OutdoorLocale } from './locale'
 
 export type OutdoorVoice = 'Leda' | 'Puck' | 'quiet'
 interface Recording { file: string; sha256: string; seconds: number }
 interface Utterance { text: string; voices: Record<'Leda' | 'Puck', Recording> }
 export const outdoorManifest: { routeId: string; utterances: Record<string, Utterance> } = manifest
+const enManifest = englishManifest as { routeId: string; utterances: Record<string, { text: string; voices: Partial<Record<'Leda' | 'Puck', Recording>> }> }
 
 // Only action identity selects speech. Server prose is never spoken or matched.
 const ACTION_KEYS: Record<string, string[]> = {
@@ -26,7 +29,13 @@ const ACTION_KEYS: Record<string, string[]> = {
   // protocol supplies an unambiguous verified identity for each one.
 }
 
-export function outdoorKeysFor(routeId: string, action: RemoteAction): string[] {
+export function outdoorKeysFor(routeId: string, action: RemoteAction, locale: OutdoorLocale = 'zh-TW'): string[] {
+  if (locale === 'en' && action.type === 'ASK' && action.messageKey !== 'ask.entrance') return []
+  if (locale === 'en' && routeId === 'renai-001' && action.type === 'RECOVER' && action.checkpointId === 'cp5') {
+    const keys: Record<string, string[]> = { 'recover.er': ['recover.er'], 'recover.daan': ['recover.daan.a', 'recover.daan.b'], 'recover.canopy': ['recover.canopy'] }
+    const key = action.messageKey ?? ''
+    return Object.prototype.hasOwnProperty.call(keys, key) ? [...keys[key]] : []
+  }
   return routeId === outdoorManifest.routeId ? [...(ACTION_KEYS[`${action.type}:${action.checkpointId}`] ?? [])] : []
 }
 
@@ -40,17 +49,18 @@ export class OutdoorSequence {
     this.controller = null
   }
 
-  async play(keys: string[], voice: OutdoorVoice): Promise<void> {
+  async play(keys: string[], voice: OutdoorVoice, locale: OutdoorLocale = 'zh-TW'): Promise<void> {
     this.stop()
     if (voice === 'quiet' || keys.length === 0) return
-    const recordings = keys.map(key => outdoorManifest.utterances[key]?.voices[voice])
+    const utterances = (locale === 'en' ? enManifest : outdoorManifest).utterances
+    const recordings = keys.map(key => Object.prototype.hasOwnProperty.call(utterances, key) ? utterances[key]?.voices[voice] : undefined)
     if (recordings.some(recording => !recording)) return
     const controller = new AbortController()
     this.controller = controller
     try {
       for (const recording of recordings) {
         if (controller.signal.aborted) return
-        await this.clip(recording.file, controller.signal)
+        await this.clip(recording!.file, controller.signal)
       }
     } catch {
       // Missing, blocked, offline: retain text; no device or remote TTS fallback.
@@ -90,7 +100,7 @@ export function createOutdoorPlayer() {
     })
   })
   return {
-    play: (keys: string[], voice: OutdoorVoice) => player.play(keys, voice),
+    play: (keys: string[], voice: OutdoorVoice, locale: OutdoorLocale = 'zh-TW') => player.play(keys, voice, locale),
     stop: () => player.stop(),
     unlock: () => {
       try {

@@ -1,0 +1,28 @@
+{
+  "locale": "en",
+  "status": "approved_for_recording",
+  "utterances": {
+    "cp1.guide": "Take Elevator 1 to street level. Exit 2 is just outside.",
+    "cp1.board": "At Exit 2, look at the notice board nearby. Look for the Chinese name of Taipei City Hospital, Renai Branch.",
+    "cp1.exit": "Outside Exit 2, turn right.",
+    "cp2.cross": "Wait for the green pedestrian signal, then cross Fuxing South Road.",
+    "cp2.after": "Now that you have crossed, turn right.",
+    "cp2.along": "Continue straight along Fuxing South Road.",
+    "cp2.bike": "Bicycles use this sidewalk too. Stay on the inner side.",
+    "cp2.water": "There is a FamilyMart along the way if you need water. Take your time.",
+    "cp3.cross": "Wait for the green pedestrian signal, then cross Renai Road.",
+    "cp3.after": "After crossing, turn left. The hospital is on this side.",
+    "cp4.driveway": "The driveway with the red Chinese characters for Emergency and the letter P is for vehicles. The lobby entrance is a little farther ahead.",
+    "ask.entrance": "Does the sign above the door show the Chinese characters for Emergency? For outpatient visits, use the automatic glass doors to the lobby.",
+    "cp5.lobby": "The row of automatic glass doors is the lobby entrance.",
+    "recover.er": "That is the emergency driveway. The lobby entrance is a little farther ahead.",
+    "recover.daan.a": "This road leads to Da'an Road. Let us turn around.",
+    "recover.daan.b": "Follow the hospital wall back until you see the automatic glass doors.",
+    "recover.canopy": "The green-roofed corridor is a side passage. Turn left toward Renai Road. The lobby entrance is ahead.",
+    "arrived": "This is the hospital entrance. The service desk is on your left inside. They can help you with the next step.",
+    "reanchor": "What can you see nearby? Just tell me.",
+    "photo.remind": "Photograph the sign only. Keep faces, number plates, and patient information out of the picture. Google will read the photo. Nightingale does not save the original image.",
+    "photo.wait": "Let me take a look at this photo.",
+    "photo.wait2": "I am still looking."
+  }
+}

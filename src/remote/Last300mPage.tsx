@@ -6,7 +6,7 @@ import { NightingaleBird } from '../ui/NightingaleBird'
 import { Last300mClient, RemoteProtocolError, type LocationReport, type RemoteAction, type RouteInfo } from './last300mClient'
 import { RemoteGuidanceText } from './RemoteGuidanceText'
 import { doneLabelFor, stepCardFor, type StepIcon } from './stepCard'
-import { LAST300M_ZH } from './strings'
+import { outdoorStrings, type OutdoorLocale } from './locale'
 import { useLast300m } from './useLast300m'
 import { createOutdoorPlayer, outdoorKeysFor, type OutdoorVoice } from './outdoorVoice'
 import { UNKNOWN_ZONE, zoneFor, type RouteZone } from './zone'
@@ -43,7 +43,8 @@ const PHOTO_CHECK = new URLSearchParams(window.location.search).get('photoCheck'
  * and the full privacy sentence is one tap away. The chosen file goes
  * straight to the hook and the input is cleared, so nothing lingers.
  */
-function PhotoInput({ disabled, onPhoto, onRemind }: { disabled: boolean; onPhoto: (file: File) => void; onRemind: () => void }) {
+function PhotoInput({ disabled, onPhoto, onRemind, locale }: { disabled: boolean; onPhoto: (file: File) => void; onRemind: () => void; locale: OutdoorLocale }) {
+  const copy = outdoorStrings(locale)
   const [reminded, setReminded] = useState(false)
   const [open, setOpen] = useState(false)
   const camera = (label: string) => (
@@ -69,11 +70,11 @@ function PhotoInput({ disabled, onPhoto, onRemind }: { disabled: boolean; onPhot
     <section className="l3-photo">
       {open ? (
         <div className="l3-photo-remind" role="status">
-          <p>{LAST300M_ZH['l3.photo.remind']}</p>
-          {camera(LAST300M_ZH['l3.photo.go'])}
+          <p>{copy['l3.photo.remind']}</p>
+          {camera(copy['l3.photo.go'])}
         </div>
       ) : reminded ? (
-        camera(LAST300M_ZH['l3.photo.button'])
+        camera(copy['l3.photo.button'])
       ) : (
         <button
           className="l3-secondary l3-icon-button"
@@ -85,13 +86,13 @@ function PhotoInput({ disabled, onPhoto, onRemind }: { disabled: boolean; onPhot
           }}
         >
           <IconCamera className="l3-btn-icon" />
-          {LAST300M_ZH['l3.photo.button']}
+          {copy['l3.photo.button']}
         </button>
       )}
-      <p className="l3-photo-small">{LAST300M_ZH['l3.photo.small']}</p>
+      <p className="l3-photo-small">{copy['l3.photo.small']}</p>
       <details className="l3-photo-details">
-        <summary>ⓘ {LAST300M_ZH['l3.photo.more']}</summary>
-        <p>{LAST300M_ZH['l3.photo.privacy']}</p>
+        <summary>ⓘ {copy['l3.photo.more']}</summary>
+        <p>{copy['l3.photo.privacy']}</p>
       </details>
     </section>
   )
@@ -109,10 +110,11 @@ const ICONS: Record<StepIcon, () => JSX.Element> = {
  * one; otherwise the server's bounded text. Questions and recoveries always
  * keep their words — they are what the person has to answer or do.
  */
-function StepView({ action }: { action: RemoteAction }) {
-  const card = stepCardFor(ROUTE_ID, action)
-  if (!card) return <RemoteGuidanceText action={action} />
-  const full = card.speech.join('')
+function StepView({ action, locale }: { action: RemoteAction; locale: OutdoorLocale }) {
+  const copy = outdoorStrings(locale)
+  const card = stepCardFor(ROUTE_ID, action, locale)
+  if (!card) return <RemoteGuidanceText action={action} locale={locale} routeId={ROUTE_ID} />
+  const full = card.speech.join(locale === 'en' ? ' ' : '')
   return (
     <div className="l3-guidance l3-step" role="group" aria-label={full}>
       {ICONS[card.icon]()}
@@ -120,11 +122,12 @@ function StepView({ action }: { action: RemoteAction }) {
         {card.label}
       </p>
       <details className="l3-step-full">
-        <summary>{LAST300M_ZH['l3.step.full']}</summary>
+        <summary>{copy['l3.step.full']}</summary>
         {card.speech.map((line) => (
           <p key={line}>{line}</p>
         ))}
       </details>
+      {card.signs?.map(sign => <p className="l3-sign-hint" key={sign}><span lang="zh-TW">{sign.split(' — ')[0]}</span>{' — '}{sign.split(' — ')[1]}</p>)}
     </div>
   )
 }
@@ -159,29 +162,36 @@ function useRouteZone(zones: RouteZone[], active: boolean): () => LocationReport
  * 起點 and never 目前位置. Fetched once; on failure no rows render, because a
  * failed fetch must never invent place names.
  */
-function RouteFrame({ info }: { info: RouteInfo | null }) {
+function RouteFrame({ info, locale }: { info: RouteInfo | null; locale: OutdoorLocale }) {
+  const copy = outdoorStrings(locale)
   if (!info) return null
+  const english = locale === 'en' && info.routeId === 'renai-001'
   return (
     <dl className="l3-route">
       <div className="l3-route-row">
         <dt>
           <IconCurrent />
-          {LAST300M_ZH['l3.label.origin']}
+          {copy['l3.label.origin']}
         </dt>
-        <dd>{info.originName}</dd>
+        <dd>{english ? 'Zhongxiao Fuxing · Exit 2, street level (step-free)' : info.originName}{english ? <small lang="zh-TW">{info.originName}</small> : null}</dd>
       </div>
       <div className="l3-route-row">
         <dt>
           <IconDestination />
-          {LAST300M_ZH['l3.label.destination']}
+          {copy['l3.label.destination']}
         </dt>
-        <dd>{info.destinationName}</dd>
+        <dd>{english ? 'Taipei City Hospital · Renai Branch, lobby (step-free)' : info.destinationName}{english ? <small lang="zh-TW">{info.destinationName}</small> : null}</dd>
       </div>
     </dl>
   )
 }
 
 export function Last300mPage() {
+  const [locale, setLocale] = useState<OutdoorLocale>(() => new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'zh-TW')
+  const localeRef = useRef(locale); localeRef.current = locale
+  const copy = outdoorStrings(locale)
+  useEffect(() => { document.documentElement.lang = locale }, [locale])
+  useEffect(() => () => { document.documentElement.lang = 'zh-TW' }, [])
   const bird = useMemo(() => new VirtualBirdAdapter(), [])
   const client = useMemo(() => new Last300mClient(API_BASE), [])
   const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null)
@@ -197,14 +207,14 @@ export function Last300mPage() {
   const [inputBusy, setInputBusy] = useState(false)
   const feedback = useMemo(() => ({
     action: (action: RemoteAction) => {
-      if (!helpActive.current && !inputActive.current) void player.play(outdoorKeysFor(ROUTE_ID, action), voiceRef.current)
+      if (!helpActive.current && !inputActive.current) void player.play(outdoorKeysFor(ROUTE_ID, action, localeRef.current), voiceRef.current, localeRef.current)
     },
     photo: (key: 'photo.wait' | 'photo.wait2') => {
-      if (ROUTE_ID === 'renai-001' && !helpActive.current && !inputActive.current) void player.play([key], voiceRef.current)
+      if (ROUTE_ID === 'renai-001' && !helpActive.current && !inputActive.current) void player.play([key], voiceRef.current, localeRef.current)
     },
     stop: () => player.stop(),
   }), [player])
-  const { state, sessionId, start, observe, observePhoto, done, confirmContinuation } = useLast300m(client, bird, ROUTE_ID, location, feedback, PHOTO_CHECK)
+  const { state, sessionId, start, observe, observePhoto, done, confirmContinuation } = useLast300m(client, bird, ROUTE_ID, location, feedback, PHOTO_CHECK, locale)
   const [draft, setDraft] = useState('')
   const [askOpen, setAskOpen] = useState(false)
   useEffect(() => () => player.dispose(), [player])
@@ -212,11 +222,23 @@ export function Last300mPage() {
   const playLocal = (keys: string[]) => {
     if (ROUTE_ID !== 'renai-001' || inputActive.current) return
     unlock()
-    void player.play(keys, voiceRef.current)
+    void player.play(keys, voiceRef.current, localeRef.current)
   }
+  const languageControl = (
+    <label className="l3-language">
+      <span>Language / 語言</span>
+      <select aria-label="Language / 語言" value={locale} onChange={event => {
+        voiceInput.current?.cancel(); player.stop(); window.speechSynthesis?.cancel()
+        const next = event.target.value === 'en' ? 'en' : 'zh-TW'
+        localeRef.current = next; setLocale(next)
+        const url = new URL(window.location.href); url.searchParams.set('lang', next)
+        window.history.replaceState(null, '', url)
+      }}><option value="zh-TW">繁體中文</option><option value="en">English</option></select>
+    </label>
+  )
   const voiceControl = (
     <label className="l3-voice">
-      {LAST300M_ZH['l3.voice.label']}
+      {copy['l3.voice.label']}
       <select value={voice} disabled={inputBusy} onChange={(event) => {
         const next = event.target.value as OutdoorVoice
         player.stop()
@@ -224,9 +246,9 @@ export function Last300mPage() {
         setVoice(next)
         if (next !== 'quiet') player.unlock()
       }}>
-        <option value="Leda">{LAST300M_ZH['l3.voice.female']}</option>
-        <option value="Puck">{LAST300M_ZH['l3.voice.male']}</option>
-        <option value="quiet">{LAST300M_ZH['l3.voice.quiet']}</option>
+        <option value="Leda">{copy['l3.voice.female']}</option>
+        <option value="Puck">{copy['l3.voice.male']}</option>
+        <option value="quiet">{copy['l3.voice.quiet']}</option>
       </select>
     </label>
   )
@@ -278,9 +300,10 @@ export function Last300mPage() {
     return (
       <div className="l3-page l3-cover">
         <h1 className="l3-title">Nightingale</h1>
-        <p className="l3-promise">{LAST300M_ZH['l3.start.promise']}</p>
+        <p className="l3-promise">{copy['l3.start.promise']}</p>
+        {languageControl}
         <NightingaleBird cue="QUIET" />
-        <RouteFrame info={routeInfo} />
+        <RouteFrame info={routeInfo} locale={locale} />
         {voiceControl}
         <button
           className="l3-primary"
@@ -291,7 +314,7 @@ export function Last300mPage() {
           }}
           disabled={state.busy}
         >
-          {LAST300M_ZH['l3.start.button']}
+          {copy['l3.start.button']}
         </button>
         {state.notice ? <p className="l3-notice">{state.notice}</p> : null}
       </div>
@@ -303,30 +326,31 @@ export function Last300mPage() {
     <div className="l3-page" ref={contentRef}>
       <header className="l3-header">
         <h1 className="l3-title">Nightingale</h1>
+        {languageControl}
       </header>
 
       <NightingaleBird cue={state.cue} />
 
-      {state.action ? <StepView action={state.action} /> : null}
+      {state.action ? <StepView action={state.action} locale={locale} /> : null}
 
       {state.phase === 'ARRIVED' ? (
-        <p className="l3-handoff">{LAST300M_ZH['l3.arrived.handoff']}</p>
+        <p className="l3-handoff">{copy['l3.arrived.handoff']}</p>
       ) : state.expects === 'walker' ? (
         // Waiting for the walker (at exit 2, mid-crossing): one button, nothing else until it is pressed.
         <button className="l3-primary l3-crossed" onClick={() => { unlock(); void done() }} disabled={state.busy}>
-          {doneLabelFor(ROUTE_ID, state.session?.checkpointId, LAST300M_ZH['l3.crossed.button'])}
+          {doneLabelFor(ROUTE_ID, state.session?.checkpointId, copy['l3.crossed.button'], locale)}
         </button>
       ) : (
         <>
           {state.action?.confirmation ? (
-            <div className="l3-confirmation" role="group" aria-label="確認目前位置">
+            <div className="l3-confirmation" role="group" aria-label={locale === 'en' ? 'Confirm your position' : '確認目前位置'}>
               <button className="l3-primary" disabled={state.busy}
                 onClick={() => { unlock(); void confirmContinuation('confirm') }}>
-                {LAST300M_ZH['l3.confirmation.yes']}
+                {copy['l3.confirmation.yes']}
               </button>
               <button className="l3-secondary" disabled={state.busy}
                 onClick={() => { unlock(); void confirmContinuation('cancel') }}>
-                {LAST300M_ZH['l3.confirmation.cancel']}
+                {copy['l3.confirmation.cancel']}
               </button>
             </div>
           ) : (
@@ -334,24 +358,24 @@ export function Last300mPage() {
               <form className="l3-observe" onSubmit={submit}>
                 <input
                   className="l3-input"
-                  aria-label="你看到什麼"
+                  aria-label={locale === 'en' ? 'What can you see?' : '你看到什麼'}
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
-                  placeholder={LAST300M_ZH['l3.input.placeholder']}
+                  placeholder={copy['l3.input.placeholder']}
                   disabled={state.busy || inputBusy}
                   autoComplete="off"
                 />
                 <button className="l3-primary" type="submit" disabled={state.busy || inputBusy || draft.trim().length === 0}>
-                  {LAST300M_ZH['l3.input.send']}
+                  {copy['l3.input.send']}
                 </button>
               </form>
               {sessionId ? <VoiceInput key={`${state.session?.checkpointId}:${JSON.stringify(state.action)}`}
-                baseUrl={API_BASE} sessionId={sessionId} control={voiceInput} disabled={state.busy || askOpen}
+                locale={locale} baseUrl={API_BASE} sessionId={sessionId} control={voiceInput} disabled={state.busy || askOpen}
                 beforeStart={() => { player.stop(); window.speechSynthesis?.cancel() }}
                 onActive={active => { inputActive.current = active; setInputBusy(active) }}
                 onTranscript={setDraft} /> : null}
               {PHOTO_ENABLED ? (
-                <PhotoInput disabled={state.busy || inputBusy} onRemind={() => playLocal(['photo.remind'])} onPhoto={(file) => { voiceInput.current?.cancel(); unlock(); void observePhoto(file) }} />
+                <PhotoInput locale={locale} disabled={state.busy || inputBusy} onRemind={() => playLocal(['photo.remind'])} onPhoto={(file) => { voiceInput.current?.cancel(); unlock(); void observePhoto(file) }} />
               ) : null}
             </>
           )}
@@ -360,7 +384,7 @@ export function Last300mPage() {
               the backend, records nothing, and parses no reply. */}
           <button ref={helpRef} className="l3-secondary l3-icon-button" onClick={() => { voiceInput.current?.cancel(); helpActive.current = true; player.stop(); setAskOpen(true) }}>
             <IconAsk className="l3-btn-icon" />
-            {LAST300M_ZH['l3.button.help']}
+            {copy['l3.button.help']}
           </button>
         </>
       )}
@@ -368,27 +392,27 @@ export function Last300mPage() {
       {state.expects !== 'walker' ? (
         <>
           {voiceControl}
-          {state.action && outdoorKeysFor(ROUTE_ID, state.action).length > 0 ? (
+          {state.action && outdoorKeysFor(ROUTE_ID, state.action, locale).length > 0 ? (
             <button className="l3-secondary l3-icon-button" disabled={state.busy || inputBusy || voice === 'quiet'}
-              onClick={() => { if (state.action) playLocal(outdoorKeysFor(ROUTE_ID, state.action)) }}>
-              <IconCurrent className="l3-btn-icon" />{LAST300M_ZH['l3.voice.repeat']}
+              onClick={() => { if (state.action) playLocal(outdoorKeysFor(ROUTE_ID, state.action, locale)) }}>
+              <IconCurrent className="l3-btn-icon" />{copy['l3.voice.repeat']}
             </button>
           ) : null}
           {ROUTE_ID === 'renai-001' && state.action?.type === 'GUIDE' && state.action.checkpointId === 'cp2x' ? (
             <div className="l3-voice-extras">
-              <button className="l3-secondary" disabled={state.busy || inputBusy || voice === 'quiet'} onClick={() => playLocal(['cp2.bike'])}>{LAST300M_ZH['l3.voice.bike']}</button>
-              <button className="l3-secondary" disabled={state.busy || inputBusy || voice === 'quiet'} onClick={() => playLocal(['cp2.water'])}>{LAST300M_ZH['l3.voice.water']}</button>
+              <button className="l3-secondary" disabled={state.busy || inputBusy || voice === 'quiet'} onClick={() => playLocal(['cp2.bike'])}>{copy['l3.voice.bike']}</button>
+              <button className="l3-secondary" disabled={state.busy || inputBusy || voice === 'quiet'} onClick={() => playLocal(['cp2.water'])}>{copy['l3.voice.water']}</button>
             </div>
           ) : null}
         </>
       ) : null}
 
-      {state.expects === 'walker' ? null : <RouteFrame info={routeInfo} />}
+      {state.expects === 'walker' ? null : <RouteFrame info={routeInfo} locale={locale} />}
 
       {state.notice ? <p className="l3-notice" role="status">{state.notice}</p> : null}
     </div>
     {askOpen ? (
-      <AskCard text={LAST300M_ZH['l3.ask.utterance']} onClose={() => { helpActive.current = false; setAskOpen(false) }} />
+      <AskCard lang={locale === 'en' ? 'en-US' : 'zh-TW'} labels={locale === 'en' ? { again: 'Say it again', done: 'Done', volume: { level: 'Volume {n} of 4', down: 'Quieter', up: 'Louder' } } : undefined} text={copy['l3.ask.utterance']} onClose={() => { helpActive.current = false; setAskOpen(false) }} />
     ) : null}
     </>
   )

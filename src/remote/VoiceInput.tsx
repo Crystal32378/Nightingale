@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type MutableRefObject } from 'react'
 import { recordingMime, VoiceCapture, type CaptureState, type RecorderLike } from './voiceCapture'
 import { transcribeAudio } from './voiceInputClient'
+import { VOICE_ERRORS_EN, type OutdoorLocale } from './locale'
 
 const messages: Record<string, string> = {
   unsupported: '這個瀏覽器暫時不能錄音。用文字跟我說也可以。',
@@ -20,6 +21,7 @@ const messages: Record<string, string> = {
 }
 
 interface Props {
+  locale?: OutdoorLocale
   baseUrl: string
   sessionId: string
   disabled: boolean
@@ -30,6 +32,7 @@ interface Props {
 }
 
 export function VoiceInput(props: Props) {
+  const en = props.locale === 'en'
   const [state, setState] = useState<CaptureState>({ phase: 'idle' })
   const callbacks = useRef(props); callbacks.current = props
   const capture = useMemo(() => new VoiceCapture({
@@ -56,33 +59,40 @@ export function VoiceInput(props: Props) {
     }
   }, [capture, props.control])
   useEffect(() => { if (props.disabled) capture.cancel() }, [capture, props.disabled])
+  useEffect(() => { capture.cancel() }, [capture, props.locale])
 
   const active = ['requesting', 'recording', 'stopping', 'transcribing'].includes(state.phase)
-  const status = state.phase === 'requesting' ? '請允許使用麥克風。'
+  const statusZh = state.phase === 'requesting' ? '請允許使用麥克風。'
     : state.phase === 'recording' ? '正在聽，說一句就好。最長 15 秒。'
     : state.phase === 'stopping' ? '正在停止錄音。'
     : state.phase === 'transcribing' ? '錄音已停止，正在轉成文字。'
     : state.phase === 'review' ? '文字放好了。可以修改，確認後再按「傳送」。'
     : state.phase === 'error' ? messages[state.error || ''] || messages.transcription_failed : ''
+  const statusEn = state.phase === 'requesting' ? 'Please allow microphone access.'
+    : state.phase === 'recording' ? 'Listening. Say one short sentence, up to 15 seconds.'
+    : state.phase === 'stopping' ? 'Stopping the recording.'
+    : state.phase === 'transcribing' ? 'Recording stopped. Turning it into text.'
+    : state.phase === 'review' ? 'Your words are in the text box. Edit them if needed, then press Send.'
+    : state.phase === 'error' ? VOICE_ERRORS_EN[state.error || ''] || VOICE_ERRORS_EN.transcription_failed : ''
   return (
-    <section className="l3-voice-input" aria-label="語音輸入">
+    <section className="l3-voice-input" aria-label={en ? 'Voice input' : '語音輸入'}>
       <div className="l3-voice-input-actions">
         {state.phase === 'recording' ? (
-          <button type="button" className="l3-primary" onClick={() => capture.stop()}>說完了</button>
+          <button type="button" className="l3-primary" onClick={() => capture.stop()}>{en ? 'Finished speaking' : '說完了'}</button>
         ) : !active ? (
           <button type="button" className="l3-secondary l3-icon-button" disabled={props.disabled} aria-describedby="l3-voice-purpose"
             onClick={() => { callbacks.current.beforeStart(); void capture.start() }}>
             <svg className="l3-btn-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <rect x="9" y="2" width="6" height="12" rx="3" /><path d="M5 10v1a7 7 0 0 0 14 0v-1M12 18v4M8 22h8" />
-            </svg>說一句
+            </svg>{en ? 'Say a sentence' : '說一句'}
           </button>
         ) : null}
-        {active ? <button type="button" className="l3-secondary" onClick={() => capture.cancel()}>取消錄音</button> : null}
+        {active ? <button type="button" className="l3-secondary" onClick={() => capture.cancel()}>{en ? 'Cancel recording' : '取消錄音'}</button> : null}
       </div>
-      <p className="l3-voice-input-status" role="status" aria-live="polite">{status}</p>
-      <p className="l3-voice-purpose" id="l3-voice-purpose">先停在安全的地方。錄音會傳送給 Google Vertex AI 轉成文字，確認後再傳送。</p>
-      <details className="l3-photo-details"><summary>錄音怎麼處理</summary>
-        <p>Nightingale 只暫時處理錄音，不保存原始音訊。文字在你按「傳送」前，不會用來判斷路線。</p>
+      <p className="l3-voice-input-status" role="status" aria-live="polite">{en ? statusEn : statusZh}</p>
+      <p className="l3-voice-purpose" id="l3-voice-purpose">{en ? 'Stop somewhere safe first. Audio is sent to Google Vertex AI to make a text draft. Check it before pressing Send.' : '先停在安全的地方。錄音會傳送給 Google Vertex AI 轉成文字，確認後再傳送。'}</p>
+      <details className="l3-photo-details"><summary>{en ? 'How recordings are handled' : '錄音怎麼處理'}</summary>
+        <p>{en ? 'Nightingale processes audio temporarily and does not save the original recording. Your words do not enter the route flow until you press Send.' : 'Nightingale 只暫時處理錄音，不保存原始音訊。文字在你按「傳送」前，不會用來判斷路線。'}</p>
       </details>
     </section>
   )

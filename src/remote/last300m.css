@@ -315,3 +315,12 @@
 .l3-voice-input-status { margin: 0; line-height: 1.6; color: #2c3a33; }
 .l3-voice-input-status:empty { display: none; }
 .l3-voice-purpose { margin: 0; font-size: 0.95rem; line-height: 1.6; color: #4c5e54; }
+.l3-language { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; }
+.l3-language select { min-height: 44px; font: inherit; color: #2c3a33; border: 1px solid #c8d2c8; background: white; border-radius: 10px; padding: 8px; }
+.l3-header { flex-wrap: wrap; gap: 12px; }
+.l3-route dd small { display: block; font-size: 0.85rem; margin-top: 4px; }
+.l3-page:lang(en) .l3-step-label { font-size: 1.6rem; line-height: 1.3; overflow-wrap: anywhere; }
+.l3-page:lang(en) .l3-voice-input-actions { flex-wrap: wrap; }
+.l3-page:lang(en) .l3-voice-input-actions button { min-width: 135px; }
+.ask-card:lang(en) .ask-line { font-size: clamp(1.4rem, 5vw, 2.2rem); line-height: 1.5; }
+.l3-sign-hint { font-size: 1rem; line-height: 1.5; font-weight: normal; letter-spacing: normal; margin: 8px 0 0; }

@@ -1,0 +1,428 @@
+{
+  "routeId": "renai-001",
+  "locale": "en",
+  "model": "gemini-2.5-flash-tts",
+  "style": "Speak English naturally at a normal conversational pace, with relaxed, effortless articulation and a warm, calm tone. Read only the following text verbatim, without adding any words: ",
+  "scriptSha256": "a1579077950ff8a82d1ed5c781ad0320520114be1099b66bc8d9d6dff0d2fe5e",
+  "acceptance": "Crystal accepted fixed copy, Leda/Puck voice IDs and revised normal-pace samples. Other clips have generation/hash checks, not individual human listening acceptance.",
+  "utterances": {
+    "cp1.guide": {
+      "text": "Take Elevator 1 to street level. Exit 2 is just outside.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp1.guide.wav",
+          "sha256": "a3088afbd421aaba6e38af6222c472a85406aa7808b62b0af61e8aad531fe887",
+          "seconds": 5.090958333333333,
+          "generatedAt": "2026-10-08T04:58:34.558545+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp1.guide.wav",
+          "sha256": "8a05b581c09be9980c84ce74d58e0f76ddaa2f4cc67927abe23d0b83e55e39fe",
+          "seconds": 5.010958333333333,
+          "generatedAt": "2026-10-08T05:00:35.385764+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "cp1.board": {
+      "text": "At Exit 2, look at the notice board nearby. Look for the Chinese name of Taipei City Hospital, Renai Branch.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp1.board.wav",
+          "sha256": "5dda794e4555e8257c785620fb21b52a3f49e709823b39af0e155723c9513bb7",
+          "seconds": 8.650958333333334,
+          "generatedAt": "2026-10-08T04:58:41.628175+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp1.board.wav",
+          "sha256": "e19d57ea75efe06357ceba8c414b86861bca22b1473825975ebc3e1716c0c3d7",
+          "seconds": 8.450958333333332,
+          "generatedAt": "2026-10-08T05:00:42.308429+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "cp1.exit": {
+      "text": "Outside Exit 2, turn right.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp1.exit.wav",
+          "sha256": "4b3057f67b3d11986fc3c0e218aae9aec045d5fd880386f8033338679dd3abd5",
+          "seconds": 2.770958333333333,
+          "generatedAt": "2026-10-08T04:58:46.074081+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp1.exit.wav",
+          "sha256": "16e1b86192ad304b7a40ef3593a860c55eb857ca136a77f1f6f1890da0e13e74",
+          "seconds": 3.0509583333333334,
+          "generatedAt": "2026-10-08T05:00:47.191676+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "cp2.cross": {
+      "text": "Wait for the green pedestrian signal, then cross Fuxing South Road.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp2.cross.wav",
+          "sha256": "a0b88124215e96a33da3a3da82e92d4cec19a47cb14de093957bf419e88018e9",
+          "seconds": 5.010958333333333,
+          "generatedAt": "2026-10-08T04:58:51.171852+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp2.cross.wav",
+          "sha256": "ff27c5eb7ffb94fdbb3348c93342445848924d426df438d72100025f5d9f44f4",
+          "seconds": 5.530958333333333,
+          "generatedAt": "2026-10-08T05:00:52.776344+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "cp2.after": {
+      "text": "Now that you have crossed, turn right.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp2.after.wav",
+          "sha256": "d94846574cadab003c8154acf9d310e6d5c44484006a1fcba76fff8d0940548d",
+          "seconds": 3.0109583333333334,
+          "generatedAt": "2026-10-08T04:58:56.050468+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp2.after.wav",
+          "sha256": "e5ece3b4a3d9e441ee3c72813788004e258dedb48745a2bf7ab20ec863911ec3",
+          "seconds": 2.8109583333333332,
+          "generatedAt": "2026-10-08T05:00:57.166930+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "cp2.along": {
+      "text": "Continue straight along Fuxing South Road.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp2.along.wav",
+          "sha256": "d5232810fda5d787f84b28f46be1692934c5398441ac7b7201c3752e32a30790",
+          "seconds": 3.1309583333333335,
+          "generatedAt": "2026-10-08T04:47:52.690501+00:00",
+          "listeningReview": "accepted_sample_by_Crystal_2026_10_08"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp2.along.wav",
+          "sha256": "5c818465190b2c001a402d348d43b4dc090947296bf328d39a96bedfe8db8b16",
+          "seconds": 3.3709583333333333,
+          "generatedAt": "2026-10-08T04:47:57.270228+00:00",
+          "listeningReview": "accepted_sample_by_Crystal_2026_10_08"
+        }
+      }
+    },
+    "cp2.bike": {
+      "text": "Bicycles use this sidewalk too. Stay on the inner side.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp2.bike.wav",
+          "sha256": "62062e558fabf5c82f134ceb190172286c869664aabe5a897892e8108823f31e",
+          "seconds": 4.410958333333333,
+          "generatedAt": "2026-10-08T04:59:01.004913+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp2.bike.wav",
+          "sha256": "cea86ed1450b7a746df83e35888021be198a1b7c722f4846f9dab136b0436086",
+          "seconds": 4.770958333333334,
+          "generatedAt": "2026-10-08T05:01:02.408542+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "cp2.water": {
+      "text": "There is a FamilyMart along the way if you need water. Take your time.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp2.water.wav",
+          "sha256": "c5dc2d0c2fe30656e13b88e13471373834395810f8d71739db44f6a5782e85b2",
+          "seconds": 4.330958333333333,
+          "generatedAt": "2026-10-08T04:59:06.856234+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp2.water.wav",
+          "sha256": "4f4b907585c4ebbf933a80e7e0d840a3b6dd28a5531c88cd6fbfb985ce793616",
+          "seconds": 4.330958333333333,
+          "generatedAt": "2026-10-08T05:01:07.479171+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "cp3.cross": {
+      "text": "Wait for the green pedestrian signal, then cross Renai Road.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp3.cross.wav",
+          "sha256": "26b01fcf0f734f586be7426fba820d812437f6ecc7b29a74cb1f2687f2e6ef1d",
+          "seconds": 4.730958333333334,
+          "generatedAt": "2026-10-08T04:59:11.836106+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp3.cross.wav",
+          "sha256": "9b5067dc4300c0e702340704a1734989fe6befd894d6afb64334a063df2bd798",
+          "seconds": 4.690958333333334,
+          "generatedAt": "2026-10-08T05:01:12.639087+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "cp3.after": {
+      "text": "After crossing, turn left. The hospital is on this side.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp3.after.wav",
+          "sha256": "de330d5a83b4f652d5a2ebd979349fb7e75f448b57f1e094999a69e5728ef244",
+          "seconds": 4.5709583333333335,
+          "generatedAt": "2026-10-08T04:59:16.612997+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp3.after.wav",
+          "sha256": "a34274c89cd491d553b942eae3cfc2112ec6c80b3a5be25b0e86a175bfdd5e00",
+          "seconds": 4.6109583333333335,
+          "generatedAt": "2026-10-08T05:01:17.802456+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "cp4.driveway": {
+      "text": "The driveway with the red Chinese characters for Emergency and the letter P is for vehicles. The lobby entrance is a little farther ahead.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp4.driveway.wav",
+          "sha256": "cfec3588996240c32fade6a97d910aa82797a9a9f3b15067040d7dbb4ed2002c",
+          "seconds": 9.610958333333333,
+          "generatedAt": "2026-10-08T04:59:28.779621+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp4.driveway.wav",
+          "sha256": "f3dd340c064ddc72a825d15fc52382823f2237b5aeda73b3614138047636a330",
+          "seconds": 9.970958333333334,
+          "generatedAt": "2026-10-08T05:01:25.328520+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "ask.entrance": {
+      "text": "Does the sign above the door show the Chinese characters for Emergency? For outpatient visits, use the automatic glass doors to the lobby.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/ask.entrance.wav",
+          "sha256": "bdc0ea20dd66d602ef98d6e7ea935bb927ce39402e08b87eca3f8babeaaec538",
+          "seconds": 10.490958333333333,
+          "generatedAt": "2026-10-08T04:59:37.828066+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/ask.entrance.wav",
+          "sha256": "a4d8b8368c9da7c06bfd41f45f12d1b39c94b0bc47b3675ea6c2d36fdbadb957",
+          "seconds": 9.210958333333334,
+          "generatedAt": "2026-10-08T05:01:32.135670+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "cp5.lobby": {
+      "text": "The row of automatic glass doors is the lobby entrance.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/cp5.lobby.wav",
+          "sha256": "087e6aa7b1f51ffa3df80a093213ee8b8f38b5a68b43d71ecb5b37b4eb4ba8ba",
+          "seconds": 4.370958333333333,
+          "generatedAt": "2026-10-08T04:59:42.845813+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/cp5.lobby.wav",
+          "sha256": "f1a80d2db7318253cf559a1b4ebcb803e0f6fe05bc3689e96a51cb110d9e13c3",
+          "seconds": 4.050958333333333,
+          "generatedAt": "2026-10-08T05:01:37.189375+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "recover.er": {
+      "text": "That is the emergency driveway. The lobby entrance is a little farther ahead.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/recover.er.wav",
+          "sha256": "9032d1849888dc173b73f8b3b9b2f816a0f849737b9c4d8ac45b89c55b1ad45c",
+          "seconds": 5.5709583333333335,
+          "generatedAt": "2026-10-08T04:59:48.555006+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/recover.er.wav",
+          "sha256": "077b949d5f435f553b2949c3870b1b92a7b0ca4d951f3c69ed83d9cdf8eb3552",
+          "seconds": 5.690958333333334,
+          "generatedAt": "2026-10-08T05:01:43.146548+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "recover.daan.a": {
+      "text": "This road leads to Da'an Road. Let us turn around.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/recover.daan.a.wav",
+          "sha256": "76d1f45e5a9e4c2ff0ce6a322bf7aa794d015da012b859effaafe0bebbae977f",
+          "seconds": 4.5709583333333335,
+          "generatedAt": "2026-10-08T04:59:54.264014+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/recover.daan.a.wav",
+          "sha256": "aebf26758f3ec64240f98683801a1a025c3098e985924a444b95b62b761b99f8",
+          "seconds": 4.050958333333333,
+          "generatedAt": "2026-10-08T05:01:48.223229+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "recover.daan.b": {
+      "text": "Follow the hospital wall back until you see the automatic glass doors.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/recover.daan.b.wav",
+          "sha256": "2d0ca0e98c03d0ce6002010dd5ad76c7748d316c240f4bd0bf2abb024b75dc9a",
+          "seconds": 5.130958333333333,
+          "generatedAt": "2026-10-08T04:59:59.791515+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/recover.daan.b.wav",
+          "sha256": "aa8196a667549af1781f433469400abd9b2430046b4613f5a781a4ec60c8de49",
+          "seconds": 4.690958333333334,
+          "generatedAt": "2026-10-08T05:01:53.682936+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "recover.canopy": {
+      "text": "The green-roofed corridor is a side passage. Turn left toward Renai Road. The lobby entrance is ahead.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/recover.canopy.wav",
+          "sha256": "c2be03200dfde2d22c6eb4427b8a941b0ada56e0e096a626832777c2264ab675",
+          "seconds": 7.170958333333333,
+          "generatedAt": "2026-10-08T05:00:05.802263+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/recover.canopy.wav",
+          "sha256": "e8296c69267bc2e71ad032425805ced69a2b3e056d41b57e7650c6c9b031a67e",
+          "seconds": 7.090958333333333,
+          "generatedAt": "2026-10-08T05:02:01.687578+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "arrived": {
+      "text": "This is the hospital entrance. The service desk is on your left inside. They can help you with the next step.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/arrived.wav",
+          "sha256": "2a3fc7f7bcbb432944cd5021de66ec4a26fc76915418e494c6c9be155d56de53",
+          "seconds": 7.410958333333333,
+          "generatedAt": "2026-10-08T05:00:11.965635+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/arrived.wav",
+          "sha256": "68dafbe3d163af0d8c10b22498df9d5ad35e164d10fd0ddeacd44605902d3284",
+          "seconds": 7.090958333333333,
+          "generatedAt": "2026-10-08T05:02:08.892318+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "reanchor": {
+      "text": "What can you see nearby? Just tell me.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/reanchor.wav",
+          "sha256": "afea716eab644da990cc1a66b393de26dca7d805a334cd4f0bd94e08db9b71a2",
+          "seconds": 2.8109583333333332,
+          "generatedAt": "2026-10-08T04:48:02.253540+00:00",
+          "listeningReview": "accepted_sample_by_Crystal_2026_10_08"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/reanchor.wav",
+          "sha256": "036a299f9186ec4bd48daa83145518ecf5ecb1b7896289907af6ca79a55f9d68",
+          "seconds": 3.0109583333333334,
+          "generatedAt": "2026-10-08T04:48:06.786337+00:00",
+          "listeningReview": "accepted_sample_by_Crystal_2026_10_08"
+        }
+      }
+    },
+    "photo.remind": {
+      "text": "Photograph the sign only. Keep faces, number plates, and patient information out of the picture. Google will read the photo. Nightingale does not save the original image.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/photo.remind.wav",
+          "sha256": "26116d6f302d683c7fe84aa92006f37c3b26355d8e6c56e2b15f12731f1e8dbc",
+          "seconds": 12.570958333333333,
+          "generatedAt": "2026-10-08T05:00:22.173666+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/photo.remind.wav",
+          "sha256": "4c0ccd23e8a2709b1eb602c7ac473a7b6276a28b5d88976e1ed335276473a54c",
+          "seconds": 12.010958333333333,
+          "generatedAt": "2026-10-08T05:02:18.527986+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "photo.wait": {
+      "text": "Let me take a look at this photo.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/photo.wait.wav",
+          "sha256": "f1ebe399660bf363da56b4b241e293d1c52c657de66a303b5f84d81c376eec63",
+          "seconds": 2.5309583333333334,
+          "generatedAt": "2026-10-08T05:00:26.500892+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/photo.wait.wav",
+          "sha256": "c6704b40c253c73958fc4692ec2122dd18f5b5f99513dba5c332743b8c02466a",
+          "seconds": 2.1709583333333335,
+          "generatedAt": "2026-10-08T05:02:22.616990+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "photo.wait2": {
+      "text": "I am still looking.",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/photo.wait2.wav",
+          "sha256": "1be31cd98d2b4f651df070b781e6560797c0fd6e79cc4f12e11b404ee31a0be0",
+          "seconds": 1.5709583333333332,
+          "generatedAt": "2026-10-08T05:00:30.052366+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/photo.wait2.wav",
+          "sha256": "fd43fabf035a01537a01f8c1706c3baf2ea3f144568a57f75f59642c8cefd7c9",
+          "seconds": 1.9309583333333333,
+          "generatedAt": "2026-10-08T05:02:26.182651+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    }
+  }
+}

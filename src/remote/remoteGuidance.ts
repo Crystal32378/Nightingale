@@ -1,5 +1,7 @@
 import type { RemoteAction } from './last300mClient'
 import { LAST300M_ZH } from './strings'
+import type { OutdoorLocale } from './locale'
+import { englishGuidance } from './englishGuidance'
 
 /**
  * The narrow outlet for server-authored text (福's ruling: no global
@@ -27,7 +29,8 @@ export interface GuidanceView {
   lookFor: string[]
 }
 
-export function deriveGuidance(action: RemoteAction): GuidanceView {
+export function deriveGuidance(action: RemoteAction, locale: OutdoorLocale = 'zh-TW', routeId?: string): GuidanceView {
+  if (locale === 'en') return englishGuidance(action, routeId)
   switch (action.type) {
     case 'GUIDE':
     case 'RECOVER':

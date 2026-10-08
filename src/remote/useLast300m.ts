@@ -12,7 +12,8 @@ import {
 } from './last300mClient'
 import { PhotoPrepareError, preparePhoto } from './photo'
 import { photoDiagnostic } from './photoDiagnostic'
-import { LAST300M_ZH } from './strings'
+import type { Last300mStringKey } from './strings'
+import { outdoorStrings, type OutdoorLocale } from './locale'
 
 /**
  * Session state for the outdoor last-300m flow. All route truth lives on the
@@ -34,6 +35,8 @@ export interface Last300mState {
   cue: Cue
   busy: boolean
   notice: string | null
+  noticeKey?: Last300mStringKey | null
+  diagnosticCode?: string
   /** 'walker': the step waits for the walker's own word (exit reached, road crossed) — one button, bird quiet. */
   expects: Expects
 }
@@ -47,6 +50,10 @@ export interface OutdoorFeedback {
   stop(): void
 }
 
+function noticeText(key: Last300mStringKey, locale: OutdoorLocale, diagnosticCode?: string): string {
+  return outdoorStrings(locale)[key] + (diagnosticCode ? ` ${locale === 'en' ? 'Check code: ' : '檢查代碼：'}${diagnosticCode}` : '')
+}
+
 export function useLast300m(
   client: Last300mClient,
   bird: BirdCueSink,
@@ -54,14 +61,17 @@ export function useLast300m(
   location: () => LocationReport | undefined = () => undefined,
   feedback?: OutdoorFeedback,
   photoCheck = false,
+  locale: OutdoorLocale = 'zh-TW',
 ) {
+  const localeRef = useRef(locale); localeRef.current = locale
+  const message = useCallback((key: Last300mStringKey) => outdoorStrings(localeRef.current)[key], [])
   const [state, setState] = useState<Last300mState>({
     phase: 'IDLE',
     session: null,
     action: null,
     cue: 'QUIET',
     busy: false,
-    notice: null,
+    notice: null, noticeKey: null, diagnosticCode: undefined,
     expects: 'evidence',
   })
   const stillWorking = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -69,6 +79,9 @@ export function useLast300m(
   // before React has painted that disabled state.
   const inFlight = useRef(false)
   const [sessionId, setSessionId] = useState<string | null>(null)
+  useEffect(() => {
+    setState(current => current.noticeKey ? { ...current, notice: noticeText(current.noticeKey, locale, current.diagnosticCode) } : current)
+  }, [locale])
 
   useEffect(() => () => {
     if (stillWorking.current) clearTimeout(stillWorking.current)
@@ -87,7 +100,7 @@ export function useLast300m(
         action,
         cue,
         busy: false,
-        notice: null,
+        notice: null, noticeKey: null, diagnosticCode: undefined,
         expects,
       })
       feedback?.action(action)
@@ -95,24 +108,24 @@ export function useLast300m(
     [bird, feedback],
   )
 
-  const fail = useCallback((notice: string) => {
+  const fail = useCallback((key: Last300mStringKey, diagnosticCode?: string) => {
     if (stillWorking.current) clearTimeout(stillWorking.current)
     feedback?.stop()
-    setState((s) => ({ ...s, busy: false, notice }))
+    setState((s) => ({ ...s, busy: false, notice: noticeText(key, localeRef.current, diagnosticCode), noticeKey: key, diagnosticCode }))
   }, [feedback])
 
   const start = useCallback(async () => {
     if (inFlight.current) return
     inFlight.current = true
     feedback?.stop()
-    setState((s) => ({ ...s, busy: true, notice: null }))
+    setState((s) => ({ ...s, busy: true, notice: null, noticeKey: null, diagnosticCode: undefined }))
     try {
       const started = await client.createSession(routeId)
       setSessionId(started.sessionId)
       apply(started.session, started.action, started.expects)
     } catch (err) {
       if (!(err instanceof RemoteProtocolError)) throw err
-      fail(LAST300M_ZH['l3.notice.offline'])
+      fail('l3.notice.offline')
     } finally {
       inFlight.current = false
     }
@@ -124,14 +137,14 @@ export function useLast300m(
       if (trimmed.length === 0 || sessionId === null || inFlight.current) return
       inFlight.current = true
       feedback?.stop()
-      setState((s) => ({ ...s, busy: true, notice: null,
+      setState((s) => ({ ...s, busy: true, notice: null, noticeKey: null, diagnosticCode: undefined,
         action: s.action?.confirmation ? { ...s.action, confirmation: undefined } : s.action }))
       try {
         const result = await client.observe(sessionId, trimmed, location())
         apply(result.session, result.action, result.expects)
       } catch (err) {
         if (!(err instanceof RemoteProtocolError)) throw err
-        fail(LAST300M_ZH['l3.notice.offline'])
+        fail('l3.notice.offline')
       } finally {
         inFlight.current = false
       }
@@ -143,13 +156,13 @@ export function useLast300m(
     if (sessionId === null || inFlight.current || state.expects !== 'walker' || state.action?.confirmation) return
     inFlight.current = true
     feedback?.stop()
-    setState((s) => ({ ...s, busy: true, notice: null }))
+    setState((s) => ({ ...s, busy: true, notice: null, noticeKey: null, diagnosticCode: undefined }))
     try {
       const result = await client.confirmDone(sessionId)
       apply(result.session, result.action, result.expects)
     } catch (err) {
       if (!(err instanceof RemoteProtocolError)) throw err
-      fail(LAST300M_ZH['l3.notice.offline'])
+      fail('l3.notice.offline')
     } finally {
       inFlight.current = false
     }
@@ -160,7 +173,7 @@ export function useLast300m(
     if (sessionId === null || inFlight.current || !confirmation || state.expects !== 'evidence') return
     inFlight.current = true
     feedback?.stop()
-    setState((s) => ({ ...s, busy: true, notice: null }))
+    setState((s) => ({ ...s, busy: true, notice: null, noticeKey: null, diagnosticCode: undefined }))
     try {
       const result = await client.confirmContinuation(sessionId, { id: confirmation.id, answer }, location())
       apply(result.session, result.action, result.expects)
@@ -169,11 +182,11 @@ export function useLast300m(
       if (err.status === 409) {
         feedback?.stop()
         setState((s) => ({ ...s, busy: false,
-          action: s.action ? { ...s.action, confirmation: undefined, question: LAST300M_ZH['l3.reanchor.question'] } : null,
-          notice: LAST300M_ZH['l3.confirmation.expired'],
+          action: s.action ? { ...s.action, confirmation: undefined, question: outdoorStrings('zh-TW')['l3.reanchor.question'] } : null,
+          notice: message('l3.confirmation.expired'), noticeKey: 'l3.confirmation.expired',
         }))
       } else {
-        fail(LAST300M_ZH['l3.notice.offline'])
+        fail('l3.notice.offline')
       }
     } finally {
       inFlight.current = false
@@ -185,12 +198,12 @@ export function useLast300m(
       if (sessionId === null || inFlight.current) return
       inFlight.current = true
       feedback?.photo('photo.wait')
-      setState((s) => ({ ...s, busy: true, notice: LAST300M_ZH['l3.photo.reading'],
+      setState((s) => ({ ...s, busy: true, notice: message('l3.photo.reading'), noticeKey: 'l3.photo.reading',
         action: s.action?.confirmation ? { ...s.action, confirmation: undefined } : s.action }))
       stillWorking.current = setTimeout(
         () => {
           feedback?.photo('photo.wait2')
-          setState((s) => (s.busy ? { ...s, notice: LAST300M_ZH['l3.photo.stillWorking'] } : s))
+          setState((s) => (s.busy ? { ...s, notice: message('l3.photo.stillWorking'), noticeKey: 'l3.photo.stillWorking' } : s))
         },
         PHOTO_STILL_WORKING_MS,
       )
@@ -201,15 +214,15 @@ export function useLast300m(
       } catch (err) {
         const notice =
           err instanceof PhotoPrepareError
-            ? LAST300M_ZH['l3.photo.unreadable']
+            ? 'l3.photo.unreadable'
             : err instanceof RemoteProtocolError && err.status === 429
-              ? LAST300M_ZH['l3.photo.limit']
+              ? 'l3.photo.limit'
               : err instanceof RemoteProtocolError
-                ? LAST300M_ZH['l3.notice.offline']
+                ? 'l3.notice.offline'
                 : null
         if (notice === null) throw err
         const diagnostic = photoCheck && err instanceof PhotoPrepareError ? await photoDiagnostic(err, file) : null
-        fail(diagnostic ? `${notice} 檢查代碼：${diagnostic}` : notice)
+        fail(notice, diagnostic ?? undefined)
       } finally {
         inFlight.current = false
       }

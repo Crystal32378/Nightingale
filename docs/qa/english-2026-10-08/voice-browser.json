@@ -1,0 +1,29 @@
+{
+  "checkedAt": "2026-10-08T04:50:41.056Z",
+  "receipts": [
+    {
+      "engine": "chromium",
+      "version": "154.0.8037.98",
+      "audioRequests": [
+        {
+          "mime": "audio/webm",
+          "bytes": 5156
+        }
+      ],
+      "assertions": "editable transcript without auto-send; one explicit send; no capture before click; cancel/help/pagehide release tracks; both crossings and confirmation hide input; no JS errors or overflow",
+      "scope": "Desktop engines and synthetic oscillator with intercepted API; WebKit negotiates native MP4 under a restricted MIME capability list. Not iPhone LINE or real model speech acceptance"
+    },
+    {
+      "engine": "webkit",
+      "version": "26.5",
+      "audioRequests": [
+        {
+          "mime": "audio/mp4",
+          "bytes": 2879
+        }
+      ],
+      "assertions": "editable transcript without auto-send; one explicit send; no capture before click; cancel/help/pagehide release tracks; both crossings and confirmation hide input; no JS errors or overflow",
+      "scope": "Desktop engines and synthetic oscillator with intercepted API; WebKit negotiates native MP4 under a restricted MIME capability list. Not iPhone LINE or real model speech acceptance"
+    }
+  ]
+}

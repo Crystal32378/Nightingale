@@ -38,10 +38,10 @@ function LevelBars({ level }: { level: number }) {
   )
 }
 
-export function VolumeControl({ context }: { context: ListeningContext }) {
+export function VolumeControl({ context, labels }: { context: ListeningContext; labels?: { level: string; down: string; up: string } }) {
   const levels = useSyncExternalStore(subscribe, getLevels)
   const level = levels[context]
-  const ariaLabel = label('label.volume.level').replace('{n}', String(level + 1))
+  const ariaLabel = (labels?.level ?? label('label.volume.level')).replace('{n}', String(level + 1))
 
   return (
     <div className={`volume volume-${context.toLowerCase()}`} role="group" aria-label={ariaLabel}>
@@ -49,7 +49,7 @@ export function VolumeControl({ context }: { context: ListeningContext }) {
       <button
         type="button"
         className="volume-btn"
-        aria-label={label('label.volume.down')}
+        aria-label={labels?.down ?? label('label.volume.down')}
         disabled={level === 0}
         onClick={() => lowerContext(context)}
       >
@@ -59,7 +59,7 @@ export function VolumeControl({ context }: { context: ListeningContext }) {
       <button
         type="button"
         className="volume-btn"
-        aria-label={label('label.volume.up')}
+        aria-label={labels?.up ?? label('label.volume.up')}
         disabled={level === 3}
         onClick={() => raiseContext(context)}
       >

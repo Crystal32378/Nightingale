@@ -7,12 +7,12 @@ import { speechVolumeFor } from './volumeStore'
  * Loudness is not the sentence's business either: it comes from the level the
  * person chose for this listening context (see volumeStore / voice/level.ts).
  */
-export function speak(text: string, key = 'guidance.go'): void {
+export function speak(text: string, key = 'guidance.go', lang = 'zh-TW'): void {
   if (text.trim().length === 0) return
   try {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
     const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = 'zh-TW'
+    utterance.lang = lang
     utterance.rate = 0.95
     utterance.volume = speechVolumeFor(key)
     window.speechSynthesis.cancel()
