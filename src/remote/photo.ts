@@ -15,7 +15,13 @@ export interface PreparedPhoto {
   data: string
 }
 
-export class PhotoPrepareError extends Error {}
+export type PhotoErrorCode = 'P-UNKNOWN' | 'P-DECODE' | 'P-CANVAS' | 'P-ENCODE' | 'P-JPEG' | 'P-META'
+
+export class PhotoPrepareError extends Error {
+  constructor(message: string, readonly code: PhotoErrorCode = 'P-UNKNOWN', readonly causeName = 'none') {
+    super(message)
+  }
+}
 
 /** Scales (w, h) down to fit a max×max box, keeping the aspect ratio. Never scales up. */
 export function fitWithin(width: number, height: number, max: number): { width: number; height: number } {
@@ -27,7 +33,7 @@ interface MetadataSegment { start: number; end: number }
 
 /** Walk framing, including multiple scans; never interpret compressed pixels as headers. */
 function jpegMetadataSegments(bytes: Uint8Array): MetadataSegment[] {
-  const invalid = () => new PhotoPrepareError('invalid encoded JPEG')
+  const invalid = () => new PhotoPrepareError('invalid encoded JPEG', 'P-JPEG')
   if (bytes[0] !== 0xff || bytes[1] !== 0xd8) throw invalid()
   const metadata: MetadataSegment[] = []
   let i = 2
@@ -108,23 +114,24 @@ export async function preparePhoto(file: Blob): Promise<PreparedPhoto> {
   let bitmap: ImageBitmap
   try {
     bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
-  } catch {
-    throw new PhotoPrepareError('not a readable image')
+  } catch (cause) {
+    const name = cause !== null && typeof cause === 'object' && 'name' in cause && typeof cause.name === 'string' ? cause.name : 'unknown'
+    throw new PhotoPrepareError('not a readable image', 'P-DECODE', name)
   }
   const { width, height } = fitWithin(bitmap.width, bitmap.height, PHOTO_MAX_EDGE)
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
   const ctx = canvas.getContext('2d')
-  if (!ctx) throw new PhotoPrepareError('no canvas')
+  if (!ctx) throw new PhotoPrepareError('no canvas', 'P-CANVAS')
   ctx.drawImage(bitmap, 0, 0, width, height)
   bitmap.close()
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', JPEG_QUALITY))
   canvas.width = 0
   canvas.height = 0
-  if (!blob) throw new PhotoPrepareError('encode failed')
+  if (!blob) throw new PhotoPrepareError('encode failed', 'P-ENCODE')
   // Clean only the newly encoded pixels, never the camera's original file.
   const bytes = stripCanvasJpegMetadata(new Uint8Array(await blob.arrayBuffer()))
-  if (hasJpegMetadata(bytes)) throw new PhotoPrepareError('metadata survived re-encoding')
+  if (hasJpegMetadata(bytes)) throw new PhotoPrepareError('metadata survived re-encoding', 'P-META')
   return { mimeType: 'image/jpeg', data: toBase64(bytes) }
 }

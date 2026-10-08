@@ -32,6 +32,7 @@ const ROUTE_ID = (import.meta.env.VITE_LAST300M_ROUTE as string | undefined) ?? 
  * live page; ?photo=1 turns it on for review.
  */
 const PHOTO_ENABLED = new URLSearchParams(window.location.search).get('photo') === '1'
+const PHOTO_CHECK = new URLSearchParams(window.location.search).get('photoCheck') === '1'
 
 /**
  * Photo input. The first press only reminds (the bird's one spoken line, shown
@@ -198,7 +199,7 @@ export function Last300mPage() {
     },
     stop: () => player.stop(),
   }), [player])
-  const { state, start, observe, observePhoto, done, confirmContinuation } = useLast300m(client, bird, ROUTE_ID, location, feedback)
+  const { state, start, observe, observePhoto, done, confirmContinuation } = useLast300m(client, bird, ROUTE_ID, location, feedback, PHOTO_CHECK)
   const [draft, setDraft] = useState('')
   const [askOpen, setAskOpen] = useState(false)
   useEffect(() => () => player.dispose(), [player])

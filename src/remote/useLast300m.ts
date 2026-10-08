@@ -11,6 +11,7 @@ import {
   type TextContinuationAnswer,
 } from './last300mClient'
 import { PhotoPrepareError, preparePhoto } from './photo'
+import { photoDiagnostic } from './photoDiagnostic'
 import { LAST300M_ZH } from './strings'
 
 /**
@@ -52,6 +53,7 @@ export function useLast300m(
   routeId: string,
   location: () => LocationReport | undefined = () => undefined,
   feedback?: OutdoorFeedback,
+  photoCheck = false,
 ) {
   const [state, setState] = useState<Last300mState>({
     phase: 'IDLE',
@@ -206,12 +208,13 @@ export function useLast300m(
                 ? LAST300M_ZH['l3.notice.offline']
                 : null
         if (notice === null) throw err
-        fail(notice)
+        const diagnostic = photoCheck && err instanceof PhotoPrepareError ? await photoDiagnostic(err, file) : null
+        fail(diagnostic ? `${notice} 檢查代碼：${diagnostic}` : notice)
       } finally {
         inFlight.current = false
       }
     },
-    [apply, client, fail, feedback, location, sessionId],
+    [apply, client, fail, feedback, location, photoCheck, sessionId],
   )
 
   return { state, start, observe, observePhoto, done, confirmContinuation }
