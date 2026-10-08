@@ -113,7 +113,9 @@ function toBase64(bytes: Uint8Array): string {
 export async function preparePhoto(file: Blob): Promise<PreparedPhoto> {
   let bitmap: ImageBitmap
   try {
-    bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
+    // Use the native orientation default; older WebKit rejects the renamed
+    // 'from-image' option. Actual iPhone orientation still needs field acceptance.
+    bitmap = await createImageBitmap(file)
   } catch (cause) {
     const name = cause !== null && typeof cause === 'object' && 'name' in cause && typeof cause.name === 'string' ? cause.name : 'unknown'
     throw new PhotoPrepareError('not a readable image', 'P-DECODE', name)
