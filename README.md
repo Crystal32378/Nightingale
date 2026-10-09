@@ -11,11 +11,13 @@ It grows out of the Walk Me There principle:
 
 When the system knows, it guides. When it does not know, it says so — and helps the person ask for the next step instead of pretending.
 
-## Current Chinese outdoor preview — AI Builder Cup
+## Current bilingual outdoor preview — AI Builder Cup
 
 The reviewed outdoor flow is opened with `?flow=last300m`; its route/API/evaluation source lives in [Nightingale-Walk-with-Me](https://github.com/Crystal32378/Nightingale-Walk-with-Me). This repository provides the React interface, bird and 44 fixed Chinese recordings (Leda/Puck). The outdoor backend uses Gemini on Vertex AI; the earlier indoor prototype below remains documented as project history.
 
-[English / Chinese prototype](https://nightingale-walk-with-me--english-20261008-q4gion1y.web.app/?flow=last300m&photo=1&lang=en) — expires **2026-11-07 13:27 Asia/Taipei**. Backend runtime `34bc9be`; frontend runtime `cdb9da5`. The language switch preserves the active session and pending confirmation.
+[English / Chinese prototype](https://nightingale-walk-with-me--english-20261008-q4gion1y.web.app/?flow=last300m&photo=1&lang=en) — expires **2026-11-08 12:29 Asia/Taipei**. Backend runtime `34bc9be` remains unchanged. The language switch preserves the active session and pending confirmation.
+
+The [fixed help-card voice update](docs/help-voice-2026-10-09.md) adds four Leda/Puck question recordings, following the selected language and voice. Its local gain control replaces outdoor device speech; the original 88 route-guidance files are retained. See the update's evidence limits separately from the October 8 baseline below.
 
 The English flow covers the full route UI, voice input/error states, photos, cp2 follow-up, explicit confirmations, recovery, arrival and the help card. Actual Chinese sign characters remain visible beside English explanations. The 44 English WAVs use Crystal's accepted normal conversational pace. Six clips have individual human listening acceptance; the remainder have machine text/hash checks. The original 44 accepted Chinese WAVs remain unchanged.
 

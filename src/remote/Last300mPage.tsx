@@ -9,6 +9,7 @@ import { doneLabelFor, stepCardFor, type StepIcon } from './stepCard'
 import { outdoorStrings, type OutdoorLocale } from './locale'
 import { useLast300m } from './useLast300m'
 import { createOutdoorPlayer, outdoorKeysFor, type OutdoorVoice } from './outdoorVoice'
+import { createHelpPlayer } from './helpVoice'
 import { UNKNOWN_ZONE, zoneFor, type RouteZone } from './zone'
 import { VoiceInput } from './VoiceInput'
 import type { VoiceCapture } from './voiceCapture'
@@ -199,6 +200,7 @@ export function Last300mPage() {
   const zones = useMemo(() => routeInfo?.zones ?? [], [routeInfo])
   const location = useRouteZone(zones, walking)
   const player = useMemo(() => createOutdoorPlayer(), [])
+  const helpPlayer = useMemo(() => createHelpPlayer(), [])
   const [voice, setVoice] = useState<OutdoorVoice>('Leda')
   const voiceRef = useRef<OutdoorVoice>('Leda')
   const helpActive = useRef(false)
@@ -217,7 +219,15 @@ export function Last300mPage() {
   const { state, sessionId, start, observe, observePhoto, done, confirmContinuation } = useLast300m(client, bird, ROUTE_ID, location, feedback, PHOTO_CHECK, locale)
   const [draft, setDraft] = useState('')
   const [askOpen, setAskOpen] = useState(false)
+  const helpPlayback = useMemo(() => ({
+    play: () => {
+      if (ROUTE_ID === 'renai-001') void helpPlayer.play(voiceRef.current, localeRef.current, outdoorStrings(localeRef.current)['l3.ask.utterance'])
+    },
+    stop: helpPlayer.stop,
+    muted: voice === 'quiet',
+  }), [helpPlayer, voice])
   useEffect(() => () => player.dispose(), [player])
+  useEffect(() => () => helpPlayer.dispose(), [helpPlayer])
   const unlock = () => { if (voiceRef.current !== 'quiet') player.unlock() }
   const playLocal = (keys: string[]) => {
     if (ROUTE_ID !== 'renai-001' || inputActive.current) return
@@ -382,7 +392,7 @@ export function Last300mPage() {
           {/* 幫我問 is Nightingale's ask-a-person move: it opens the question
               card a passerby can read (and the phone can say). It never calls
               the backend, records nothing, and parses no reply. */}
-          <button ref={helpRef} className="l3-secondary l3-icon-button" onClick={() => { voiceInput.current?.cancel(); helpActive.current = true; player.stop(); setAskOpen(true) }}>
+          <button ref={helpRef} className="l3-secondary l3-icon-button" onClick={() => { voiceInput.current?.cancel(); helpActive.current = true; player.stop(); if (voiceRef.current !== 'quiet') helpPlayer.unlock(); setAskOpen(true) }}>
             <IconAsk className="l3-btn-icon" />
             {copy['l3.button.help']}
           </button>
@@ -412,7 +422,7 @@ export function Last300mPage() {
       {state.notice ? <p className="l3-notice" role="status">{state.notice}</p> : null}
     </div>
     {askOpen ? (
-      <AskCard lang={locale === 'en' ? 'en-US' : 'zh-TW'} labels={locale === 'en' ? { again: 'Say it again', done: 'Done', volume: { level: 'Volume {n} of 4', down: 'Quieter', up: 'Louder' } } : undefined} text={copy['l3.ask.utterance']} onClose={() => { helpActive.current = false; setAskOpen(false) }} />
+      <AskCard lang={locale === 'en' ? 'en-US' : 'zh-TW'} labels={locale === 'en' ? { again: 'Say it again', done: 'Done', volume: { level: 'Volume {n} of 4', down: 'Quieter', up: 'Louder' } } : undefined} text={copy['l3.ask.utterance']} playback={helpPlayback} volumeLabel={locale === 'en' ? 'Volume' : '音量'} onClose={() => { helpPlayer.stop(); helpActive.current = false; setAskOpen(false) }} />
     ) : null}
     </>
   )

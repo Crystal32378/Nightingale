@@ -50,7 +50,7 @@ const base = process.env.NIGHTINGALE_UI_URL || 'http://127.0.0.1:4173';
       await page.getByRole('button',{name:'Help me ask',exact:true}).click();
       const dialog=page.getByRole('dialog');await dialog.waitFor();
       await dialog.getByRole('button',{name:'Say it again',exact:true}).waitFor();
-      assert.equal(await dialog.getAttribute('lang'),'en');assert.equal(await page.evaluate(()=>window.__spoken.at(-1).lang),'en-US');
+      assert.equal(await dialog.getAttribute('lang'),'en');assert.equal(await page.evaluate(()=>window.__spoken.length),0);
       assert.equal(await dialog.getByRole('button',{name:'Quieter',exact:true}).count(),1);
       await page.keyboard.press('Escape');assert.equal(await page.getByRole('button',{name:'Help me ask',exact:true}).evaluate(el=>el===document.activeElement),true);
       await send('Renai Fuxing intersection');await page.getByRole('button',{name:'Yes, all of those are true',exact:true}).waitFor();
@@ -68,7 +68,7 @@ const base = process.env.NIGHTINGALE_UI_URL || 'http://127.0.0.1:4173';
       assert.equal(await page.getByRole('textbox').count(),0);assert.equal(await page.locator('html').getAttribute('lang'),'en');
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);
       if(process.env.NIGHTINGALE_EN_SCREENSHOTS)await page.screenshot({path:`${process.env.NIGHTINGALE_EN_SCREENSHOTS}/${engine}-arrival.png`,fullPage:true});
-      results.push({engine,version:browser.version(),status:'PASS',requests:requests.length,scope:'Desktop mocked API, actual React UI; language switch, full route, help focus/speech locale, confirmation/cancel and recoveries'});
+      results.push({engine,version:browser.version(),status:'PASS',requests:requests.length,scope:'Desktop mocked API, actual React UI; language switch, full route, help focus and no device speech fallback, confirmation/cancel and recoveries'});
     }finally{await browser.close();}
   }
   if(process.env.NIGHTINGALE_EN_RECEIPT)fs.writeFileSync(process.env.NIGHTINGALE_EN_RECEIPT,JSON.stringify({checkedAt:new Date().toISOString(),results},null,2)+'\n');

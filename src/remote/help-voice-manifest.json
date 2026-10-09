@@ -1,0 +1,32 @@
+{
+  "en": {
+    "text": "Excuse me, how do I get to the main entrance of the hospital?",
+    "voices": {
+      "Leda": {
+        "sha256": "917f6be319d81737bf6d1181794a92be462de49a30f7d223a5eb4723bdbbf44e",
+        "seconds": 4.490958333333333,
+        "file": "audio/help/en/leda.wav"
+      },
+      "Puck": {
+        "sha256": "72c5bfaa272f486f5a6465fa4b1ace8a48c79e69bee389088307653736d4b139",
+        "seconds": 4.090958333333333,
+        "file": "audio/help/en/puck.wav"
+      }
+    }
+  },
+  "zh-TW": {
+    "text": "請問，醫院的正門要怎麼走？",
+    "voices": {
+      "Leda": {
+        "sha256": "82033b988a7c29b48f40f5fb07022b1d08b88099d2920d68e28d172e74098250",
+        "seconds": 4.250958333333333,
+        "file": "audio/help/zh-TW/leda.wav"
+      },
+      "Puck": {
+        "sha256": "dfbf36677d07da9d8c063fd730d461d85ef0ecf01e23f7cb2c2d1517d1023ae0",
+        "seconds": 3.8509583333333333,
+        "file": "audio/help/zh-TW/puck.wav"
+      }
+    }
+  }
+}

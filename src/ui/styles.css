@@ -647,6 +647,20 @@ button.wide {
   gap: 12px;
 }
 
+.ask-volume-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.ask-volume-label {
+  margin: 0;
+  color: var(--ink-faint);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 /* ---------- dev panel ---------- */
 .dev {
   margin-top: 26px;

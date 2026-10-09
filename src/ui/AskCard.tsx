@@ -33,12 +33,16 @@ const FOCUSABLE =
  * 幫我問 button that opened it — a person always knows where they came back
  * to.
  */
-export function AskCard({ text, onClose, lang = 'zh-TW', labels }: { text: string; onClose: () => void; lang?: string; labels?: { again: string; done: string; volume: { level: string; down: string; up: string } } }) {
+export function AskCard({ text, onClose, lang = 'zh-TW', labels, playback, volumeLabel }: { text: string; onClose: () => void; lang?: string; labels?: { again: string; done: string; volume: { level: string; down: string; up: string } }; playback?: { play: () => void; stop: () => void; muted: boolean }; volumeLabel?: string }) {
   const cardRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (playback) {
+      playback.play()
+      return playback.stop
+    }
     speak(text, 'ask.utterance', lang)
-  }, [text, lang])
+  }, [text, lang, playback])
 
   // Focus goes in on open. Coming home is a two-body problem: the background
   // is inert until the card unmounts, so the card cannot focus anything in
@@ -85,10 +89,12 @@ export function AskCard({ text, onClose, lang = 'zh-TW', labels }: { text: strin
   const lines = lang.startsWith('en') ? (text.match(/[^.!?]+[.!?]?/g) ?? [text]).map(line => line.trim()) : visualLines(text)
 
   const again = () => {
+    if (playback?.muted) return
     // Asking to hear it again is evidence it was not heard: one step louder,
     // and it stays there (levelAfterRepeat in voice/level.ts).
     raiseContext('PUBLIC')
-    speak(text, 'ask.utterance', lang)
+    if (playback) playback.play()
+    else speak(text, 'ask.utterance', lang)
   }
 
   return (
@@ -110,9 +116,14 @@ export function AskCard({ text, onClose, lang = 'zh-TW', labels }: { text: strin
           {line}
         </p>
       ))}
-      <VolumeControl context="PUBLIC" labels={labels?.volume} />
+      {volumeLabel ? (
+        <div className="ask-volume-group">
+          <p className="ask-volume-label">{volumeLabel}</p>
+          <VolumeControl context="PUBLIC" labels={labels?.volume} />
+        </div>
+      ) : <VolumeControl context="PUBLIC" labels={labels?.volume} />}
       <div className="ask-actions">
-        <button onClick={again}>
+        <button onClick={again} disabled={playback?.muted}>
           <IconAgain />
           {labels?.again ?? label('label.again')}
         </button>
