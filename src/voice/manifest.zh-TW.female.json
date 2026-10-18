@@ -11,7 +11,7 @@
     },
     "vol": 2
   },
-  "generatedAt": "2026-09-19",
+  "generatedAt": "2026-09-22",
   "utterances": {
     "guidance.go": {
       "text": "往前走。",
@@ -103,6 +103,42 @@
       "bytes": 30137,
       "durationMs": 0
     },
+    "guidance.arrived#NTUH_CHILD": {
+      "text": "兒醫大樓，到了。",
+      "file": "audio/zh-TW/female/guidance.arrived__NTUH_CHILD.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "54c35d1fd7f862c427ab39cce03b5c73eb6dd5a0b4d19291a4d4012801834fac",
+      "bytes": 31391,
+      "durationMs": 0
+    },
+    "guidance.arrived#NTUH_EAST": {
+      "text": "東址大樓，到了。",
+      "file": "audio/zh-TW/female/guidance.arrived__NTUH_EAST.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "a5669d8cabce72e8f2d121e6a614a01a72860d38993f7a5e5af0a91a7cd71fab",
+      "bytes": 29719,
+      "durationMs": 0
+    },
+    "guidance.arrived#NTUH_EXIT2": {
+      "text": "常德街及公園路交叉口，到了。",
+      "file": "audio/zh-TW/female/guidance.arrived__NTUH_EXIT2.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "a93f8edbb972794a381d7da79778317d4334fdf7eefe08ae531585ceb28843b3",
+      "bytes": 58976,
+      "durationMs": 0
+    },
+    "guidance.arrived#NTUH_WEST": {
+      "text": "西址大樓，到了。",
+      "file": "audio/zh-TW/female/guidance.arrived__NTUH_WEST.mp3",
+      "context": "PRIVATE",
+      "pitch": 0,
+      "sha256": "163c5f5231d835a490165eabbdfb29416846ad23b758ec4da76b4fae7ac64f4c",
+      "bytes": 38078,
+      "durationMs": 0
+    },
     "guidance.arrived#PHARMACY": {
       "text": "藥局，到了。",
       "file": "audio/zh-TW/female/guidance.arrived__PHARMACY.mp3",
@@ -173,6 +209,42 @@
       "pitch": 1,
       "sha256": "86e812d2da7e3aba420e30f5ae518ec20167bcd5d5b726654f20b5799a8235d2",
       "bytes": 37242,
+      "durationMs": 0
+    },
+    "ask.utterance#NTUH_CHILD": {
+      "text": "請問，兒醫大樓？",
+      "file": "audio/zh-TW/female/ask.utterance__NTUH_CHILD.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "cf37d568046fc75ab6fcf45c3fcdd3e0fe4b25c8186d4ad6bf8356b0789aee91",
+      "bytes": 33062,
+      "durationMs": 0
+    },
+    "ask.utterance#NTUH_EAST": {
+      "text": "請問，東址大樓？",
+      "file": "audio/zh-TW/female/ask.utterance__NTUH_EAST.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "49495d336b0821adce27aa479ef98d1e97dc79c6a8a86cb54c3a653d3f8eb234",
+      "bytes": 36824,
+      "durationMs": 0
+    },
+    "ask.utterance#NTUH_EXIT2": {
+      "text": "請問，常德街及公園路交叉口？",
+      "file": "audio/zh-TW/female/ask.utterance__NTUH_EXIT2.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "f8c0bb5e88b7eab7e7d50aa04204f9865aede5df144bc133fcd7233c08b96f9b",
+      "bytes": 58976,
+      "durationMs": 0
+    },
+    "ask.utterance#NTUH_WEST": {
+      "text": "請問，西址大樓？",
+      "file": "audio/zh-TW/female/ask.utterance__NTUH_WEST.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "822ee5040b9e5e78e86642922238128be548833b71ae9f05e30a5a7021e7c295",
+      "bytes": 35152,
       "durationMs": 0
     },
     "ask.utterance#PHARMACY": {

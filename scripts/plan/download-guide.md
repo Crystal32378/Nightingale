@@ -23,7 +23,7 @@ node scripts/voice.mjs --from-files --profile=MALE
 
 同一支聲音、同樣語速、同樣用字，只有面對誰的時候語氣不同。
 
-共 20 句，每個聲音一套。
+共 28 句，每個聲音一套。
 
 | # | 對象 | pitch | 要生成的文字 | 存成這個檔名 |
 | --- | --- | --- | --- | --- |
@@ -37,16 +37,24 @@ node scripts/voice.mjs --from-files --profile=MALE
 | 8 | PRIVATE | 0 | `大門，到了。` | `guidance.arrived__ENTRANCE.mp3` |
 | 9 | PRIVATE | 0 | `出口，到了。` | `guidance.arrived__EXIT.mp3` |
 | 10 | PRIVATE | 0 | `神經外科，到了。` | `guidance.arrived__NEUROSURGERY.mp3` |
-| 11 | PRIVATE | 0 | `藥局，到了。` | `guidance.arrived__PHARMACY.mp3` |
-| 12 | PRIVATE | 0 | `掛號櫃台，到了。` | `guidance.arrived__REGISTRATION.mp3` |
-| 13 | PUBLIC | 1 | `請問，批價櫃台？` | `ask.utterance__CASHIER.mp3` |
-| 14 | PUBLIC | 1 | `請問，電梯口？` | `ask.utterance__ELEVATOR_IN.mp3` |
-| 15 | PUBLIC | 1 | `請問，電梯出口？` | `ask.utterance__ELEVATOR_OUT.mp3` |
-| 16 | PUBLIC | 1 | `請問，大門？` | `ask.utterance__ENTRANCE.mp3` |
-| 17 | PUBLIC | 1 | `請問，出口？` | `ask.utterance__EXIT.mp3` |
-| 18 | PUBLIC | 1 | `請問，神經外科？` | `ask.utterance__NEUROSURGERY.mp3` |
-| 19 | PUBLIC | 1 | `請問，藥局？` | `ask.utterance__PHARMACY.mp3` |
-| 20 | PUBLIC | 1 | `請問，掛號櫃台？` | `ask.utterance__REGISTRATION.mp3` |
+| 11 | PRIVATE | 0 | `兒醫大樓，到了。` | `guidance.arrived__NTUH_CHILD.mp3` |
+| 12 | PRIVATE | 0 | `東址大樓，到了。` | `guidance.arrived__NTUH_EAST.mp3` |
+| 13 | PRIVATE | 0 | `常德街及公園路交叉口，到了。` | `guidance.arrived__NTUH_EXIT2.mp3` |
+| 14 | PRIVATE | 0 | `西址大樓，到了。` | `guidance.arrived__NTUH_WEST.mp3` |
+| 15 | PRIVATE | 0 | `藥局，到了。` | `guidance.arrived__PHARMACY.mp3` |
+| 16 | PRIVATE | 0 | `掛號櫃台，到了。` | `guidance.arrived__REGISTRATION.mp3` |
+| 17 | PUBLIC | 1 | `請問，批價櫃台？` | `ask.utterance__CASHIER.mp3` |
+| 18 | PUBLIC | 1 | `請問，電梯口？` | `ask.utterance__ELEVATOR_IN.mp3` |
+| 19 | PUBLIC | 1 | `請問，電梯出口？` | `ask.utterance__ELEVATOR_OUT.mp3` |
+| 20 | PUBLIC | 1 | `請問，大門？` | `ask.utterance__ENTRANCE.mp3` |
+| 21 | PUBLIC | 1 | `請問，出口？` | `ask.utterance__EXIT.mp3` |
+| 22 | PUBLIC | 1 | `請問，神經外科？` | `ask.utterance__NEUROSURGERY.mp3` |
+| 23 | PUBLIC | 1 | `請問，兒醫大樓？` | `ask.utterance__NTUH_CHILD.mp3` |
+| 24 | PUBLIC | 1 | `請問，東址大樓？` | `ask.utterance__NTUH_EAST.mp3` |
+| 25 | PUBLIC | 1 | `請問，常德街及公園路交叉口？` | `ask.utterance__NTUH_EXIT2.mp3` |
+| 26 | PUBLIC | 1 | `請問，西址大樓？` | `ask.utterance__NTUH_WEST.mp3` |
+| 27 | PUBLIC | 1 | `請問，藥局？` | `ask.utterance__PHARMACY.mp3` |
+| 28 | PUBLIC | 1 | `請問，掛號櫃台？` | `ask.utterance__REGISTRATION.mp3` |
 
 檔名一個字都不能錯——manifest 是靠檔名對回句子的。
 

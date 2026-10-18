@@ -60,6 +60,30 @@
     "fileStem": "guidance.arrived__NEUROSURGERY"
   },
   {
+    "id": "guidance.arrived#NTUH_CHILD",
+    "text": "兒醫大樓，到了。",
+    "context": "PRIVATE",
+    "fileStem": "guidance.arrived__NTUH_CHILD"
+  },
+  {
+    "id": "guidance.arrived#NTUH_EAST",
+    "text": "東址大樓，到了。",
+    "context": "PRIVATE",
+    "fileStem": "guidance.arrived__NTUH_EAST"
+  },
+  {
+    "id": "guidance.arrived#NTUH_EXIT2",
+    "text": "常德街及公園路交叉口，到了。",
+    "context": "PRIVATE",
+    "fileStem": "guidance.arrived__NTUH_EXIT2"
+  },
+  {
+    "id": "guidance.arrived#NTUH_WEST",
+    "text": "西址大樓，到了。",
+    "context": "PRIVATE",
+    "fileStem": "guidance.arrived__NTUH_WEST"
+  },
+  {
     "id": "guidance.arrived#PHARMACY",
     "text": "藥局，到了。",
     "context": "PRIVATE",
@@ -106,6 +130,30 @@
     "text": "請問，神經外科？",
     "context": "PUBLIC",
     "fileStem": "ask.utterance__NEUROSURGERY"
+  },
+  {
+    "id": "ask.utterance#NTUH_CHILD",
+    "text": "請問，兒醫大樓？",
+    "context": "PUBLIC",
+    "fileStem": "ask.utterance__NTUH_CHILD"
+  },
+  {
+    "id": "ask.utterance#NTUH_EAST",
+    "text": "請問，東址大樓？",
+    "context": "PUBLIC",
+    "fileStem": "ask.utterance__NTUH_EAST"
+  },
+  {
+    "id": "ask.utterance#NTUH_EXIT2",
+    "text": "請問，常德街及公園路交叉口？",
+    "context": "PUBLIC",
+    "fileStem": "ask.utterance__NTUH_EXIT2"
+  },
+  {
+    "id": "ask.utterance#NTUH_WEST",
+    "text": "請問，西址大樓？",
+    "context": "PUBLIC",
+    "fileStem": "ask.utterance__NTUH_WEST"
   },
   {
     "id": "ask.utterance#PHARMACY",

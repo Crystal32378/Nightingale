@@ -67,6 +67,10 @@ export const PLACE_REGISTRY: PlaceRegistry = {
   CASHIER: { id: 'CASHIER', names: { 'zh-TW': '批價櫃台' }, source: generic(FACILITY) },
   PHARMACY: { id: 'PHARMACY', names: { 'zh-TW': '藥局' }, source: generic(FACILITY) },
   EXIT: { id: 'EXIT', names: { 'zh-TW': '出口' }, source: generic(FACILITY) },
+  NTUH_WEST: { id: 'NTUH_WEST', names: { 'zh-TW': '西址大樓' }, source: { kind: 'web', url: 'https://www.ntuh.gov.tw/ntuh/Fpage.action?muid=3231&fid=2984', readOn: '2026-09-22', asWritten: '100229 台北市常德街1號(西址大樓門診住院服務)' } },
+  NTUH_EAST: { id: 'NTUH_EAST', names: { 'zh-TW': '東址大樓' }, source: { kind: 'web', url: 'https://www.ntuh.gov.tw/ntuh/Fpage.action?muid=3231&fid=2984', readOn: '2026-09-22', asWritten: '100225 台北市中山南路7號(東址大樓住院急診服務)' } },
+  NTUH_CHILD: { id: 'NTUH_CHILD', names: { 'zh-TW': '兒醫大樓' }, source: { kind: 'web', url: 'https://www.ntuh.gov.tw/ntuh/Fpage.action?muid=3231&fid=2984', readOn: '2026-09-22', asWritten: '100226 台北市中山南路8號(兒醫大樓門診住院服務)' } },
+  NTUH_EXIT2: { id: 'NTUH_EXIT2', names: { 'zh-TW': '常德街及公園路交叉口' }, source: { kind: 'web', url: 'https://www.ntuh.gov.tw/ntuh/Fpage.action?muid=3231&fid=2984', readOn: '2026-09-22', asWritten: '搭乘捷運至台大醫院站，常德街及公園路交叉口（二號出口）。' } },
 }
 
 /** A URL a person could actually open. Anything else is not a citation. */
