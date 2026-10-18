@@ -14,6 +14,8 @@ export interface DevPanelProps {
   onDecay: () => void
   onSimulateArrival: () => void
   onReset: () => void
+  onTriggerIdleGlance: () => void
+  onTriggerIdleGaze: () => void
 }
 
 export function DevPanel(props: DevPanelProps) {
@@ -27,6 +29,8 @@ export function DevPanel(props: DevPanelProps) {
         <button onClick={props.onShortPress}>simulate short press</button>
         <button onClick={props.onLongPress}>simulate long press</button>
         <button onClick={props.onDecay}>simulate confidence decay</button>
+        <button onClick={props.onTriggerIdleGlance}>trigger idle glance (L1)</button>
+        <button onClick={props.onTriggerIdleGaze}>trigger idle gaze (L2)</button>
         <button onClick={props.onReset}>reset visit</button>
       </div>
       <div className="dev-readout">
