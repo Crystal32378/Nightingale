@@ -39,6 +39,7 @@
 - `content` 開頭會帶換行（例如 `"\n\nPHARMACY"`），`parseDestination` 會先 trim，不影響結果。
 - 選 **Super 120B**：三句都對、速度比 Nano 穩定，也是 Nebius 自己範例用的模型。不比較其他模型（B5：比較不在四天範圍內）。
 - 踩到的坑：在 Windows 的 Git Bash 用 `curl -d` 送中文會回 `400 There was an error parsing the body`，是終端機編碼問題；改用 Node `fetch` 就正常。
+  同一天對本機代理再測：Git Bash 內建的 curl（`/ucrt64/bin/curl`）把指令裡的中文轉成亂碼，有時仍是合法 JSON，伺服器回 200 但辨識成 uncertain；Windows 內建的 `curl.exe`，或把 JSON 存成 UTF-8 檔案再用 `--data-binary @file` 送，都正常。瀏覽器的 `fetch` 一律送 UTF-8，使用者在畫面上輸入中文不受影響。
 
 ---
 
