@@ -40,6 +40,16 @@ describe('MockInterpreter', () => {
     expect(await mock.interpret('先去批價再去藥局')).toEqual(UNCERTAIN)
   })
 
+  it.each(['不要去藥局', '我不想去批價', '不用掛號了', '不去神經外科', '別去出口', '不必搭電梯', '不是要去大門'])(
+    'is uncertain when the place is negated: %j',
+    async (text) => {
+      // Spotting 藥局 in 不要去藥局 and walking the person there is the worst
+      // answer. The mock cannot tell negation from naming, so any negation
+      // word means it does not guess; 我陪你問 is the safe fallback.
+      expect(await mock.interpret(text)).toEqual(UNCERTAIN)
+    },
+  )
+
   it('does not turn 電梯出口 into a destination', async () => {
     // ELEVATOR_OUT is never offered; the words inside it (電梯, 出口) point two
     // ways at once, so the mock must not settle on either.

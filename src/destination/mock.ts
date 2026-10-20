@@ -13,8 +13,16 @@ const WORDS: Record<DestinationId, string> = {
 }
 
 /**
+ * Words that may turn the sentence against the place it names (不要去藥局).
+ * ponytail: plain word list, so 不知道藥局在哪 is uncertain too — a false
+ * uncertain only costs a 我陪你問; Nemotron handles the real sentences.
+ */
+const NEGATIONS = ['不要', '不想', '不用', '不去', '不必', '不是', '別']
+
+/**
  * Runs when there is no API key. It only spots words — no AI — and names a
- * place only when exactly one is mentioned; two places, or none, is uncertain.
+ * place only when exactly one is mentioned; two places, none, or any negation
+ * is uncertain.
  */
 export class MockInterpreter implements DestinationInterpreter {
   readonly mode = 'mock'
@@ -22,6 +30,7 @@ export class MockInterpreter implements DestinationInterpreter {
   constructor(private readonly registry: PlaceRegistry = PLACE_REGISTRY) {}
 
   async interpret(text: string): Promise<Destination> {
+    if (NEGATIONS.some((word) => text.includes(word))) return UNCERTAIN
     const named = DESTINATION_IDS.filter((id) => text.includes(WORDS[id]))
     if (named.length !== 1) return UNCERTAIN
     return parseDestination(named[0], this.registry)
