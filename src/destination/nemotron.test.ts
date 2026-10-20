@@ -47,6 +47,21 @@ describe('NemotronInterpreter', () => {
     expect(init?.body).not.toContain('test-key')
   })
 
+  it('tells the model to pick the first stop only when the order is clear', async () => {
+    // 先去批價再去藥局 should start at 批價: DEMO_VISIT walks on to 藥局 after
+    // it anyway, and the screen asks the person to confirm before walking.
+    // 藥局還是批價？ has no first stop, so it stays uncertain.
+    let system = ''
+    const fetchImpl: FetchLike = async (_u, init) => {
+      system = JSON.parse(init?.body as string).messages[0].content
+      return reply('CASHIER')
+    }
+    await nemotron(fetchImpl).interpret('先去批價再去藥局')
+    expect(system).toContain('先後順序清楚')
+    expect(system).toContain('第一個要去的地點')
+    expect(system).toMatch(/順序不清楚.*UNCERTAIN/)
+  })
+
   it('names the place the model answered, ignoring the newlines it puts first', async () => {
     expect(await nemotron(answering('\n\nPHARMACY')).interpret('我要去領藥')).toEqual(place('PHARMACY'))
   })
