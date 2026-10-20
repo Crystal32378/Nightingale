@@ -11,10 +11,13 @@
     "test": "vitest run",
     "lint:register": "vitest run src/lint/register.test.ts",
     "voice:plan": "vite-node scripts/export-voice-plan.ts",
+    "server": "vite-node server/index.ts",
     "build:hosting": "tsc -b && VITE_LAST300M_API= vite build",
     "deploy:hosting": "npm run build:hosting && npx --yes firebase-tools deploy --only hosting"
   },
   "dependencies": {
+    "@hono/node-server": "^2.1.5",
+    "hono": "^4.13.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
