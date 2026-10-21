@@ -49,6 +49,13 @@ describe('DestinationClient', () => {
     expect(await client.interpret('電梯出口')).toEqual({ mode: 'nemotron', destination: UNCERTAIN })
   })
 
+  it.each([400, 413])('is uncertain, not the mock, when the proxy refuses the sentence (HTTP %i)', async (status) => {
+    // A refused sentence (blank, too long) is the person's input, not a broken
+    // proxy. Letting the mock guess at it would answer 藥局 here.
+    const client = new DestinationClient({ fetchImpl: proxyAnswering({ mode: 'nemotron', error: 'x' }, status) })
+    expect(await client.interpret('我要去藥局')).toEqual({ mode: 'nemotron', destination: UNCERTAIN })
+  })
+
   describe('falls back to the mock, labelled mock, when the proxy cannot be used', () => {
     const viaMock = { mode: 'mock', destination: place('PHARMACY') }
 

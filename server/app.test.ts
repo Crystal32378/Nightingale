@@ -50,6 +50,9 @@ describe('indoor proxy', () => {
     const { interpreter, asked } = fakeInterpreter('nemotron', { kind: 'place', placeId: 'PHARMACY' })
     const res = await post(createApp(interpreter), body)
     expect(res.status).toBe(400)
+    // The mode tells the screen this is a refused sentence from a working
+    // proxy, not a broken one — so it says uncertain instead of asking the mock.
+    expect((await res.json()).mode).toBe('nemotron')
     expect(asked).toEqual([])
   })
 
@@ -57,6 +60,7 @@ describe('indoor proxy', () => {
     const { interpreter, asked } = fakeInterpreter('nemotron', { kind: 'place', placeId: 'PHARMACY' })
     const res = await post(createApp(interpreter), JSON.stringify({ text: 'x', pad: 'x'.repeat(5000) }))
     expect(res.status).toBe(413)
+    expect((await res.json()).mode).toBe('nemotron')
     expect(asked).toEqual([])
   })
 
