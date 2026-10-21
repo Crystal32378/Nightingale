@@ -40,7 +40,23 @@ describe('MockInterpreter', () => {
     expect(await mock.interpret('先去批價再去藥局')).toEqual(UNCERTAIN)
   })
 
-  it.each(['不要去藥局', '我不想去批價', '不用掛號了', '不去神經外科', '別去出口', '不必搭電梯', '不是要去大門'])(
+  it.each([
+    '不要去藥局',
+    '我不想去批價',
+    '不用掛號了',
+    '不去神經外科',
+    '別去出口',
+    '不必搭電梯',
+    '不是要去大門',
+    // Found in PR② review: these still walked people to the pharmacy.
+    '我不能去藥局',
+    '我不需要去藥局',
+    '我不可以去藥局',
+    '我沒有要去藥局',
+    '我沒要去藥局',
+    '我不會去批價',
+    '我不打算去掛號',
+  ])(
     'is uncertain when the place is negated: %j',
     async (text) => {
       // Spotting 藥局 in 不要去藥局 and walking the person there is the worst
@@ -49,6 +65,15 @@ describe('MockInterpreter', () => {
       expect(await mock.interpret(text)).toEqual(UNCERTAIN)
     },
   )
+
+  it.each([
+    ['我不知道藥局在哪裡', 'PHARMACY'],
+    ['不好意思，批價在哪', 'CASHIER'],
+  ])('still finds the place when 不 is not negating it: %j', async (text, id) => {
+    // Someone who does not know where the pharmacy is wants to go there; a
+    // list of negation words (not every 不) keeps that a destination.
+    expect(await mock.interpret(text)).toEqual(place(id))
+  })
 
   it('does not turn 電梯出口 into a destination', async () => {
     // ELEVATOR_OUT is never offered; the words inside it (電梯, 出口) point two

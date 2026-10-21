@@ -13,11 +13,12 @@ const WORDS: Record<DestinationId, string> = {
 }
 
 /**
- * Words that may turn the sentence against the place it names (不要去藥局).
- * ponytail: plain word list, so 不知道藥局在哪 is uncertain too — a false
- * uncertain only costs a 我陪你問; Nemotron handles the real sentences.
+ * Words that turn the sentence against the place it names (不要去藥局). A
+ * list, not every 不: 不知道藥局在哪 still wants the pharmacy.
+ * ponytail: a list misses phrasings nobody added yet; add them here with a
+ * test. A miss walks someone the wrong way only if they then confirm it.
  */
-const NEGATIONS = ['不要', '不想', '不用', '不去', '不必', '不是', '別']
+const NEGATIONS = ['不要', '不想', '不用', '不去', '不必', '不是', '不能', '不需要', '不可以', '不會', '不打算', '沒有要', '沒要', '別']
 
 /**
  * Runs when there is no API key. It only spots words — no AI — and names a
