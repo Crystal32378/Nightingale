@@ -13,8 +13,17 @@ const WORDS: Record<DestinationId, string> = {
 }
 
 /**
+ * Words that turn the sentence against the place it names (不要去藥局). A
+ * list, not every 不: 不知道藥局在哪 still wants the pharmacy.
+ * ponytail: a list misses phrasings nobody added yet; add them here with a
+ * test. A miss walks someone the wrong way only if they then confirm it.
+ */
+const NEGATIONS = ['不要', '不想', '不用', '不去', '不必', '不是', '不能', '不需要', '不可以', '不會', '不打算', '沒有要', '沒要', '別']
+
+/**
  * Runs when there is no API key. It only spots words — no AI — and names a
- * place only when exactly one is mentioned; two places, or none, is uncertain.
+ * place only when exactly one is mentioned; two places, none, or any negation
+ * is uncertain.
  */
 export class MockInterpreter implements DestinationInterpreter {
   readonly mode = 'mock'
@@ -22,6 +31,7 @@ export class MockInterpreter implements DestinationInterpreter {
   constructor(private readonly registry: PlaceRegistry = PLACE_REGISTRY) {}
 
   async interpret(text: string): Promise<Destination> {
+    if (NEGATIONS.some((word) => text.includes(word))) return UNCERTAIN
     const named = DESTINATION_IDS.filter((id) => text.includes(WORDS[id]))
     if (named.length !== 1) return UNCERTAIN
     return parseDestination(named[0], this.registry)
