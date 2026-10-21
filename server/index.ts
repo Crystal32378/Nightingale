@@ -14,7 +14,10 @@ try {
 const apiKey = process.env.NEBIUS_API_KEY?.trim()
 const interpreter = apiKey ? new NemotronInterpreter({ apiKey }) : new MockInterpreter()
 const port = Number(process.env.PORT) || 8787
+// Loopback only: anyone else who can reach this spends the key's credit
+// without knowing it. A deploy sets HOST=0.0.0.0 behind its own protection.
+const hostname = process.env.HOST || '127.0.0.1'
 
-serve({ fetch: createApp(interpreter).fetch, port }, () => {
-  console.log(`indoor proxy on http://localhost:${port} (${interpreter.mode})`)
+serve({ fetch: createApp(interpreter).fetch, port, hostname }, () => {
+  console.log(`indoor proxy on http://${hostname}:${port} (${interpreter.mode})`)
 })
