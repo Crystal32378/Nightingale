@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
+import { DestinationClient, type DestinationAnswer } from '../destination/client'
 import type { Instruction } from '../engine/types'
 import { label, renderPlace } from '../render/renderer'
 import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
@@ -95,6 +96,20 @@ export function App() {
     sequenceStartedAtMs: idleTrigger?.startedAtMs ?? 0,
     now: Date.now(),
     reducedMotion: useReducedMotion(),
+  }
+
+  // Where the person says they want to go, before the visit starts. Only ever
+  // a destination: where they are still comes from a QR scan or a button.
+  const destinationClient = useMemo(() => new DestinationClient(), [])
+  const [whereText, setWhereText] = useState('')
+  const [finding, setFinding] = useState(false)
+  const [answer, setAnswer] = useState<DestinationAnswer | null>(null)
+  const findWay = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (finding || !whereText.trim()) return
+    setFinding(true)
+    setAnswer(await destinationClient.interpret(whereText))
+    setFinding(false)
   }
 
   const leg = DEMO_VISIT[ng.visit ? Math.min(ng.visit.legIndex, DEMO_VISIT.length - 1) : 0]
@@ -198,6 +213,39 @@ export function App() {
           <p className="value">{destinationPlace ?? '—'}</p>
         </div>
       </div>
+
+      {!ng.started ? (
+        <form className="where" onSubmit={findWay}>
+          <label className="label" htmlFor="where-text">
+            {label('label.where')}
+          </label>
+          <div className="where-row">
+            <input
+              id="where-text"
+              value={whereText}
+              onChange={(event) => setWhereText(event.target.value)}
+              maxLength={200}
+              enterKeyHint="go"
+              autoComplete="off"
+              aria-describedby="where-privacy"
+            />
+            <button type="submit" disabled={finding || !whereText.trim()}>
+              {label('label.find')}
+            </button>
+          </div>
+          <p className="privacy" id="where-privacy">
+            {label('label.privacy')}
+          </p>
+          <p className="answer" aria-live="polite">
+            {answer ? (
+              <>
+                <span className="mode">{label(answer.mode === 'nemotron' ? 'label.mode.nemotron' : 'label.mode.mock')}</span>
+                {answer.destination.kind === 'place' ? renderPlace(answer.destination.placeId, ng.now) ?? '—' : '—'}
+              </>
+            ) : null}
+          </p>
+        </form>
+      ) : null}
 
       <div className="actions">
         {!ng.started ? (

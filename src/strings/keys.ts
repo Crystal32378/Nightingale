@@ -34,6 +34,11 @@ export const STRING_KEYS = [
   'label.volume.down',
   'label.volume.up',
   'label.volume.level',
+  'label.where',
+  'label.find',
+  'label.mode.mock',
+  'label.mode.nemotron',
+  'label.privacy',
   'fallback.safe',
 ] as const
 
@@ -105,5 +110,13 @@ export const STRING_NOTES: Record<StringKey, string> = {
   'label.volume.down': '讀屏用，不錄音，畫面不顯示。',
   'label.volume.up': '讀屏用，不錄音，畫面不顯示。',
   'label.volume.level': '讀屏用，不錄音，畫面不顯示。{n} 由程式代入目前級數。',
+  // Typing where you want to go (indoor, before the visit starts). Screen
+  // chrome only: what the person types goes to the destination interpreter,
+  // never into a spoken or shown sentence.
+  'label.where': '輸入框的標籤，不朗讀。只問想去哪裡，不引導輸入姓名、病歷、症狀。',
+  'label.find': '送出按鈕文字，不朗讀。',
+  'label.mode.mock': '標示這次是關鍵字比對（沒有 AI）判斷的，不朗讀。',
+  'label.mode.nemotron': '標示這次是 Nemotron 判斷的，不朗讀。產品名照原文。',
+  'label.privacy': '輸入框下方的告知，不朗讀。Nebius 帳號已開 Zero Data Retention 才能寫「處理完不保存」；不寫「不會用來訓練」或任何合規宣稱。',
   'fallback.safe': 'validator 擋下輸出時的靜態退路。與 guidance.uncertain 同字。',
 }
