@@ -287,10 +287,14 @@ export function App() {
 
       <div className="actions">
         {!ng.started ? (
-          <button className="primary wide" onClick={actions.start}>
-            <IconResume />
-            {label('label.start')}
-          </button>
+          // While 對／不是 is up, it is the only question on screen: two dark
+          // buttons stacked would leave the person guessing which one to press.
+          confirmable ? null : (
+            <button className="primary wide" onClick={actions.start}>
+              <IconResume />
+              {label('label.start')}
+            </button>
+          )
         ) : (
           <>
             <button className="primary" data-ask-trigger onClick={actions.askForMe}>
