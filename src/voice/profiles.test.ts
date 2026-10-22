@@ -61,7 +61,7 @@ describe('one speaker, two ways of addressing someone', () => {
   it('gives the ask utterance the PUBLIC pitch and every guidance line the PRIVATE one', () => {
     const profile = VOICE_PROFILES.MALE
     for (const u of canonicalUtterances()) {
-      const expected = u.key === 'ask.utterance' ? 'PUBLIC' : 'PRIVATE'
+      const expected = u.key.startsWith('ask.') ? 'PUBLIC' : 'PRIVATE'
       expect(u.context).toBe(expected)
       expect(pitchFor(profile, u.context)).toBe(profile.pitch[expected])
     }

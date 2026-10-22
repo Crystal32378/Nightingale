@@ -21,7 +21,8 @@ const FOCUSABLE =
  * Ask-for-me.
  *
  * The card shows the verified utterance and the phone says the same string —
- * one string, from the verified registry, with no model anywhere in the path.
+ * one string, from the approved table and (when known) the verified place
+ * registry, with no model anywhere in the path.
  * Nothing is recorded and no reply is transcribed or parsed; what the member of
  * staff says goes to the person, not to us.
  *

@@ -116,3 +116,13 @@ Token Factory 預設會保存輸入和輸出，用在 Speculative Decoding 加�
 | 今天天氣如何 | uncertain |
 
 來源：[Legal quick guide](https://docs.tokenfactory.nebius.com/legal/legal-quick-guide)
+
+---
+
+## 2026-10-23：PR③ review 補修交付
+
+Review 重現了三個銜接問題：換目的地時仍可按舊確認、拒絕／重設後晚回覆重新出現、uncertain 缺乏真正的求助入口。R1 讓改輸入、拒絕、重設與離開確認流程的請求失效；R2 加入不帶目的地的固定求助句「請問，可以幫我找路嗎？」。「開始示範行程」只在空白輸入且沒有查詢／結果時提供，避免把求助帶進預設神經外科。
+
+新增 20 個介面與 2 個單元案例，限制為 2 個 worker 的全套測試 497/497、型別檢查及 build 通過；第一次預設並行執行有 2 個介面案例超過 5 秒，已如實記錄。此輪未呼叫付費 Nemotron。院內語音實際使用瀏覽器 TTS，新求助句已同步字串、語音計畫與 PUBLIC 音量分類，沒有新增預錄檔。
+
+完整操作、測試條件、10/22 擷取的補修截圖與驗證限制見 [PR #5 review 補修驗證](qa/indoor-review-2026-10-23/README.md)。

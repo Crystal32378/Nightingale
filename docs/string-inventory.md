@@ -21,7 +21,8 @@ runtime validator swaps the whole line for `fallback.safe`.
 | `guidance.arrived` | `{place}，到了。` | the leg destination was observed | 收尾，不慶祝。 |
 | `guidance.wait` | *(empty)* | posture is RESTING | 休息時什麼都不說。這是刻意的。 |
 | `guidance.none` | *(empty)* | the visit has not started | — |
-| `ask.utterance` | `請問，{place}？` | ask-for-me, from a long press or the button | 音量足夠讓旁邊的人聽一次就懂。 |
+| `ask.utterance` | `請問，{place}？` | ask-for-me with a confirmed destination, from a long press or the button | 音量足夠讓旁邊的人聽一次就懂。 |
+| `ask.generic` | `請問，可以幫我找路嗎？` | ask-for-me before any destination is confirmed; never includes the person's input | 音量足夠讓旁邊的人聽懂。目前使用瀏覽器 TTS，尚無預錄音檔。 |
 | `checkpoint.next` | `下一個：{place}` | screen label for the single next checkpoint | 畫面用，不朗讀。 |
 | `place.bare` | `{place}` | a verified place name on its own (目前位置 / 目的地) | 畫面用，不朗讀。 |
 | `label.current` | `目前位置` | screen chrome | 不朗讀。 |
@@ -29,7 +30,7 @@ runtime validator swaps the whole line for `fallback.safe`.
 | `label.ask` | `幫我問` | button | 不朗讀。 |
 | `label.rest` | `休息` | button | 不朗讀。 |
 | `label.resume` | `繼續` | button | 不朗讀。 |
-| `label.start` | `開始` | button | 不朗讀。 |
+| `label.start` | `開始示範行程` | secondary button, only with empty input and no pending query or answer | 不朗讀。 |
 | `label.again` | `再說一遍` | ask card button | 不朗讀。 |
 | `label.done` | `好了` | ask card button | 不朗讀。 |
 | `label.underway` | `路線進行中` | status pill; hidden entirely while resting | 不朗讀。 |

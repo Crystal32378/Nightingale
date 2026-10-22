@@ -78,12 +78,15 @@ export function renderGuidance(instruction: Instruction, now: number, options: R
 }
 
 /**
- * The ask-for-me utterance. Deterministic, from the verified registry, zero LLM.
+ * The ask-for-me utterance. A known place comes from the verified registry;
+ * without a destination, a fixed generic request asks for help. Zero LLM.
  * Nothing is recorded, nothing is transcribed, no answer is parsed.
  */
 export function renderAsk(destinationId: string | null, now: number, options: RenderOptions = {}): Rendered {
   return render(
-    { key: 'ask.utterance', params: { placeId: destinationId ?? undefined } },
+    destinationId === null
+      ? { key: 'ask.generic' }
+      : { key: 'ask.utterance', params: { placeId: destinationId } },
     { instruction: null, now },
     options,
   )

@@ -19,6 +19,7 @@ export const STRING_KEYS = [
   'guidance.wait',
   'guidance.none',
   'ask.utterance',
+  'ask.generic',
   'checkpoint.next',
   'place.bare',
   'label.current',
@@ -66,6 +67,7 @@ export const SPOKEN_KEYS = [
   'guidance.uncertain',
   'guidance.arrived',
   'ask.utterance',
+  'ask.generic',
 ] as const
 
 export type SpokenKey = (typeof SPOKEN_KEYS)[number]
@@ -93,6 +95,7 @@ export const STRING_NOTES: Record<StringKey, string> = {
   'guidance.wait': '空字串。休息時什麼都不說，這是刻意的。',
   'guidance.none': '空字串。行程尚未開始。',
   'ask.utterance': '幫使用者問路的那一句。清楚、音量足夠讓旁邊的人聽一次就懂。',
+  'ask.generic': '尚未確認目的地時的求助句。不帶地點或使用者原文，音量足夠讓旁邊的人聽懂。',
   'checkpoint.next': '下一個 checkpoint 的標籤，畫面用，不朗讀。',
   'place.bare': '單獨一個已驗證地點名，畫面用，不朗讀。',
   'label.current': '畫面標籤，不朗讀。',
@@ -100,7 +103,7 @@ export const STRING_NOTES: Record<StringKey, string> = {
   'label.ask': '按鈕文字，不朗讀。',
   'label.rest': '按鈕文字，不朗讀。',
   'label.resume': '按鈕文字，不朗讀。',
-  'label.start': '按鈕文字，不朗讀。',
+  'label.start': '示範行程入口，不朗讀。只在輸入空白、沒有查詢或辨識結果時顯示。',
   'label.again': '按鈕文字，不朗讀。',
   'label.done': '按鈕文字，不朗讀。',
   'label.underway': '狀態標籤，不朗讀。休息時不顯示任何狀態。',

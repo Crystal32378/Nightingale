@@ -86,7 +86,10 @@ export function useNightingale(adapter: VirtualBirdAdapter) {
   const cue = deriveCue(output.state, output.instruction)
   const guidance = renderGuidance(output.instruction, now)
   const checkpoint = renderNextCheckpoint(output.nextCheckpointPlaceId, now)
-  const ask = renderAsk(askPlaceId ?? DEMO_VISIT[visit ? Math.min(visit.legIndex, DEMO_VISIT.length - 1) : 0].destinationId, now)
+  // Before a visit, only an explicitly confirmed place may be named. The
+  // default demo leg is not evidence of where this person wants to go.
+  const askDestinationId = askPlaceId ?? (visit ? DEMO_VISIT[Math.min(visit.legIndex, DEMO_VISIT.length - 1)].destinationId : null)
+  const ask = renderAsk(askDestinationId, now)
 
   useEffect(() => {
     adapter.send(cue)
@@ -187,7 +190,7 @@ export function useNightingale(adapter: VirtualBirdAdapter) {
     })
   }, [adapter])
 
-  const speakAsk = useCallback(() => speak(ask.speech), [ask.speech])
+  const speakAsk = useCallback(() => speak(ask.speech, ask.key), [ask.speech, ask.key])
 
   return {
     started: visit !== null,

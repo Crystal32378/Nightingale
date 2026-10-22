@@ -10,9 +10,9 @@ const utterances = canonicalUtterances()
 const now = 1_700_000_000_000
 
 describe('the canonical utterance set is derived, not written by hand', () => {
-  it('covers every verified place exactly twice, plus the four place-free lines', () => {
+  it('covers every verified place exactly twice, plus the five place-free lines', () => {
     const verifiedPlaces = Object.values(PLACE_REGISTRY).filter((p) => isVerifiedEntry(p)).length
-    expect(utterances).toHaveLength(4 + verifiedPlaces * 2)
+    expect(utterances).toHaveLength(5 + verifiedPlaces * 2)
   })
 
   it('has unique ids', () => {
@@ -38,6 +38,14 @@ describe('the canonical utterance set is derived, not written by hand', () => {
 })
 
 describe('every recordable line is exactly what the renderer says', () => {
+  it('includes the generic ask as a PUBLIC line without a place', () => {
+    expect(utterances.find((u) => u.id === 'ask.generic')).toMatchObject({
+      text: '請問，可以幫我找路嗎？',
+      placeId: null,
+      context: 'PUBLIC',
+    })
+  })
+
   it('matches the renderer for a direction', () => {
     const live = renderGuidance(
       { intent: 'TURN', turn: 'RIGHT', turnExpiresAt: now + 1000, destinationId: null, disclosedSteps: 1 },

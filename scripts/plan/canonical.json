@@ -118,5 +118,11 @@
     "text": "請問，掛號櫃台？",
     "context": "PUBLIC",
     "fileStem": "ask.utterance__REGISTRATION"
+  },
+  {
+    "id": "ask.generic",
+    "text": "請問，可以幫我找路嗎？",
+    "context": "PUBLIC",
+    "fileStem": "ask.generic"
   }
 ]
