@@ -97,3 +97,22 @@ Crystal 轉來的 review 意見，和 key、額度、辨識結果有關的部分
 - **Mock 漏了常見的否定說法**：「我不能去藥局」「我不需要去藥局」「我不可以去藥局」原本都回藥局。補上不能、不需要、不可以、不會、不打算、沒有要、沒要。仍然用清單，不是看到「不」就 uncertain：「不知道藥局在哪」的人是要去藥局。
 - **輸入無效被當成代理故障**：超過 200 字被代理拒絕後，前端原本會改用 Mock 猜目的地。現在代理拒絕時附上 `mode`，前端回 uncertain。
 - **下一步要告知使用者**：「不記錄文字」不等於「文字不離開本機」。PR③ 的畫面要告知文字會傳到 Nebius；Token Factory 的資料保存政策要先查證，不自己宣稱。
+
+---
+
+## 2026-10-22：開啟 Zero Data Retention
+
+Token Factory 預設會保存輸入和輸出，用在 Speculative Decoding 加速推論（存在芬蘭，保存多久文件沒寫）。這是醫院情境，使用者可能不小心打出個人資料，所以在帳號的 Settings 勾選 **Enable zero data retention**：處理完不保存。畫面上的告知因此可以寫「處理完不保存」；不寫「不會用來訓練」，因為官方兩份文件的說法不一致。
+
+開啟後實測 6 句，結果都對，速度沒有變慢（1.0–2.0 秒）：
+
+| 輸入 | 結果 |
+|---|---|
+| 我要去領藥 | `PHARMACY` |
+| 繳費要去哪 | `CASHIER` |
+| 先去批價再去藥局 | `CASHIER` |
+| 我不能去藥局 | uncertain |
+| 我不知道藥局在哪 | `PHARMACY` |
+| 今天天氣如何 | uncertain |
+
+來源：[Legal quick guide](https://docs.tokenfactory.nebius.com/legal/legal-quick-guide)
