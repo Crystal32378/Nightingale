@@ -39,6 +39,9 @@ export const STRING_KEYS = [
   'label.mode.mock',
   'label.mode.nemotron',
   'label.privacy',
+  'label.confirm',
+  'label.yes',
+  'label.no',
   'fallback.safe',
 ] as const
 
@@ -118,5 +121,8 @@ export const STRING_NOTES: Record<StringKey, string> = {
   'label.mode.mock': '標示這次是關鍵字比對（沒有 AI）判斷的，不朗讀。',
   'label.mode.nemotron': '標示這次是 Nemotron 判斷的，不朗讀。產品名照原文。',
   'label.privacy': '輸入框下方的告知，不朗讀。Nebius 帳號已開 Zero Data Retention 才能寫「處理完不保存」；不寫「不會用來訓練」或任何合規宣稱。',
+  'label.confirm': '辨識出地點後先問一次，按「對」才開始引導，不朗讀。{place} 只來自已驗證地點。',
+  'label.yes': '確認按鈕文字，不朗讀。',
+  'label.no': '否認按鈕文字，不朗讀。按了回到輸入框重新說。',
   'fallback.safe': 'validator 擋下輸出時的靜態退路。與 guidance.uncertain 同字。',
 }

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
 import { DestinationClient, type DestinationAnswer } from '../destination/client'
+import { planFor } from '../destination/plan'
 import type { Instruction } from '../engine/types'
-import { label, renderPlace } from '../render/renderer'
+import { label, materialize, render, renderPlace } from '../render/renderer'
 import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
 import { AskCard, acknowledgeFocusReturn, wantFocusReturn } from './AskCard'
 import { DevPanel } from './DevPanel'
@@ -104,12 +105,34 @@ export function App() {
   const [whereText, setWhereText] = useState('')
   const [finding, setFinding] = useState(false)
   const [answer, setAnswer] = useState<DestinationAnswer | null>(null)
+  const whereInputRef = useRef<HTMLInputElement>(null)
   const findWay = async (event: React.FormEvent) => {
     event.preventDefault()
     if (finding || !whereText.trim()) return
     setFinding(true)
     setAnswer(await destinationClient.interpret(whereText))
     setFinding(false)
+  }
+  // A recognised place is asked about once; nothing starts until 對. The
+  // line goes through the validator, so an unverified place comes back as
+  // 我不確定。我陪你問。 with no 對 to press.
+  const confirmLine =
+    answer?.destination.kind === 'place'
+      ? render({ key: 'label.confirm', params: { placeId: answer.destination.placeId } }, { instruction: null, now: ng.now })
+      : null
+  const confirmable = confirmLine !== null && !confirmLine.fallbackUsed
+  const answerText = confirmLine ? confirmLine.screen : materialize({ key: 'guidance.uncertain' })
+  const confirmDestination = () => {
+    if (!answer) return
+    const plan = planFor(answer.destination)
+    setAnswer(null)
+    setWhereText('')
+    if (plan.kind === 'walk') actions.startAt(plan.legIndex)
+    else if (plan.kind === 'ask') actions.askAbout(plan.placeId)
+  }
+  const rejectDestination = () => {
+    setAnswer(null)
+    whereInputRef.current?.focus()
   }
 
   const leg = DEMO_VISIT[ng.visit ? Math.min(ng.visit.legIndex, DEMO_VISIT.length - 1) : 0]
@@ -222,6 +245,9 @@ export function App() {
           <div className="where-row">
             <input
               id="where-text"
+              ref={whereInputRef}
+              // Where focus comes home after an ask card opened from here.
+              data-ask-trigger
               value={whereText}
               onChange={(event) => setWhereText(event.target.value)}
               maxLength={200}
@@ -236,14 +262,26 @@ export function App() {
           <p className="privacy" id="where-privacy">
             {label('label.privacy')}
           </p>
-          <p className="answer" aria-live="polite">
+          <div className="answer" aria-live="polite">
             {answer ? (
               <>
-                <span className="mode">{label(answer.mode === 'nemotron' ? 'label.mode.nemotron' : 'label.mode.mock')}</span>
-                {answer.destination.kind === 'place' ? renderPlace(answer.destination.placeId, ng.now) ?? '—' : '—'}
+                <p>
+                  <span className="mode">{label(answer.mode === 'nemotron' ? 'label.mode.nemotron' : 'label.mode.mock')}</span>
+                  {answerText}
+                </p>
+                {confirmable ? (
+                  <div className="confirm">
+                    <button type="button" className="primary" onClick={confirmDestination}>
+                      {label('label.yes')}
+                    </button>
+                    <button type="button" onClick={rejectDestination}>
+                      {label('label.no')}
+                    </button>
+                  </div>
+                ) : null}
               </>
             ) : null}
-          </p>
+          </div>
         </form>
       ) : null}
 

@@ -44,5 +44,8 @@ export const ZH_TW: Record<StringKey, string> = {
   'label.mode.mock': '模擬',
   'label.mode.nemotron': 'Nemotron',
   'label.privacy': '你輸入的文字會傳送到 Nebius 雲端的 Nemotron 模型判斷目的地，處理完不保存。請不要輸入姓名、病歷或身體狀況。',
+  'label.confirm': '要去{place}？',
+  'label.yes': '對',
+  'label.no': '不是',
   'fallback.safe': '我不確定。我陪你問。',
 }

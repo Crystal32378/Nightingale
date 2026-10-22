@@ -563,10 +563,21 @@ button.wide {
 }
 
 .where .answer {
-  margin: 0;
+  display: grid;
+  gap: 12px;
   min-height: 1.5em;
+}
+
+.where .answer p {
+  margin: 0;
   font-size: 1.0625rem;
   color: var(--ink);
+}
+
+.where .confirm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 .where .mode {

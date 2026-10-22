@@ -39,6 +39,9 @@ runtime validator swaps the whole line for `fallback.safe`.
 | `label.mode.mock` | `模擬` | which interpreter decided: keyword matching, no AI | 不朗讀。 |
 | `label.mode.nemotron` | `Nemotron` | which interpreter decided: Nemotron | 不朗讀。產品名照原文。 |
 | `label.privacy` | `你輸入的文字會傳送到 Nebius 雲端的 Nemotron 模型判斷目的地，處理完不保存。請不要輸入姓名、病歷或身體狀況。` | under the text box | 不朗讀。「處理完不保存」只在 Nebius 帳號開了 Zero Data Retention 時成立。 |
+| `label.confirm` | `要去{place}？` | asked once a place is recognised; nothing starts until 對 | 不朗讀。 |
+| `label.yes` | `對` | confirms the recognised place | 不朗讀。 |
+| `label.no` | `不是` | rejects it; back to the text box | 不朗讀。 |
 | `fallback.safe` | `我不確定。我陪你問。` | the validator refused an output | 與 `guidance.uncertain` 同字。 |
 
 ## Register rules these strings are held to
