@@ -121,7 +121,7 @@ export function needsCompression(gain: number): boolean {
 
 /** Which context a spoken string belongs to. Derived from the key, never passed in by a caller. */
 export function contextForKey(key: string): ListeningContext {
-  return key === 'ask.utterance' ? 'PUBLIC' : 'PRIVATE'
+  return key === 'ask.utterance' || key === 'ask.generic' ? 'PUBLIC' : 'PRIVATE'
 }
 
 /** For storage. Anything unrecognised falls back to the default rather than throwing. */

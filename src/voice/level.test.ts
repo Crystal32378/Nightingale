@@ -57,9 +57,10 @@ describe('the two listening contexts', () => {
     expect(DEFAULT_LEVELS.PUBLIC).toBeGreaterThan(DEFAULT_LEVELS.PRIVATE)
   })
 
-  it('sends the ask utterance to PUBLIC and everything else to PRIVATE', () => {
+  it('sends both ask utterances to PUBLIC and every guidance line to PRIVATE', () => {
     expect(contextForKey('ask.utterance')).toBe('PUBLIC')
-    for (const key of SPOKEN_KEYS.filter((k) => k !== 'ask.utterance')) {
+    expect(contextForKey('ask.generic')).toBe('PUBLIC')
+    for (const key of SPOKEN_KEYS.filter((k) => k.startsWith('guidance.'))) {
       expect(contextForKey(key)).toBe('PRIVATE')
     }
   })

@@ -23,7 +23,7 @@ node scripts/voice.mjs --from-files --profile=MALE
 
 同一支聲音、同樣語速、同樣用字，只有面對誰的時候語氣不同。
 
-共 20 句，每個聲音一套。
+共 21 句，每個聲音一套。
 
 | # | 對象 | pitch | 要生成的文字 | 存成這個檔名 |
 | --- | --- | --- | --- | --- |
@@ -47,6 +47,7 @@ node scripts/voice.mjs --from-files --profile=MALE
 | 18 | PUBLIC | 1 | `請問，神經外科？` | `ask.utterance__NEUROSURGERY.mp3` |
 | 19 | PUBLIC | 1 | `請問，藥局？` | `ask.utterance__PHARMACY.mp3` |
 | 20 | PUBLIC | 1 | `請問，掛號櫃台？` | `ask.utterance__REGISTRATION.mp3` |
+| 21 | PUBLIC | 1 | `請問，可以幫我找路嗎？` | `ask.generic.mp3` |
 
 檔名一個字都不能錯——manifest 是靠檔名對回句子的。
 

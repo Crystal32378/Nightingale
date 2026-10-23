@@ -19,6 +19,7 @@ export const STRING_KEYS = [
   'guidance.wait',
   'guidance.none',
   'ask.utterance',
+  'ask.generic',
   'checkpoint.next',
   'place.bare',
   'label.current',
@@ -34,6 +35,14 @@ export const STRING_KEYS = [
   'label.volume.down',
   'label.volume.up',
   'label.volume.level',
+  'label.where',
+  'label.find',
+  'label.mode.mock',
+  'label.mode.nemotron',
+  'label.privacy',
+  'label.confirm',
+  'label.yes',
+  'label.no',
   'fallback.safe',
 ] as const
 
@@ -58,6 +67,7 @@ export const SPOKEN_KEYS = [
   'guidance.uncertain',
   'guidance.arrived',
   'ask.utterance',
+  'ask.generic',
 ] as const
 
 export type SpokenKey = (typeof SPOKEN_KEYS)[number]
@@ -85,6 +95,7 @@ export const STRING_NOTES: Record<StringKey, string> = {
   'guidance.wait': '空字串。休息時什麼都不說，這是刻意的。',
   'guidance.none': '空字串。行程尚未開始。',
   'ask.utterance': '幫使用者問路的那一句。清楚、音量足夠讓旁邊的人聽一次就懂。',
+  'ask.generic': '尚未確認目的地時的求助句。不帶地點或使用者原文，音量足夠讓旁邊的人聽懂。',
   'checkpoint.next': '下一個 checkpoint 的標籤，畫面用，不朗讀。',
   'place.bare': '單獨一個已驗證地點名，畫面用，不朗讀。',
   'label.current': '畫面標籤，不朗讀。',
@@ -92,7 +103,7 @@ export const STRING_NOTES: Record<StringKey, string> = {
   'label.ask': '按鈕文字，不朗讀。',
   'label.rest': '按鈕文字，不朗讀。',
   'label.resume': '按鈕文字，不朗讀。',
-  'label.start': '按鈕文字，不朗讀。',
+  'label.start': '示範行程入口，不朗讀。只在輸入空白、沒有查詢或辨識結果時顯示。',
   'label.again': '按鈕文字，不朗讀。',
   'label.done': '按鈕文字，不朗讀。',
   'label.underway': '狀態標籤，不朗讀。休息時不顯示任何狀態。',
@@ -105,5 +116,16 @@ export const STRING_NOTES: Record<StringKey, string> = {
   'label.volume.down': '讀屏用，不錄音，畫面不顯示。',
   'label.volume.up': '讀屏用，不錄音，畫面不顯示。',
   'label.volume.level': '讀屏用，不錄音，畫面不顯示。{n} 由程式代入目前級數。',
+  // Typing where you want to go (indoor, before the visit starts). Screen
+  // chrome only: what the person types goes to the destination interpreter,
+  // never into a spoken or shown sentence.
+  'label.where': '輸入框的標籤，不朗讀。只問想去哪裡，不引導輸入姓名、病歷、症狀。',
+  'label.find': '送出按鈕文字，不朗讀。',
+  'label.mode.mock': '標示這次是關鍵字比對（沒有 AI）判斷的，不朗讀。',
+  'label.mode.nemotron': '標示這次是 Nemotron 判斷的，不朗讀。產品名照原文。',
+  'label.privacy': '輸入框下方的告知，不朗讀。Nebius 帳號已開 Zero Data Retention 才能寫「處理完不保存」；不寫「不會用來訓練」或任何合規宣稱。',
+  'label.confirm': '辨識出地點後先問一次，按「對」才開始引導，不朗讀。{place} 只來自已驗證地點。',
+  'label.yes': '確認按鈕文字，不朗讀。',
+  'label.no': '否認按鈕文字，不朗讀。按了回到輸入框重新說。',
   'fallback.safe': 'validator 擋下輸出時的靜態退路。與 guidance.uncertain 同字。',
 }

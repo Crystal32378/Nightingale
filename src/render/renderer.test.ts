@@ -28,6 +28,14 @@ function instruction(partial: Partial<Instruction>): Instruction {
 }
 
 describe('verified registry interpolation', () => {
+  it('asks for help without inventing a destination when no destination is known', () => {
+    const rendered = renderAsk(null, now)
+    expect(rendered.screen).toBe('請問，可以幫我找路嗎？')
+    expect(rendered.speech).toBe(rendered.screen)
+    expect(rendered.fallbackUsed).toBe(false)
+    expect(rendered.failures).toEqual([])
+  })
+
   it('builds the ask utterance from the registry, deterministically', () => {
     const rendered = renderAsk('NEUROSURGERY', now)
     expect(rendered.screen).toBe('請問，神經外科？')

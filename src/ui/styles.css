@@ -510,6 +510,87 @@ button.wide {
   grid-column: 1 / -1;
 }
 
+/* ---------- where do you want to go (before the visit starts) ---------- */
+/*
+  Same height and radius as the buttons, so the box and 找路 read as one row.
+  The text is at least 16px: below that, iOS zooms the page on focus.
+*/
+.where {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.where .label {
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+}
+
+.where-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.where input {
+  font: inherit;
+  font-size: 1.1875rem;
+  min-width: 0;
+  min-height: 60px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: 1.5px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+}
+
+.where button:disabled {
+  cursor: default;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.where input:focus-visible {
+  outline: 3px solid var(--green-deep);
+  outline-offset: 3px;
+}
+
+.where .privacy {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.where .answer {
+  display: grid;
+  gap: 12px;
+  min-height: 1.5em;
+}
+
+.where .answer p {
+  margin: 0;
+  font-size: 1.0625rem;
+  color: var(--ink);
+}
+
+.where .confirm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.where .mode {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--mist-edge);
+  background: var(--mist);
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
 /* ---------- volume ---------- */
 /*
   Four steps, two buttons, one icon, four bars. No words: the speaker glyph is

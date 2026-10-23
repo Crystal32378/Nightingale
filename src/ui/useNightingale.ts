@@ -33,6 +33,8 @@ export function useNightingale(adapter: VirtualBirdAdapter) {
   const [visit, setVisit] = useState<VisitState | null>(null)
   const [timeShiftMs, setTimeShiftMs] = useState(0)
   const [askOpen, setAskOpen] = useState(false)
+  // A place asked about from the text box before any visit leg names it.
+  const [askPlaceId, setAskPlaceId] = useState<string | null>(null)
   const [, setTick] = useState(0)
   const [lastEvent, setLastEvent] = useState<string | null>(null)
 
@@ -84,21 +86,27 @@ export function useNightingale(adapter: VirtualBirdAdapter) {
   const cue = deriveCue(output.state, output.instruction)
   const guidance = renderGuidance(output.instruction, now)
   const checkpoint = renderNextCheckpoint(output.nextCheckpointPlaceId, now)
-  const ask = renderAsk(DEMO_VISIT[visit ? Math.min(visit.legIndex, DEMO_VISIT.length - 1) : 0].destinationId, now)
+  // Before a visit, only an explicitly confirmed place may be named. The
+  // default demo leg is not evidence of where this person wants to go.
+  const askDestinationId = askPlaceId ?? (visit ? DEMO_VISIT[Math.min(visit.legIndex, DEMO_VISIT.length - 1)].destinationId : null)
+  const ask = renderAsk(askDestinationId, now)
 
   useEffect(() => {
     adapter.send(cue)
   }, [adapter, cue])
 
-  const start = useCallback(() => {
+  /** Starts the visit at a leg; the engine works out the route from the entrance. */
+  const startAt = useCallback((legIndex: number) => {
     setTimeShiftMs(0)
     setVisit({
-      legIndex: 0,
+      legIndex,
       lastObservation: observationAt(START_NODE_ID, Date.now(), 'QR'),
       posture: 'MOVING',
       startedAt: Date.now(),
     })
   }, [])
+
+  const start = useCallback(() => startAt(0), [startAt])
 
   const observe = useCallback(
     (nodeId: string, source: Observation['source']) => {
@@ -128,7 +136,16 @@ export function useNightingale(adapter: VirtualBirdAdapter) {
     setAskOpen(true)
   }, [])
 
-  const closeAsk = useCallback(() => setAskOpen(false), [])
+  /** Opens the ask card for a place the demo visit does not walk to. */
+  const askAbout = useCallback((placeId: string) => {
+    setAskPlaceId(placeId)
+    setAskOpen(true)
+  }, [])
+
+  const closeAsk = useCallback(() => {
+    setAskOpen(false)
+    setAskPlaceId(null)
+  }, [])
 
   const decay = useCallback(() => setTimeShiftMs((v) => v + DECAY_STEP_MS), [])
 
@@ -137,6 +154,7 @@ export function useNightingale(adapter: VirtualBirdAdapter) {
     setVisit(null)
     setTimeShiftMs(0)
     setAskOpen(false)
+    setAskPlaceId(null)
   }, [])
 
   // Everything the bird can do must be reachable from the adapter, not only
@@ -172,7 +190,7 @@ export function useNightingale(adapter: VirtualBirdAdapter) {
     })
   }, [adapter])
 
-  const speakAsk = useCallback(() => speak(ask.speech), [ask.speech])
+  const speakAsk = useCallback(() => speak(ask.speech, ask.key), [ask.speech, ask.key])
 
   return {
     started: visit !== null,
@@ -188,6 +206,8 @@ export function useNightingale(adapter: VirtualBirdAdapter) {
     timeShiftMs,
     actions: {
       start,
+      startAt,
+      askAbout,
       observe,
       advanceLeg,
       setPosture,

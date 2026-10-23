@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { VirtualBirdAdapter } from '../adapters/virtual'
+import { DestinationClient, type DestinationAnswer } from '../destination/client'
+import { planFor } from '../destination/plan'
 import type { Instruction } from '../engine/types'
-import { label, renderPlace } from '../render/renderer'
+import { label, materialize, render, renderPlace } from '../render/renderer'
 import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
 import { AskCard, acknowledgeFocusReturn, wantFocusReturn } from './AskCard'
 import { DevPanel } from './DevPanel'
@@ -95,6 +97,75 @@ export function App() {
     sequenceStartedAtMs: idleTrigger?.startedAtMs ?? 0,
     now: Date.now(),
     reducedMotion: useReducedMotion(),
+  }
+
+  // Where the person says they want to go, before the visit starts. Only ever
+  // a destination: where they are still comes from a QR scan or a button.
+  const destinationClient = useMemo(() => new DestinationClient(), [])
+  const [whereText, setWhereText] = useState('')
+  const [finding, setFinding] = useState(false)
+  const [answer, setAnswer] = useState<(DestinationAnswer & { requestId: number }) | null>(null)
+  const whereInputRef = useRef<HTMLInputElement>(null)
+  const requestId = useRef(0)
+  // Editing, rejecting or leaving this question invalidates every older
+  // request, even if the person later types exactly the same words again.
+  const clearDestination = useCallback(() => {
+    requestId.current += 1
+    setAnswer(null)
+    setFinding(false)
+  }, [])
+  useEffect(() => () => { requestId.current += 1 }, [])
+  // Also covers a resumed visit and an ask card opened by the bird's button.
+  useEffect(() => {
+    if (ng.started || ng.askOpen) clearDestination()
+  }, [ng.started, ng.askOpen, clearDestination])
+
+  const findWay = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (finding || ng.started || ng.askOpen || !whereText.trim()) return
+    clearDestination()
+    const submittedId = requestId.current
+    setFinding(true)
+    const result = await destinationClient.interpret(whereText)
+    // An obsolete reply must not update the answer OR stop a newer spinner.
+    if (submittedId !== requestId.current) return
+    setAnswer({ ...result, requestId: submittedId })
+    setFinding(false)
+  }
+  // A recognised place is asked about once; nothing starts until 對. The
+  // line goes through the validator, so an unverified place comes back as
+  // 我不確定。我陪你問。 with no 對 to press.
+  const confirmLine =
+    answer?.destination.kind === 'place'
+      ? render({ key: 'label.confirm', params: { placeId: answer.destination.placeId } }, { instruction: null, now: ng.now })
+      : null
+  const confirmable = !finding && answer?.requestId === requestId.current && confirmLine !== null && !confirmLine.fallbackUsed
+  const answerText = confirmLine ? confirmLine.screen : materialize({ key: 'guidance.uncertain' })
+  const confirmDestination = () => {
+    if (!answer || !confirmable || answer.requestId !== requestId.current) return
+    const plan = planFor(answer.destination)
+    clearDestination()
+    setWhereText('')
+    if (plan.kind === 'walk') actions.startAt(plan.legIndex)
+    else if (plan.kind === 'ask') actions.askAbout(plan.placeId)
+  }
+  const rejectDestination = () => {
+    clearDestination()
+    whereInputRef.current?.focus()
+  }
+  // The demo is an explicit alternative on the empty screen, never the next
+  // step of a pending, uncertain or rejected destination query.
+  const canStartDemo = !ng.started && !finding && !answer && !whereText.trim()
+  const startVisit = () => {
+    if (!canStartDemo) return
+    clearDestination()
+    setWhereText('')
+    actions.start()
+  }
+  const resetVisit = () => {
+    clearDestination()
+    setWhereText('')
+    actions.reset()
   }
 
   const leg = DEMO_VISIT[ng.visit ? Math.min(ng.visit.legIndex, DEMO_VISIT.length - 1) : 0]
@@ -199,12 +270,75 @@ export function App() {
         </div>
       </div>
 
+      {!ng.started ? (
+        <form className="where" onSubmit={findWay}>
+          <label className="label" htmlFor="where-text">
+            {label('label.where')}
+          </label>
+          <div className="where-row">
+            <input
+              id="where-text"
+              ref={whereInputRef}
+              // Where focus comes home after an ask card opened from here.
+              data-ask-trigger
+              value={whereText}
+              onChange={(event) => {
+                clearDestination()
+                setWhereText(event.target.value)
+              }}
+              maxLength={200}
+              enterKeyHint="go"
+              autoComplete="off"
+              aria-describedby="where-privacy"
+            />
+            <button type="submit" disabled={finding || !whereText.trim()}>
+              {label('label.find')}
+            </button>
+          </div>
+          <p className="privacy" id="where-privacy">
+            {label('label.privacy')}
+          </p>
+          <div className="answer" aria-live="polite">
+            {answer ? (
+              <>
+                <p>
+                  <span className="mode">{label(answer.mode === 'nemotron' ? 'label.mode.nemotron' : 'label.mode.mock')}</span>
+                  {answerText}
+                </p>
+                {confirmable ? (
+                  <div className="confirm">
+                    <button type="button" className="primary" onClick={confirmDestination}>
+                      {label('label.yes')}
+                    </button>
+                    <button type="button" onClick={rejectDestination}>
+                      {label('label.no')}
+                    </button>
+                  </div>
+                ) : null}
+              </>
+            ) : null}
+          </div>
+        </form>
+      ) : null}
+
       <div className="actions">
         {!ng.started ? (
-          <button className="primary wide" onClick={actions.start}>
-            <IconResume />
-            {label('label.start')}
-          </button>
+          // A confirmed destination has its own 對／不是 choice. Everywhere
+          // else the person can ask for help without choosing a destination.
+          confirmable ? null : (
+            <>
+              <button className="primary wide" data-ask-trigger onClick={actions.askForMe}>
+                <IconAsk />
+                {label('label.ask')}
+              </button>
+              {canStartDemo ? (
+                <button className="wide" onClick={startVisit}>
+                  <IconResume />
+                  {label('label.start')}
+                </button>
+              ) : null}
+            </>
+          )
         ) : (
           <>
             <button className="primary" data-ask-trigger onClick={actions.askForMe}>
@@ -248,7 +382,7 @@ export function App() {
         onDecay={actions.decay}
         onTriggerIdleGlance={() => armIdleTrigger('L1')}
         onTriggerIdleGaze={() => armIdleTrigger('L2')}
-        onReset={actions.reset}
+        onReset={resetVisit}
       />
       </div>
 
