@@ -4,7 +4,7 @@ This guide covers the indoor React UI and the Hono destination proxy in this
 repository. Open `/` for the indoor flow. The outdoor `?flow=last300m` flow has
 separate backend settings; they are not needed here.
 
-The UI currently uses Traditional Chinese. It asks where the person wants to go,
+The steps below use the Traditional Chinese screen. It asks where the person wants to go,
 shows the interpreter mode, and requires confirmation before starting navigation.
 See the [scenario report](qa/indoor-scenarios-2026-10-23/README.md) for screenshots,
 test sentences and failure behavior.
@@ -58,8 +58,8 @@ or `simulate arrival` moves the route on, and `reset visit` returns to the input
 
 With no proxy listening, Vite reports an expected connection failure/HTTP 500;
 the frontend handles it by using its local Mock. No Nebius request is made.
-Mock matches the existing Chinese place keywords; `領藥` alone is not one of
-those keywords. Use `我要去藥局` when verifying Mock.
+Mock only matches place names; `領藥` alone is not one. Use `我要去藥局`
+when verifying Mock.
 
 ## 3. Configure and start the proxy
 
@@ -249,4 +249,4 @@ when finished.
   - 497/497 tests, both typechecks and build passed.
 - macOS/Linux commands were not run.
 
-Deployment proposals and English UI work are separate delivery steps.
+Public deployment is not set up yet; see the [deployment proposal](indoor-deploy-proposal.md).
