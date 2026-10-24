@@ -20,6 +20,25 @@ const WORDS: Record<DestinationId, string> = {
  */
 const NEGATIONS = ['不要', '不想', '不用', '不去', '不必', '不是', '不能', '不需要', '不可以', '不會', '不打算', '沒有要', '沒要', '別']
 
+/** The English name of each place, as a whole word: exiting is not the exit. */
+const WORDS_EN: Record<DestinationId, RegExp> = {
+  ENTRANCE: /\bentrance\b/i,
+  REGISTRATION: /\bregistration\b/i,
+  ELEVATOR_IN: /\belevator\b/i,
+  NEUROSURGERY: /\bneurosurgery\b/i,
+  CASHIER: /\bcashier\b/i,
+  PHARMACY: /\bpharmacy\b/i,
+  EXIT: /\bexit\b/i,
+}
+
+/**
+ * English negation, after dropping the phrases that still want the place
+ * (I don't know where the pharmacy is), as 不知道 is not in the list above.
+ * ponytail: same ceiling as NEGATIONS; add phrasings here with a test.
+ */
+const NOT_KNOWING_EN = /\b(do not|don't|dont) know\b|\bnot sure\b/gi
+const NEGATION_EN = /\b(no|not|never|don't|dont|won't|wont|can't|cant|cannot|doesn't|isn't|shouldn't)\b/i
+
 /**
  * Runs when there is no API key. It only spots words — no AI — and names a
  * place only when exactly one is mentioned; two places, none, or any negation
@@ -31,8 +50,11 @@ export class MockInterpreter implements DestinationInterpreter {
   constructor(private readonly registry: PlaceRegistry = PLACE_REGISTRY) {}
 
   async interpret(text: string): Promise<Destination> {
+    // Phone keyboards type ’ for '.
+    const english = text.replace(/’/g, "'")
     if (NEGATIONS.some((word) => text.includes(word))) return UNCERTAIN
-    const named = DESTINATION_IDS.filter((id) => text.includes(WORDS[id]))
+    if (NEGATION_EN.test(english.replace(NOT_KNOWING_EN, ''))) return UNCERTAIN
+    const named = DESTINATION_IDS.filter((id) => text.includes(WORDS[id]) || WORDS_EN[id].test(english))
     if (named.length !== 1) return UNCERTAIN
     return parseDestination(named[0], this.registry)
   }
