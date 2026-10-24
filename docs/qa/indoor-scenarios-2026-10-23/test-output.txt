@@ -1,0 +1,66 @@
+
+ RUN  v2.1.9 D:/Devpost/Nebius x NVIDIA Global AI Hackathon/Nightingale
+
+ ✓ src/ui/birdMotion.test.ts (23 tests) 47ms
+ ✓ src/remote/photo.test.ts (28 tests) 52ms
+ ✓ src/engine/engine.test.ts (21 tests) 26ms
+ ✓ src/remote/voiceCapture.test.ts (10 tests) 32ms
+ ✓ src/remote/english.test.ts (17 tests) 303ms
+ ✓ src/voice/utterances.test.ts (16 tests) 36ms
+ ✓ src/registry/registry.test.ts (16 tests) 25ms
+ ✓ src/render/renderer.test.ts (18 tests) 24ms
+ ✓ src/remote/textContinuation.test.ts (25 tests) 143ms
+ ✓ src/destination/nemotron.test.ts (16 tests) 672ms
+   ✓ NemotronInterpreter > asks the chosen model at Token Factory, with the key only in the auth header 377ms
+ ✓ src/remote/steps.test.ts (11 tests) 35ms
+ ✓ src/destination/client.test.ts (14 tests) 56ms
+ ✓ src/remote/last300m.test.ts (7 tests) 46ms
+ ✓ src/remote/outdoorVoice.test.ts (6 tests) 544ms
+   ✓ verified outdoor recordings > ships both voices for every approved line, with matching source text and intact bytes 524ms
+ ✓ src/ui/motionDriver.test.ts (4 tests) 13ms
+ ✓ src/ui/motionTrigger.test.ts (9 tests) 15ms
+ ✓ src/ui/visualText.test.ts (11 tests) 32ms
+ ✓ src/acceptance.test.ts (1 test) 14ms
+ ✓ src/voice/level.test.ts (16 tests) 25ms
+ ✓ server/app.test.ts (10 tests) 157ms
+ ✓ src/engine/graph.test.ts (14 tests) 25ms
+ ✓ src/voice/profiles.test.ts (10 tests) 23ms
+ ✓ src/destination/mock.test.ts (29 tests) 27ms
+ ✓ src/destination/destination.test.ts (35 tests) 32ms
+ ✓ src/ui/birdPresentation.test.ts (10 tests) 17ms
+ ✓ src/remote/remoteGuidance.test.ts (7 tests) 19ms
+ ✓ src/remote/photoDiagnostic.test.ts (6 tests) 34ms
+ ✓ src/voice/plan.test.ts (7 tests) 20ms
+ ✓ src/lint/register.test.ts (32 tests) 30ms
+ ✓ src/persistence/visitStore.test.ts (6 tests) 23ms
+ ✓ src/adapters/virtual.test.ts (6 tests) 21ms
+ ✓ src/remote/voiceInputClient.test.ts (8 tests) 136ms
+ ✓ src/lint/enginePurity.test.ts (15 tests) 61ms
+ ✓ src/destination/plan.test.ts (8 tests) 12ms
+ ✓ src/ui/App.test.tsx (20 tests) 17724ms
+   ✓ indoor destination confirmation > removes the old confirmation as soon as the input changes, before submitting again 2525ms
+   ✓ indoor destination confirmation > clears an old answer when resubmitting the same text and waits for the new answer 799ms
+   ✓ indoor destination confirmation > lets a new input be submitted while an obsolete request is pending and only confirms the new destination 857ms
+   ✓ indoor destination confirmation > does not let an obsolete reply end the newer request loading state 810ms
+   ✓ indoor destination confirmation > keeps an old reply invalid even when the input is changed back to the same text 1400ms
+   ✓ indoor destination confirmation > rejects the current destination, restores input focus and ignores an older pending reply 643ms
+   ✓ indoor destination confirmation > resets a completed answer as well as the input 516ms
+   ✓ indoor destination confirmation > resets a pending request and ignores its reply after a new query 643ms
+   ✓ indoor destination confirmation > does not bring a pending result back after starting and resetting the demo visit 848ms
+   ✓ indoor destination confirmation > keeps obsolete replies out of an ask card and the input after it closes 1152ms
+   ✓ indoor destination confirmation > invalidates a pending query when the bird long press opens generic help before confirmation 619ms
+   ✓ indoor destination confirmation > invalidates a answered query when the bird long press opens generic help before confirmation 728ms
+   ✓ asking for help without a destination > offers generic help for an uncertain nemotron answer without starting a visit 873ms
+   ✓ asking for help without a destination > offers generic help for an uncertain mock answer without starting a visit 1011ms
+   ✓ asking for help without a destination > returns a rejected destination to editing and offers generic help without opening it automatically 519ms
+   ✓ asking for help without a destination > can ask while waiting and ignores the late reply after the card closes 521ms
+   ✓ asking for help without a destination > can retry after generic help and then asks about the confirmed visit destination 1617ms
+   ✓ asking for help without a destination > speaks only the fixed generic request, including when asked to repeat it 870ms
+   ✓ asking for help without a destination > does not reuse a previous visit destination after reset 562ms
+ ✓ src/engine/confidence.test.ts (5 tests) 14ms
+
+ Test Files  36 passed (36)
+      Tests  497 passed (497)
+   Start at  21:15:30
+   Duration  111.18s (transform 6.22s, setup 0ms, collect 29.56s, tests 20.52s, environment 63.97s, prepare 22.71s)
+

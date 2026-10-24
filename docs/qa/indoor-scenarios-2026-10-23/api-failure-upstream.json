@@ -1,0 +1,5 @@
+{
+  "recordedAt": "2026-10-23T13:22:42.454Z",
+  "status": 401,
+  "setup": "Deliberately invalid QA credential supplied only to the proxy process environment"
+}

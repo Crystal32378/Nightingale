@@ -1,0 +1,39 @@
+{
+  "recordedAt": "2026-10-23T13:22:33.325Z",
+  "revision": "70c40539396325e9b741eff421440af68d82f8cd",
+  "mode": "api-failure",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "browser": "156.0.4314.42",
+  "cases": [
+    {
+      "id": "03-api-failure",
+      "input": "我要去領藥",
+      "expected": "uncertain",
+      "screenshots": [
+        "03-api-failure-uncertain.png",
+        "03-api-failure-help.png"
+      ],
+      "assertions": [
+        "No visit before destination confirmation",
+        "Uncertain offers generic help without starting a visit",
+        "Closing help preserves input and restores focus"
+      ],
+      "proxyStatus": 200,
+      "proxyAnswer": {
+        "mode": "nemotron",
+        "destination": {
+          "kind": "uncertain"
+        }
+      },
+      "responseMs": 1128,
+      "passed": true
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "note": "Headless desktop Edge at mobile width; not a physical phone or an audio-quality assessment.",
+  "passed": true
+}
