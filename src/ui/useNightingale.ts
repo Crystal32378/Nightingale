@@ -5,6 +5,7 @@ import { deriveCue } from '../engine/cues'
 import { DEMO_VISIT, MOCK_VENUE, START_NODE_ID } from '../venue/mock'
 import { renderAsk, renderGuidance, renderNextCheckpoint } from '../render/renderer'
 import { VirtualBirdAdapter } from '../adapters/virtual'
+import type { Locale } from '../registry/types'
 import { clearVisit, loadVisit, saveVisit, type VisitSnapshot } from '../persistence/visitStore'
 import { speak } from './speech'
 
@@ -29,7 +30,7 @@ function observationAt(nodeId: string, at: number, source: Observation['source']
   }
 }
 
-export function useNightingale(adapter: VirtualBirdAdapter) {
+export function useNightingale(adapter: VirtualBirdAdapter, locale: Locale = 'zh-TW') {
   const [visit, setVisit] = useState<VisitState | null>(null)
   const [timeShiftMs, setTimeShiftMs] = useState(0)
   const [askOpen, setAskOpen] = useState(false)
@@ -84,12 +85,12 @@ export function useNightingale(adapter: VirtualBirdAdapter) {
   }, [visit, now])
 
   const cue = deriveCue(output.state, output.instruction)
-  const guidance = renderGuidance(output.instruction, now)
-  const checkpoint = renderNextCheckpoint(output.nextCheckpointPlaceId, now)
+  const guidance = renderGuidance(output.instruction, now, { locale })
+  const checkpoint = renderNextCheckpoint(output.nextCheckpointPlaceId, now, { locale })
   // Before a visit, only an explicitly confirmed place may be named. The
   // default demo leg is not evidence of where this person wants to go.
   const askDestinationId = askPlaceId ?? (visit ? DEMO_VISIT[Math.min(visit.legIndex, DEMO_VISIT.length - 1)].destinationId : null)
-  const ask = renderAsk(askDestinationId, now)
+  const ask = renderAsk(askDestinationId, now, { locale })
 
   useEffect(() => {
     adapter.send(cue)
@@ -190,7 +191,10 @@ export function useNightingale(adapter: VirtualBirdAdapter) {
     })
   }, [adapter])
 
-  const speakAsk = useCallback(() => speak(ask.speech, ask.key), [ask.speech, ask.key])
+  const speakAsk = useCallback(
+    () => speak(ask.speech, ask.key, locale === 'en' ? 'en-US' : 'zh-TW'),
+    [ask.speech, ask.key, locale],
+  )
 
   return {
     started: visit !== null,

@@ -124,3 +124,27 @@ describe('the runtime gate refuses every unusable source, not only a drifted quo
     expect(isVerifiedEntry(web('心臟內科'))).toBe(true)
   })
 })
+
+/**
+ * English names have no page to be checked against: the quote is Chinese.
+ * A generic facility word translates the same everywhere, so it may carry one;
+ * a name read off one hospital's page may not, until someone sources it.
+ */
+describe('an English name is only handed out where the claim still holds', () => {
+  it('names every shipped place in English', () => {
+    for (const entry of Object.values(PLACE_REGISTRY)) {
+      expect(placeName(entry.id, 'en'), `${entry.id} has no English name`).toBeTruthy()
+    }
+  })
+
+  it('withholds the English name of a web-sourced entry', () => {
+    const entry = { ...sourced('心臟血管外科', '本院設有心臟血管外科。'), names: { 'zh-TW': '心臟血管外科', en: 'Cardiovascular Surgery' } }
+    expect(placeName('X', 'zh-TW', { X: entry })).toBe('心臟血管外科')
+    expect(placeName('X', 'en', { X: entry })).toBeNull()
+  })
+
+  it('has no English name to give for an entry it refuses', () => {
+    const registry = { WARD: { id: 'WARD', names: { 'zh-TW': '某某病房', en: 'Some ward' }, source: null } }
+    expect(placeName('WARD', 'en', registry)).toBeNull()
+  })
+})

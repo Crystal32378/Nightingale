@@ -3,6 +3,7 @@ import { VirtualBirdAdapter } from '../adapters/virtual'
 import { DestinationClient, type DestinationAnswer } from '../destination/client'
 import { planFor } from '../destination/plan'
 import type { Instruction } from '../engine/types'
+import type { Locale } from '../registry/types'
 import { label, materialize, render, renderPlace } from '../render/renderer'
 import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
 import { AskCard, acknowledgeFocusReturn, wantFocusReturn } from './AskCard'
@@ -75,10 +76,29 @@ function InstructionArrow({ instruction }: { instruction: Instruction }) {
   return null
 }
 
+const VOICE_LANG: Record<Locale, string> = { 'zh-TW': 'zh-TW', en: 'en-US' }
+
 export function App() {
   const adapter = useMemo(() => new VirtualBirdAdapter(), [])
   const appRef = useRef<HTMLDivElement>(null)
-  const ng = useNightingale(adapter)
+  // Same switch as the outdoor flow: ?lang=en. Changing it changes words only;
+  // the visit, the typed text and any pending or answered query stay as they are.
+  const [locale, setLocale] = useState<Locale>(() =>
+    new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'zh-TW',
+  )
+  useEffect(() => {
+    document.documentElement.lang = locale
+  }, [locale])
+  const switchLocale = (next: Locale) => {
+    // A sentence already being spoken belongs to the old screen.
+    window.speechSynthesis?.cancel()
+    setLocale(next)
+    const url = new URL(window.location.href)
+    url.searchParams.set('lang', next)
+    window.history.replaceState(null, '', url)
+  }
+  const t = (key: Parameters<typeof label>[0]) => label(key, { locale })
+  const ng = useNightingale(adapter, locale)
   const { output, actions } = ng
 
   // Dev-only IDLE motion triggers (L1 glance / L2 gaze). Sealed inside App:
@@ -137,10 +157,10 @@ export function App() {
   // 我不確定。我陪你問。 with no 對 to press.
   const confirmLine =
     answer?.destination.kind === 'place'
-      ? render({ key: 'label.confirm', params: { placeId: answer.destination.placeId } }, { instruction: null, now: ng.now })
+      ? render({ key: 'label.confirm', params: { placeId: answer.destination.placeId } }, { instruction: null, now: ng.now }, { locale })
       : null
   const confirmable = !finding && answer?.requestId === requestId.current && confirmLine !== null && !confirmLine.fallbackUsed
-  const answerText = confirmLine ? confirmLine.screen : materialize({ key: 'guidance.uncertain' })
+  const answerText = confirmLine ? confirmLine.screen : materialize({ key: 'guidance.uncertain' }, { locale })
   const confirmDestination = () => {
     if (!answer || !confirmable || answer.requestId !== requestId.current) return
     const plan = planFor(answer.destination)
@@ -172,13 +192,14 @@ export function App() {
   const resting = output.state.posture === 'RESTING'
   const arrived = output.state.progress === 'ARRIVED'
 
-  // "下一個：掛號櫃台" shown as a label and a name. Presentation of one verified
-  // string, broken where it is already punctuated — not a second string.
-  const nextParts = ng.checkpoint ? ng.checkpoint.screen.split('：') : null
+  // "下一個：掛號櫃台" / "Next: Registration counter" shown as a label and a
+  // name. Presentation of one verified string, broken where it is already
+  // punctuated — not a second string.
+  const nextParts = ng.checkpoint ? ng.checkpoint.screen.split(/：|: /) : null
 
   const currentNodeId = ng.visit?.lastObservation?.nodeId ?? null
-  const currentPlace = currentNodeId ? renderPlace(MOCK_VENUE.nodes[currentNodeId]?.placeId ?? null, ng.now) : null
-  const destinationPlace = ng.started ? renderPlace(leg.destinationId, ng.now) : null
+  const currentPlace = currentNodeId ? renderPlace(MOCK_VENUE.nodes[currentNodeId]?.placeId ?? null, ng.now, { locale }) : null
+  const destinationPlace = ng.started ? renderPlace(leg.destinationId, ng.now, { locale }) : null
 
   const guidanceText = ng.guidance.screen
   const instructionClass = [
@@ -215,6 +236,7 @@ export function App() {
   // Three scenes, three protagonists. Idle: the bird. Guiding: the sentence.
   // Resting: the silence. The layout knows which scene it is in.
   const scene = !ng.started ? 'idle' : resting ? 'rest' : 'guide'
+  const volumeLabels = { level: t('label.volume.level'), down: t('label.volume.down'), up: t('label.volume.up') }
 
   return (
     <>
@@ -231,7 +253,7 @@ export function App() {
         {ng.started && !resting ? (
           <span className="status">
             {arrived ? <IconDone /> : <IconRoute />}
-            {arrived ? label('label.arrived') : label('label.underway')}
+            {arrived ? t('label.arrived') : t('label.underway')}
           </span>
         ) : null}
       </header>
@@ -256,7 +278,7 @@ export function App() {
         <div>
           <p className="label">
             <IconCurrent />
-            {label('label.current')}
+            {t('label.current')}
           </p>
           <p className="value">{currentPlace ?? '—'}</p>
         </div>
@@ -264,7 +286,7 @@ export function App() {
         <div>
           <p className="label">
             <IconDestination />
-            {label('label.destination')}
+            {t('label.destination')}
           </p>
           <p className="value">{destinationPlace ?? '—'}</p>
         </div>
@@ -273,7 +295,7 @@ export function App() {
       {!ng.started ? (
         <form className="where" onSubmit={findWay}>
           <label className="label" htmlFor="where-text">
-            {label('label.where')}
+            {t('label.where')}
           </label>
           <div className="where-row">
             <input
@@ -292,26 +314,26 @@ export function App() {
               aria-describedby="where-privacy"
             />
             <button type="submit" disabled={finding || !whereText.trim()}>
-              {label('label.find')}
+              {t('label.find')}
             </button>
           </div>
           <p className="privacy" id="where-privacy">
-            {label('label.privacy')}
+            {t('label.privacy')}
           </p>
           <div className="answer" aria-live="polite">
             {answer ? (
               <>
                 <p>
-                  <span className="mode">{label(answer.mode === 'nemotron' ? 'label.mode.nemotron' : 'label.mode.mock')}</span>
+                  <span className="mode">{t(answer.mode === 'nemotron' ? 'label.mode.nemotron' : 'label.mode.mock')}</span>
                   {answerText}
                 </p>
                 {confirmable ? (
                   <div className="confirm">
                     <button type="button" className="primary" onClick={confirmDestination}>
-                      {label('label.yes')}
+                      {t('label.yes')}
                     </button>
                     <button type="button" onClick={rejectDestination}>
-                      {label('label.no')}
+                      {t('label.no')}
                     </button>
                   </div>
                 ) : null}
@@ -329,12 +351,12 @@ export function App() {
             <>
               <button className="primary wide" data-ask-trigger onClick={actions.askForMe}>
                 <IconAsk />
-                {label('label.ask')}
+                {t('label.ask')}
               </button>
               {canStartDemo ? (
                 <button className="wide" onClick={startVisit}>
                   <IconResume />
-                  {label('label.start')}
+                  {t('label.start')}
                 </button>
               ) : null}
             </>
@@ -343,17 +365,17 @@ export function App() {
           <>
             <button className="primary" data-ask-trigger onClick={actions.askForMe}>
               <IconAsk />
-              {label('label.ask')}
+              {t('label.ask')}
             </button>
             {resting ? (
               <button onClick={() => actions.setPosture('MOVING')}>
                 <IconResume />
-                {label('label.resume')}
+                {t('label.resume')}
               </button>
             ) : (
               <button onClick={() => actions.setPosture('RESTING')}>
                 <IconRest />
-                {label('label.rest')}
+                {t('label.rest')}
               </button>
             )}
           </>
@@ -363,7 +385,18 @@ export function App() {
       {/* The bird's voice, one reach above the thumb's resting place. Always
           visible: a volume control you must go find is one you never adjust.
           Icon and bars only — no words to misread. */}
-      <VolumeControl context="PRIVATE" />
+      <VolumeControl context="PRIVATE" labels={volumeLabels} />
+
+      {/* Below the fold on purpose: a setting, not part of the walk. */}
+      <select
+        className="language"
+        aria-label="Language / 語言"
+        value={locale}
+        onChange={(event) => switchLocale(event.target.value === 'en' ? 'en' : 'zh-TW')}
+      >
+        <option value="zh-TW">繁體中文</option>
+        <option value="en">English</option>
+      </select>
 
       <DevPanel
         output={output}
@@ -386,7 +419,14 @@ export function App() {
       />
       </div>
 
-      {ng.askOpen ? <AskCard text={ng.ask.screen} onClose={actions.closeAsk} /> : null}
+      {ng.askOpen ? (
+        <AskCard
+          text={ng.ask.screen}
+          onClose={actions.closeAsk}
+          lang={VOICE_LANG[locale]}
+          labels={{ again: t('label.again'), done: t('label.done'), volume: volumeLabels }}
+        />
+      ) : null}
     </>
   )
 }
