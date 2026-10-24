@@ -1,0 +1,85 @@
+{
+  "recordedAt": "2026-10-23T13:45:32.125Z",
+  "revision": "70c40539396325e9b741eff421440af68d82f8cd",
+  "node": "v26.12.1",
+  "checks": [
+    {
+      "name": "keyless proxy",
+      "status": 200,
+      "body": {
+        "mode": "mock",
+        "destination": {
+          "kind": "place",
+          "placeId": "PHARMACY"
+        }
+      }
+    },
+    {
+      "name": "loopback Vite forwarding",
+      "status": 200
+    },
+    {
+      "name": "LAN UI access",
+      "status": 200
+    },
+    {
+      "name": "LAN API rejected by Vite",
+      "status": 404
+    },
+    {
+      "name": "configured-key startup and rejection before inference",
+      "recordedAt": "2026-10-23T13:49:13.265Z",
+      "status": 400,
+      "body": {
+        "mode": "nemotron",
+        "error": "text must be 1–200 characters"
+      }
+    }
+  ],
+  "scope": "Setup checks only; LAN requests were made through this computer LAN address, not a physical phone; .env unchanged; no provider calls",
+  "installation": {
+    "command": "npm ci --offline --no-audit --no-fund",
+    "isolatedTemporaryDirectory": true,
+    "packagesAdded": 199,
+    "result": "passed after rerunning outside sandbox to access npm cache",
+    "manifestHashes": {
+      "package.json": "81e278dcb079089e7922e0b0d6c7e2191967d264bc67ea4da02fb85b3edc42f5",
+      "package-lock.json": "2a4188c40f60c3631efc17901d4e1ce7261bb030e33dd7f9d42eba780d039860"
+    }
+  },
+  "followUp": {
+    "recordedAt": "2026-10-24",
+    "revision": "70c40539396325e9b741eff421440af68d82f8cd",
+    "checks": [
+      {
+        "name": "browser Mock walkthrough, no proxy",
+        "result": "Mock 要去藥局？; 不是 keeps input; 對 starts pharmacy leg"
+      },
+      {
+        "name": "mode selection",
+        "result": "key in .env, .env.local or process env -> nemotron; missing/empty/whitespace -> mock; empty process var overrides .env key"
+      },
+      {
+        "name": "browser Nemotron call at 127.0.0.1",
+        "result": "我要去領藥 -> Nemotron 要去藥局？"
+      },
+      {
+        "name": "vite preview",
+        "result": "loopback API forwarded; LAN UI 200; LAN API 404"
+      },
+      {
+        "name": "physical phone over Wi-Fi",
+        "result": "LAN URL showed 模擬 while proxy was nemotron"
+      },
+      {
+        "name": "regression",
+        "result": "497/497 tests (2 workers), app and node typecheck, build"
+      }
+    ],
+    "providerCalls": 2,
+    "providerCallNote": "1 intended browser call; 1 unintended test request whose Chinese text was garbled by Git Bash curl (returned uncertain)",
+    "notRun": [
+      "macOS/Linux commands"
+    ]
+  }
+}

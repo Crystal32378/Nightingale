@@ -8,6 +8,7 @@ tsconfig.tsbuildinfo
 *.tsbuildinfo
 
 .env
+.env.development
 casting/
 vite.config.ts.timestamp-*
 
