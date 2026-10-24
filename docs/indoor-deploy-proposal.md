@@ -45,9 +45,12 @@ the limits have to live in the proxy:
 
 1. **Per-client rate limit** (for example a few requests per minute per IP).
    The client IP behind Hosting must be checked on the deployed service.
-2. **Daily model-call cap** across all users. With `--max-instances=1` an
-   in-memory counter is a real global cap; a restart resets it, which is
-   acceptable for a demo.
+2. **Daily model-call cap** across all users. An in-memory counter is only a
+   soft cap: every restart or new revision starts it at zero, and old and new
+   instances can briefly run side by side, so it does not bound a day's total
+   even with `--max-instances=1`. The hard stop on spending is the money on
+   the Token Factory account (item 5) and the kill switch (item 3). A true
+   daily cap needs the counter in shared storage such as Firestore (question 4).
 3. **Kill switch**: an environment variable that stops model calls without a
    code change.
 4. **Limit reached → uncertain, not Mock.** Today the client treats any
@@ -55,7 +58,8 @@ the limits have to live in the proxy:
    Mock. A limit answer should show `我不確定。我陪你問。` with help, like a
    refused sentence (400/413) does now.
 5. Budget alert on the Google Cloud project, and a spending limit or alert on
-   the Token Factory account.
+   the Token Factory account (whether it offers a hard spending limit is not
+   yet checked; if not, keep only a small prepaid balance on it).
 6. A production start command for the proxy. `npm run server` uses
    `vite-node` (a dev dependency); the container entry point is to be decided
    and tested in P5.
@@ -105,6 +109,8 @@ for the owner to approve.
 3. Who deploys and operates it until 12/15: the owner, or the contributor
    with which IAM roles (Hosting, Cloud Run, Secret Manager)?
 4. Daily model-call cap and rate limit values; who receives budget alerts.
+   Is a soft in-memory cap enough for the demo, with the Token Factory balance
+   as the hard stop, or should the cap be a true daily one kept in Firestore?
 5. The Token Factory key stays on the contributor's account (decided
    2026-10-19); is that still right for the public demo?
 
