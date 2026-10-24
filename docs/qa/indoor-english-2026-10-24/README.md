@@ -14,7 +14,8 @@ for review; nothing here is a recorded voice.
 | Validator: English left/right needs a live turn; English number words, ordinals and floors are refused | `src/render/renderer.test.ts` | pass |
 | Register lint: no-blame, one-job and no-performance in English; the shipped English table passes | `src/lint/register.test.ts` | pass |
 | Mock: English place names as whole words, English negation (including `’`), "don't know where" still names the place | `src/destination/mock.test.ts` | pass |
-| Full suite | `npm test -- --maxWorkers=2 --minWorkers=1` | 554/554, 36 files |
+| Mock after PR⑤ review: any `n't` (`I wouldn't go to the pharmacy`), maybe/perhaps, `not sure I need` are uncertain; Chinese 也許／或許／說不定／不確定要／不一定要 too; `藥局可能在幾樓` and `don't know how to get to` still name the place | `src/destination/mock.test.ts` | pass |
+| Full suite | `npm test -- --maxWorkers=2 --minWorkers=1` | 568/568, 36 files (554 before the review fix) |
 | Type checks and build | `npm run typecheck`, `tsc -p tsconfig.node.json`, `npm run build` | pass |
 
 The Nemotron prompt was **not changed**. The Mock still names a place only

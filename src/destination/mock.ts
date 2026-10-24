@@ -18,7 +18,9 @@ const WORDS: Record<DestinationId, string> = {
  * ponytail: a list misses phrasings nobody added yet; add them here with a
  * test. A miss walks someone the wrong way only if they then confirm it.
  */
-const NEGATIONS = ['不要', '不想', '不用', '不去', '不必', '不是', '不能', '不需要', '不可以', '不會', '不打算', '沒有要', '沒要', '別']
+const NEGATIONS = ['不要', '不想', '不用', '不去', '不必', '不是', '不能', '不需要', '不可以', '不會', '不打算', '沒有要', '沒要', '別',
+  // Doubt counts too. Not 可能: 藥局可能在幾樓 still wants the pharmacy.
+  '也許', '或許', '說不定', '不確定要', '不一定要']
 
 /** The English name of each place, as a whole word: exiting is not the exit. */
 const WORDS_EN: Record<DestinationId, RegExp> = {
@@ -32,12 +34,13 @@ const WORDS_EN: Record<DestinationId, RegExp> = {
 }
 
 /**
- * English negation, after dropping the phrases that still want the place
- * (I don't know where the pharmacy is), as 不知道 is not in the list above.
+ * English negation or doubt, after dropping the phrases that still want the
+ * place (I don't know where the pharmacy is), as 不知道 is not in the list
+ * above. Any n't counts, so no contraction can be left off.
  * ponytail: same ceiling as NEGATIONS; add phrasings here with a test.
  */
-const NOT_KNOWING_EN = /\b(do not|don't|dont) know\b|\bnot sure\b/gi
-const NEGATION_EN = /\b(no|not|never|don't|dont|won't|wont|can't|cant|cannot|doesn't|isn't|shouldn't)\b/i
+const NOT_KNOWING_EN = /\b((do not|don't|dont) know|not sure) (where|how)\b/gi
+const NEGATION_EN = /\b(no|not|never|cannot|dont|wont|cant|maybe|perhaps)\b|\w+n't\b/i
 
 /**
  * Runs when there is no API key. It only spots words — no AI — and names a
