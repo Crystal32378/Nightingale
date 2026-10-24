@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { EN } from '../strings/en'
 import { ZH_TW } from '../strings/zh-TW'
 import { formatIssues, lintString, lintStringTable, type RegisterRule } from './register'
 
@@ -57,6 +58,47 @@ describe('register lint — the shipped string table', () => {
   it('passes its own lint', () => {
     const issues = lintStringTable(ZH_TW)
     expect(formatIssues(issues)).toBe('')
+  })
+})
+
+/** The same three rules, in the English the indoor screen can now speak. */
+const REJECT_EN: Array<[string, RegisterRule]> = [
+  ['You went the wrong way.', 'no-blame'],
+  ['We are lost.', 'no-blame'],
+  ['You missed the turn.', 'no-blame'],
+  ["You've gone the wrong way.", 'no-blame'],
+  ['Go straight ahead, then turn left.', 'one-job'],
+  ['Go to the cashier. Walk to the elevator.', 'one-job'],
+  ['Great job.', 'no-performance'],
+  ['Yes!', 'no-performance'],
+  ["Don't worry, go straight ahead.", 'no-performance'],
+  ['It is okay, go straight ahead.', 'no-performance'],
+  ['Go straight ahead 🙂', 'no-performance'],
+  ['Oops, wrong way.', 'no-performance'],
+]
+
+const ALLOW_EN = [
+  'Go to your left.',
+  'Wrong way. Stop here.',
+  'You have arrived.',
+  'I am not sure. I will help you ask.',
+  'Excuse me, which way to Neurosurgery?',
+  'Excuse me, can you help me find my way?',
+  'Next: Registration counter',
+  'Do not enter names, medical records or health conditions.',
+]
+
+describe('register lint — English fixtures', () => {
+  it.each(REJECT_EN)('rejects %s under %s', (text, rule) => {
+    expect(lintString('fixture', text).map((i) => i.rule)).toContain(rule)
+  })
+
+  it.each(ALLOW_EN)('allows %s', (text) => {
+    expect(lintString('fixture', text)).toEqual([])
+  })
+
+  it('passes the shipped English table', () => {
+    expect(formatIssues(lintStringTable(EN))).toBe('')
   })
 })
 

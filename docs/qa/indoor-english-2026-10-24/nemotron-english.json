@@ -1,0 +1,80 @@
+{
+  "recordedAt": "2026-10-24T05:13:08.318Z",
+  "revision": "32b2244+wip",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "route": "POST /indoor-api/destination on the local proxy (npm run server)",
+  "providerCalls": 7,
+  "passed": 7,
+  "results": [
+    {
+      "text": "I need to pick up my medicine",
+      "why": "everyday wording, no place name",
+      "expected": "PHARMACY",
+      "status": 200,
+      "mode": "nemotron",
+      "got": "PHARMACY",
+      "pass": true,
+      "ms": 2787
+    },
+    {
+      "text": "Where do I pay my bill?",
+      "why": "everyday wording, no place name",
+      "expected": "CASHIER",
+      "status": 200,
+      "mode": "nemotron",
+      "got": "CASHIER",
+      "pass": true,
+      "ms": 1060
+    },
+    {
+      "text": "I don't want to go to the pharmacy",
+      "why": "negated place",
+      "expected": "UNCERTAIN",
+      "status": 200,
+      "mode": "nemotron",
+      "got": "UNCERTAIN",
+      "pass": true,
+      "ms": 1193
+    },
+    {
+      "text": "I don't know where the pharmacy is",
+      "why": "not knowing still wants the place",
+      "expected": "PHARMACY",
+      "status": 200,
+      "mode": "nemotron",
+      "got": "PHARMACY",
+      "pass": true,
+      "ms": 1560
+    },
+    {
+      "text": "First the cashier, then the pharmacy",
+      "why": "two places, clear order",
+      "expected": "CASHIER",
+      "status": 200,
+      "mode": "nemotron",
+      "got": "CASHIER",
+      "pass": true,
+      "ms": 1281
+    },
+    {
+      "text": "What's the weather like today?",
+      "why": "unrelated",
+      "expected": "UNCERTAIN",
+      "status": 200,
+      "mode": "nemotron",
+      "got": "UNCERTAIN",
+      "pass": true,
+      "ms": 1284
+    },
+    {
+      "text": "I have an appointment in neurosurgery",
+      "why": "department named",
+      "expected": "NEUROSURGERY",
+      "status": 200,
+      "mode": "nemotron",
+      "got": "NEUROSURGERY",
+      "pass": true,
+      "ms": 1044
+    }
+  ]
+}

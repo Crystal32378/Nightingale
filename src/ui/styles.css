@@ -156,6 +156,20 @@ button {
   margin: 0;
 }
 
+/* Same pill as the status, and the same 44px floor as every other control. */
+.language {
+  display: block;
+  margin: 0 auto;
+  min-height: 44px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  background: var(--paper-edge);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
 .status {
   display: inline-flex;
   align-items: center;

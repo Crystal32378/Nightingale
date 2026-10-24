@@ -396,3 +396,105 @@ describe('asking for help without a destination', () => {
     expect(loadVisit()).toBeNull()
   })
 })
+
+describe('switching language', () => {
+  afterEach(() => {
+    window.history.replaceState(null, '', '/')
+    document.documentElement.lang = 'zh-TW'
+  })
+
+  const toEnglish = (ui: ReturnType<typeof setup>) =>
+    ui.user.selectOptions(screen.getByRole('combobox', { name: 'Language / 語言' }), 'en')
+
+  it('keeps what the person typed and the destination waiting for 對, now asked in English', async () => {
+    const pending = pendingReply()
+    fetchMock.mockReturnValueOnce(pending.promise)
+    const ui = setup()
+    await ui.enter('藥局')
+    await ui.user.click(ui.find)
+    await pending.reply(PHARMACY)
+    await toEnglish(ui)
+
+    expect(screen.getByRole<HTMLInputElement>('textbox', { name: 'Where do you want to go?' }).value).toBe('藥局')
+    expect(screen.getByText('Go to Pharmacy?')).toBeTruthy()
+    expect(loadVisit()).toBeNull()
+    await ui.user.click(screen.getByRole('button', { name: 'Yes' }))
+    expect(loadVisit()?.legIndex).toBe(2)
+  })
+
+  it('answers a request sent before the switch in the language now on screen', async () => {
+    const pending = pendingReply()
+    fetchMock.mockReturnValueOnce(pending.promise)
+    const ui = setup()
+    await ui.enter('藥局')
+    await ui.user.click(ui.find)
+    await toEnglish(ui)
+    await pending.reply(PHARMACY)
+
+    expect(screen.getByText('Go to Pharmacy?')).toBeTruthy()
+    expect(screen.queryByText(/要去藥局/)).toBeNull()
+  })
+
+  it('keeps a visit under way where it is and names its places in English', async () => {
+    const pending = pendingReply()
+    fetchMock.mockReturnValueOnce(pending.promise)
+    const ui = setup()
+    await ui.enter('藥局')
+    await ui.user.click(ui.find)
+    await pending.reply(PHARMACY)
+    await ui.user.click(screen.getByRole('button', { name: '對' }))
+    const visit = loadVisit()
+    await toEnglish(ui)
+
+    expect(loadVisit()).toEqual(visit)
+    expect(screen.getByText('Pharmacy')).toBeTruthy()
+    expect(screen.getByText('Next')).toBeTruthy()
+    expect(screen.getByText('Registration counter')).toBeTruthy()
+    await ui.user.click(screen.getByRole('button', { name: 'Help me ask' }))
+    expect(screen.getByRole('dialog', { name: 'Excuse me, which way to Pharmacy?' })).toBeTruthy()
+  })
+
+  it('stops the sentence being spoken, so the old language is not heard over the new screen', async () => {
+    const cancel = vi.fn()
+    vi.stubGlobal('speechSynthesis', { speak: vi.fn(), cancel })
+    const ui = setup()
+    await toEnglish(ui)
+
+    expect(cancel).toHaveBeenCalled()
+    expect(document.documentElement.lang).toBe('en')
+    expect(new URLSearchParams(window.location.search).get('lang')).toBe('en')
+  })
+
+  it('speaks exactly the English sentence on the card, with an English voice', async () => {
+    const speak = vi.fn()
+    vi.stubGlobal('SpeechSynthesisUtterance', class {
+      lang = ''
+      rate = 1
+      volume = 1
+      constructor(public text: string) {}
+    })
+    vi.stubGlobal('speechSynthesis', { speak, cancel: vi.fn() })
+    const ui = setup()
+    await toEnglish(ui)
+    await ui.user.click(screen.getByRole('button', { name: 'Help me ask' }))
+    await ui.user.click(screen.getByRole('button', { name: 'Say it again' }))
+
+    expect(screen.getByRole('dialog', { name: 'Excuse me, can you help me find my way?' })).toBeTruthy()
+    expect(speak.mock.calls.length).toBeGreaterThanOrEqual(2)
+    for (const [utterance] of speak.mock.calls) {
+      expect(utterance.text).toBe('Excuse me, can you help me find my way?')
+      expect(utterance.lang).toBe('en-US')
+    }
+  })
+
+  it('opens in English from ?lang=en and switches back to Chinese', async () => {
+    window.history.replaceState(null, '', '/?lang=en')
+    const user = userEvent.setup()
+    render(<StrictMode><App /></StrictMode>)
+    expect(screen.getByRole('textbox', { name: 'Where do you want to go?' })).toBeTruthy()
+
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Language / 語言' }), 'zh-TW')
+    expect(screen.getByRole('textbox', { name: '想去哪裡' })).toBeTruthy()
+    expect(document.documentElement.lang).toBe('zh-TW')
+  })
+})
