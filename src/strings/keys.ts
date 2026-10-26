@@ -44,6 +44,16 @@ export const STRING_KEYS = [
   'label.yes',
   'label.no',
   'fallback.safe',
+  'label.clinics',
+  'label.clinics.note',
+  'label.clinics.campus',
+  'label.clinics.search',
+  'label.clinics.loading',
+  'label.clinics.none',
+  'label.clinics.unavailable',
+  'label.clinics.register',
+  'label.clinics.source',
+  'label.clinics.official',
 ] as const
 
 export type StringKey = (typeof STRING_KEYS)[number]
@@ -128,4 +138,17 @@ export const STRING_NOTES: Record<StringKey, string> = {
   'label.yes': '確認按鈕文字，不朗讀。',
   'label.no': '否認按鈕文字，不朗讀。按了回到輸入框重新說。',
   'fallback.safe': 'validator 擋下輸出時的靜態退路。與 guidance.uncertain 同字。',
+  // Clinic lookup: the hospital's own registration pages, read through Tavily.
+  // A lookup beside the walk, not part of it: it never names a floor or a
+  // route, books nothing, and suggests no department for a symptom.
+  'label.clinics': '查詢區塊的標題，不朗讀。',
+  'label.clinics.note': '說明資料來源與範圍，不朗讀。不暗示院內位置；英文是本站翻譯。',
+  'label.clinics.campus': '院區選單標籤，不朗讀。',
+  'label.clinics.search': '科別搜尋框標籤，不朗讀。中英文都可以搜。',
+  'label.clinics.loading': '等候醫院網站回應，不朗讀。',
+  'label.clinics.none': '搜尋沒有結果，不朗讀。只說這個院區的清單沒有，不推測別處有沒有。',
+  'label.clinics.unavailable': '醫院網站或 Tavily 無法使用，不朗讀。不顯示空清單，以免看起來像院區沒有門診。',
+  'label.clinics.register': '每個科別旁的官方掛號頁連結，不朗讀。',
+  'label.clinics.source': '資料來源網址前的標籤，不朗讀。',
+  'label.clinics.official': '醫院官方網路掛號首頁連結，查不到時也一直在，不朗讀。',
 }

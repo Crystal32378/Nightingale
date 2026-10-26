@@ -43,4 +43,15 @@ export const EN: Record<StringKey, string> = {
   'label.yes': 'Yes',
   'label.no': 'No',
   'fallback.safe': 'I am not sure. I will help you ask.',
+  'label.clinics': 'Clinic lookup',
+  'label.clinics.note':
+    'Outpatient departments and registration pages from the hospital website, not where they are in the building. English names are our translation; the official Chinese name is the reference.',
+  'label.clinics.campus': 'Hospital branch',
+  'label.clinics.search': 'Department',
+  'label.clinics.loading': 'Looking up',
+  'label.clinics.none': 'No matching department at this branch.',
+  'label.clinics.unavailable': 'The hospital list is not available right now.',
+  'label.clinics.register': 'Registration page',
+  'label.clinics.source': 'Source',
+  'label.clinics.official': 'Taipei City Hospital online registration',
 }
