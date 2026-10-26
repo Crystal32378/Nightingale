@@ -9,7 +9,11 @@
  * open paths over 260 characters.
  *
  *   npm i --prefix .kokoro kokoro-js
- *   npx vite-node scripts/record-indoor-en.ts .kokoro
+ *   npx vite-node scripts/record-indoor-en.ts .kokoro female
+ *   npx vite-node scripts/record-indoor-en.ts .kokoro male
+ *
+ * Each voice has its own folder and manifest, so recording one never touches
+ * the other's files.
  */
 import { createHash } from 'node:crypto'
 import { mkdirSync, writeFileSync } from 'node:fs'
@@ -19,9 +23,14 @@ import { pathToFileURL } from 'node:url'
 import { EN } from '../src/strings/en'
 import { PLACE_REGISTRY } from '../src/registry/types'
 
-const VOICE = 'af_heart'
-const OUT_DIR = 'public/audio/indoor/en'
-const MANIFEST = 'src/ui/ask-recordings.en.json'
+// am_puck was chosen by ear from the three best-graded US male voices (all C+; af_heart is A).
+const VOICES = {
+  female: { voice: 'af_heart', dir: 'audio/indoor/en', manifest: 'src/ui/ask-recordings.en.json' },
+  male: { voice: 'am_puck', dir: 'audio/indoor/en/male', manifest: 'src/ui/ask-recordings.en.male.json' },
+}
+const gender = process.argv[3] as keyof typeof VOICES
+if (!Object.prototype.hasOwnProperty.call(VOICES, gender)) throw new Error(`voice must be one of: ${Object.keys(VOICES).join(', ')}`)
+const { voice: VOICE, dir: DIR, manifest: MANIFEST } = VOICES[gender]
 
 const kokoroDir = resolve(process.argv[2] ?? '')
 const fromKokoro = createRequire(join(kokoroDir, 'package.json'))
@@ -45,7 +54,7 @@ function wav(samples: Float32Array, rate: number): Buffer {
 }
 
 const tts = await KokoroTTS.from_pretrained('onnx-community/Kokoro-82M-v1.0-ONNX', { dtype: 'q8', device: 'cpu' })
-mkdirSync(OUT_DIR, { recursive: true })
+mkdirSync(join('public', DIR), { recursive: true })
 const manifest: Record<string, { file: string; sha256: string; voice: string }> = {}
 for (const [stem, text] of sentences) {
   const audio = await tts.generate(text, { voice: VOICE })
@@ -53,7 +62,7 @@ for (const [stem, text] of sentences) {
   // Kokoro's float output can overshoot full scale; scale the whole clip down rather than clip it.
   const samples = peak > 0.95 ? audio.audio.map((s: number) => (s * 0.95) / peak) : audio.audio
   const bytes = wav(samples, audio.sampling_rate)
-  const file = `audio/indoor/en/ask-${stem}.wav`
+  const file = `${DIR}/ask-${stem}.wav`
   writeFileSync(join('public', file), bytes)
   manifest[text] = { file, sha256: createHash('sha256').update(bytes).digest('hex'), voice: `Kokoro-82M ${VOICE}` }
   console.log(file, (audio.audio.length / audio.sampling_rate).toFixed(2) + 's', 'peak', peak.toFixed(2), text)

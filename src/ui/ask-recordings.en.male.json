@@ -1,0 +1,47 @@
+{
+  "Excuse me, which way to the Main Entrance?": {
+    "file": "audio/indoor/en/male/ask-entrance.wav",
+    "sha256": "c7b4fd37e989ed454e61812392af08211e5f0eed6030659f4ff58e0063485645",
+    "voice": "Kokoro-82M am_puck"
+  },
+  "Excuse me, which way to the Registration Counter?": {
+    "file": "audio/indoor/en/male/ask-registration.wav",
+    "sha256": "61a65dc635c6bcd6df9f2a61f366771de0941533175b20a9d4946ec130928750",
+    "voice": "Kokoro-82M am_puck"
+  },
+  "Excuse me, which way to the Elevator Lobby?": {
+    "file": "audio/indoor/en/male/ask-elevator_in.wav",
+    "sha256": "f181d1ed3f5c5d9f6b1ad1864dfcea0c5700f5d69dd9f15af69a1b4dea4f0f2d",
+    "voice": "Kokoro-82M am_puck"
+  },
+  "Excuse me, which way to the Elevator Exit?": {
+    "file": "audio/indoor/en/male/ask-elevator_out.wav",
+    "sha256": "0f849f2380ef2d7144c07b7e9dbae0a0539054ab60589b73c628b062baa42227",
+    "voice": "Kokoro-82M am_puck"
+  },
+  "Excuse me, which way to the Neurosurgery Clinic?": {
+    "file": "audio/indoor/en/male/ask-neurosurgery.wav",
+    "sha256": "77f718c0fb5dacfa8fcc183eced7d746094576bc078f265680441912249e358b",
+    "voice": "Kokoro-82M am_puck"
+  },
+  "Excuse me, which way to the Cashier?": {
+    "file": "audio/indoor/en/male/ask-cashier.wav",
+    "sha256": "b9136ef54dbc3750cb3f588c4808d67a4d7521e44b15e0caaec979dd323d26c8",
+    "voice": "Kokoro-82M am_puck"
+  },
+  "Excuse me, which way to the Pharmacy?": {
+    "file": "audio/indoor/en/male/ask-pharmacy.wav",
+    "sha256": "d346167bf23d9a5e9ab329ab3c6161cdb7c43ea183cb2506044fef0170333f9a",
+    "voice": "Kokoro-82M am_puck"
+  },
+  "Excuse me, which way to the Exit?": {
+    "file": "audio/indoor/en/male/ask-exit.wav",
+    "sha256": "9bcd280aaed08efedaabb716d831122ffee5ed7624b7ecc3cd5d373b1802f3aa",
+    "voice": "Kokoro-82M am_puck"
+  },
+  "Excuse me, can you help me find my way?": {
+    "file": "audio/indoor/en/male/ask-generic.wav",
+    "sha256": "78e7825a785a1d60703715092a8d37cef9f2002550196dc80eca7b1e86f39797",
+    "voice": "Kokoro-82M am_puck"
+  }
+}
