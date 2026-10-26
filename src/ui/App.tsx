@@ -22,6 +22,7 @@ import type { MotionInput } from './birdMotion'
 import { reduceIdleTrigger, type IdleTrigger } from './motionTrigger'
 import { NightingaleBird } from './NightingaleBird'
 import { useNightingale } from './useNightingale'
+import { stopSpeaking } from './speech'
 import { visualLines } from './visualText'
 import { VolumeControl } from './VolumeControl'
 
@@ -91,7 +92,7 @@ export function App() {
   }, [locale])
   const switchLocale = (next: Locale) => {
     // A sentence already being spoken belongs to the old screen.
-    window.speechSynthesis?.cancel()
+    stopSpeaking()
     setLocale(next)
     const url = new URL(window.location.href)
     url.searchParams.set('lang', next)

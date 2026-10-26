@@ -1,0 +1,47 @@
+{
+  "Excuse me, which way to the Main Entrance?": {
+    "file": "audio/indoor/en/ask-entrance.wav",
+    "sha256": "fa7183202929569fcd84ea3b7b10682ea3b9e01fd1f5dd9b74fe878f5c84c362",
+    "voice": "Kokoro-82M af_heart"
+  },
+  "Excuse me, which way to the Registration Counter?": {
+    "file": "audio/indoor/en/ask-registration.wav",
+    "sha256": "6e357e65ca316a57a76c5140adc596395f0c1e9dafff4b5257dfa738a3ebce6e",
+    "voice": "Kokoro-82M af_heart"
+  },
+  "Excuse me, which way to the Elevator Lobby?": {
+    "file": "audio/indoor/en/ask-elevator_in.wav",
+    "sha256": "fb7f404702c63f57cb1a92d43e63ca0b191f5e94d5c95393529208d38365aea3",
+    "voice": "Kokoro-82M af_heart"
+  },
+  "Excuse me, which way to the Elevator Exit?": {
+    "file": "audio/indoor/en/ask-elevator_out.wav",
+    "sha256": "fa207e029060f94a9a079d632dab8e6ac04543de6c3e30de1462873061e6b415",
+    "voice": "Kokoro-82M af_heart"
+  },
+  "Excuse me, which way to the Neurosurgery Clinic?": {
+    "file": "audio/indoor/en/ask-neurosurgery.wav",
+    "sha256": "4979f26bab6cd248d4924988be8fb14a5563fbb0ef89ad42250aaa1d8da2e5f7",
+    "voice": "Kokoro-82M af_heart"
+  },
+  "Excuse me, which way to the Cashier?": {
+    "file": "audio/indoor/en/ask-cashier.wav",
+    "sha256": "9aa0bb7a185a5f46eb0096a5ecf2e00a80c36643d63220504e52aa5b96cfc95c",
+    "voice": "Kokoro-82M af_heart"
+  },
+  "Excuse me, which way to the Pharmacy?": {
+    "file": "audio/indoor/en/ask-pharmacy.wav",
+    "sha256": "7c12096d5b3df74ff535e9f1f5b7bf7aea81e06f6fd2451d295ddd983c4b5d99",
+    "voice": "Kokoro-82M af_heart"
+  },
+  "Excuse me, which way to the Exit?": {
+    "file": "audio/indoor/en/ask-exit.wav",
+    "sha256": "2ed7a9c35b3ed817383a0c665f50964b2057725ace5a7e65d2aa1227802c3611",
+    "voice": "Kokoro-82M af_heart"
+  },
+  "Excuse me, can you help me find my way?": {
+    "file": "audio/indoor/en/ask-generic.wav",
+    "sha256": "46ce89cc3e3c929aeadbce2f4f5456991df7b292f04bc9cdb5be537d775498cc",
+    "voice": "Kokoro-82M af_heart"
+  }
+}

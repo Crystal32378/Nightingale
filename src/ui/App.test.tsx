@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { StrictMode } from 'react'
-import { act, cleanup, render, screen } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { DestinationAnswer } from '../destination/client'
@@ -36,6 +36,8 @@ beforeEach(() => {
   // Animation is tested separately; do not run frames outside React's act.
   vi.stubGlobal('requestAnimationFrame', vi.fn(() => 0))
   vi.stubGlobal('cancelAnimationFrame', vi.fn())
+  // jsdom cannot play media; English help recordings play into silence here.
+  vi.stubGlobal('Audio', class { volume = 1; play() { return Promise.resolve() } pause() {} })
 })
 
 afterEach(() => {
@@ -465,7 +467,31 @@ describe('switching language', () => {
     expect(new URLSearchParams(window.location.search).get('lang')).toBe('en')
   })
 
-  it('speaks exactly the English sentence on the card, with an English voice', async () => {
+  it('plays the recording of exactly the English sentence on the card, not the device voice', async () => {
+    const speak = vi.fn()
+    const played: string[] = []
+    vi.stubGlobal('speechSynthesis', { speak, cancel: vi.fn() })
+    vi.stubGlobal('Audio', class {
+      volume = 1
+      constructor(public src: string) {}
+      play() {
+        played.push(this.src)
+        return Promise.resolve()
+      }
+      pause() {}
+    })
+    const ui = setup()
+    await toEnglish(ui)
+    await ui.user.click(screen.getByRole('button', { name: 'Help me ask' }))
+    await ui.user.click(screen.getByRole('button', { name: 'Say it again' }))
+
+    expect(screen.getByRole('dialog', { name: 'Excuse me, can you help me find my way?' })).toBeTruthy()
+    expect(played.length).toBeGreaterThanOrEqual(2)
+    for (const src of played) expect(src).toBe('/audio/indoor/en/ask-generic.wav')
+    expect(speak).not.toHaveBeenCalled()
+  })
+
+  it('says the same English sentence with an English device voice when the recording will not play', async () => {
     const speak = vi.fn()
     vi.stubGlobal('SpeechSynthesisUtterance', class {
       lang = ''
@@ -474,13 +500,18 @@ describe('switching language', () => {
       constructor(public text: string) {}
     })
     vi.stubGlobal('speechSynthesis', { speak, cancel: vi.fn() })
+    vi.stubGlobal('Audio', class {
+      volume = 1
+      play() {
+        return Promise.reject(new Error('offline'))
+      }
+      pause() {}
+    })
     const ui = setup()
     await toEnglish(ui)
     await ui.user.click(screen.getByRole('button', { name: 'Help me ask' }))
-    await ui.user.click(screen.getByRole('button', { name: 'Say it again' }))
 
-    expect(screen.getByRole('dialog', { name: 'Excuse me, can you help me find my way?' })).toBeTruthy()
-    expect(speak.mock.calls.length).toBeGreaterThanOrEqual(2)
+    await waitFor(() => expect(speak).toHaveBeenCalled())
     for (const [utterance] of speak.mock.calls) {
       expect(utterance.text).toBe('Excuse me, can you help me find my way?')
       expect(utterance.lang).toBe('en-US')
