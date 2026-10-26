@@ -136,7 +136,7 @@ describe('the validator holds English to the same truth', () => {
     const expired = instruction({ intent: 'TURN', turn: 'LEFT', turnExpiresAt: now - 1 })
     const rendered = renderGuidance(expired, now, en)
     expect(rendered.failures).toContain('EXPIRED_TURN_DIRECTION')
-    expect(rendered.screen).toBe('I am not sure. I will help you ask.')
+    expect(rendered.screen).toBe('I am not sure. I will ask with you.')
   })
 
   it('allows an English direction inside its TTL', () => {
@@ -152,7 +152,7 @@ describe('the validator holds English to the same truth', () => {
   )
 
   it('does not mistake "your" for a direction or "one" inside a word for a count', () => {
-    for (const text of ['Excuse me, which way to the Pharmacy?', 'I am not sure. I will help you ask.', 'Someone will help.']) {
+    for (const text of ['Excuse me, which way to the Pharmacy?', 'I am not sure. I will ask with you.', 'Someone will help.']) {
       expect(validate({ key: 'ask.generic' }, text, { instruction: null, now }).failures).toEqual([])
     }
   })

@@ -12,7 +12,7 @@ export const EN: Record<StringKey, string> = {
   'guidance.go': 'Go straight ahead.',
   'guidance.turn.left': 'Go left.',
   'guidance.turn.right': 'Go right.',
-  'guidance.uncertain': 'I am not sure. I will help you ask.',
+  'guidance.uncertain': 'I am not sure. I will ask with you.',
   'guidance.arrived': 'This is the {place}.',
   'guidance.wait': '',
   'guidance.none': '',
@@ -42,7 +42,7 @@ export const EN: Record<StringKey, string> = {
   'label.confirm': 'Go to the {place}?',
   'label.yes': 'Yes',
   'label.no': 'No',
-  'fallback.safe': 'I am not sure. I will help you ask.',
+  'fallback.safe': 'I am not sure. I will ask with you.',
   'label.clinics': 'Clinic lookup',
   'label.clinics.note':
     'Outpatient departments and registration pages from the hospital website, not where they are in the building. English names are our translation; the official Chinese name is the reference.',
