@@ -5,8 +5,8 @@ import type { StringKey } from './keys'
  * machine translated: steady, plain, no apology, no celebration. No
  * contractions, as in the outdoor English table.
  *
- * Spoken by the browser's English voice; there are no English recordings.
- * Pending review with the rest of PR⑤.
+ * The help-card sentences are recorded (src/ui/speech.ts); everything else
+ * that speaks uses the browser's English voice. Pending review with PR⑤.
  */
 export const EN: Record<StringKey, string> = {
   'guidance.go': 'Go straight ahead.',
