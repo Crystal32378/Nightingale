@@ -10,13 +10,13 @@ import type { StringKey } from './keys'
  */
 export const EN: Record<StringKey, string> = {
   'guidance.go': 'Go straight ahead.',
-  'guidance.turn.left': 'Go to your left.',
-  'guidance.turn.right': 'Go to your right.',
+  'guidance.turn.left': 'Go left.',
+  'guidance.turn.right': 'Go right.',
   'guidance.uncertain': 'I am not sure. I will help you ask.',
-  'guidance.arrived': '{place}. You have arrived.',
+  'guidance.arrived': 'This is the {place}.',
   'guidance.wait': '',
   'guidance.none': '',
-  'ask.utterance': 'Excuse me, which way to {place}?',
+  'ask.utterance': 'Excuse me, which way to the {place}?',
   'ask.generic': 'Excuse me, can you help me find my way?',
   'checkpoint.next': 'Next: {place}',
   'place.bare': '{place}',
@@ -39,7 +39,7 @@ export const EN: Record<StringKey, string> = {
   'label.mode.nemotron': 'Nemotron',
   'label.privacy':
     'What you type is sent to the Nemotron model on Nebius cloud to work out where you want to go, and is not kept after processing. Do not enter names, medical records or health conditions.',
-  'label.confirm': 'Go to {place}?',
+  'label.confirm': 'Go to the {place}?',
   'label.yes': 'Yes',
   'label.no': 'No',
   'fallback.safe': 'I am not sure. I will help you ask.',

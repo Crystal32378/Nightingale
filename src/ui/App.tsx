@@ -192,7 +192,7 @@ export function App() {
   const resting = output.state.posture === 'RESTING'
   const arrived = output.state.progress === 'ARRIVED'
 
-  // "下一個：掛號櫃台" / "Next: Registration counter" shown as a label and a
+  // "下一個：掛號櫃台" / "Next: Registration Counter" shown as a label and a
   // name. Presentation of one verified string, broken where it is already
   // punctuated — not a second string.
   const nextParts = ng.checkpoint ? ng.checkpoint.screen.split(/：|: /) : null

@@ -416,7 +416,7 @@ describe('switching language', () => {
     await toEnglish(ui)
 
     expect(screen.getByRole<HTMLInputElement>('textbox', { name: 'Where do you want to go?' }).value).toBe('藥局')
-    expect(screen.getByText('Go to Pharmacy?')).toBeTruthy()
+    expect(screen.getByText('Go to the Pharmacy?')).toBeTruthy()
     expect(loadVisit()).toBeNull()
     await ui.user.click(screen.getByRole('button', { name: 'Yes' }))
     expect(loadVisit()?.legIndex).toBe(2)
@@ -431,7 +431,7 @@ describe('switching language', () => {
     await toEnglish(ui)
     await pending.reply(PHARMACY)
 
-    expect(screen.getByText('Go to Pharmacy?')).toBeTruthy()
+    expect(screen.getByText('Go to the Pharmacy?')).toBeTruthy()
     expect(screen.queryByText(/要去藥局/)).toBeNull()
   })
 
@@ -449,9 +449,9 @@ describe('switching language', () => {
     expect(loadVisit()).toEqual(visit)
     expect(screen.getByText('Pharmacy')).toBeTruthy()
     expect(screen.getByText('Next')).toBeTruthy()
-    expect(screen.getByText('Registration counter')).toBeTruthy()
+    expect(screen.getByText('Registration Counter')).toBeTruthy()
     await ui.user.click(screen.getByRole('button', { name: 'Help me ask' }))
-    expect(screen.getByRole('dialog', { name: 'Excuse me, which way to Pharmacy?' })).toBeTruthy()
+    expect(screen.getByRole('dialog', { name: 'Excuse me, which way to the Pharmacy?' })).toBeTruthy()
   })
 
   it('stops the sentence being spoken, so the old language is not heard over the new screen', async () => {
