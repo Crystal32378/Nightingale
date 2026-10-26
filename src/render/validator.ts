@@ -34,7 +34,12 @@ const DIGITS = /[0-9０-９]/
 /** Chinese numerals used as a distance / floor / count claim. */
 const NUMERIC_CLAIM = /[一二三四五六七八九十兩百千]\s*(樓|層|公尺|公分|米|步|分鐘|秒|號|間|排|次)/
 
-const DIRECTION_WORD = /[左右]/
+/** English number words and ordinals before a unit, and any ordinal floor. */
+const NUMERIC_CLAIM_EN =
+  /\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|twenty|thirty|forty|fifty|hundred|a few|several|first|second|third|fourth|fifth)\s+(floors?|levels?|storeys?|stories|meters?|metres?|feet|steps?|minutes?|seconds?|doors?|rooms?|blocks?|times?)\b|\b(ground|first|second|third|fourth|fifth)\s+(floor|level)\b/i
+
+/** Word boundaries keep "your" and "rightly" out: only the words left and right. */
+const DIRECTION_WORD = /[左右]|\b(left|right)\b/i
 
 const UNRESOLVED = /\{[a-zA-Z]+\}/
 
@@ -49,7 +54,7 @@ export function validate(request: StringRequest, text: string, ctx: ValidationCo
 
   if (UNRESOLVED.test(text)) failures.push('UNRESOLVED_PLACEHOLDER')
 
-  if (DIGITS.test(text) || NUMERIC_CLAIM.test(text)) failures.push('UNSOURCED_NUMBER')
+  if (DIGITS.test(text) || NUMERIC_CLAIM.test(text) || NUMERIC_CLAIM_EN.test(text)) failures.push('UNSOURCED_NUMBER')
 
   if (DIRECTION_WORD.test(text)) {
     const instruction = ctx.instruction

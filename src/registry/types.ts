@@ -15,7 +15,7 @@
  * anyone can open the link and see the same characters. Eight entries can be
  * held in one person's head; forty cannot.
  */
-export type Locale = 'zh-TW'
+export type Locale = 'zh-TW' | 'en'
 
 export type PlaceSource =
   | {
@@ -43,7 +43,8 @@ export type PlaceSource =
 
 export interface PlaceEntry {
   id: string
-  names: Record<Locale, string>
+  /** zh-TW is the checked name; en is a rendering of it, see placeName. */
+  names: { 'zh-TW': string; en?: string }
   /**
    * Where the name came from. `null` means unsourced: the entry may exist, but
    * nothing about it may ever be spoken or shown.
@@ -59,14 +60,14 @@ const FACILITY = 'Standard facility wording, identical across Taiwanese hospital
 const SPECIALTY = 'Standard specialty name used across Taiwanese hospitals; belongs to no one building.'
 
 export const PLACE_REGISTRY: PlaceRegistry = {
-  ENTRANCE: { id: 'ENTRANCE', names: { 'zh-TW': '大門' }, source: generic(FACILITY) },
-  REGISTRATION: { id: 'REGISTRATION', names: { 'zh-TW': '掛號櫃台' }, source: generic(FACILITY) },
-  ELEVATOR_IN: { id: 'ELEVATOR_IN', names: { 'zh-TW': '電梯口' }, source: generic(FACILITY) },
-  ELEVATOR_OUT: { id: 'ELEVATOR_OUT', names: { 'zh-TW': '電梯出口' }, source: generic(FACILITY) },
-  NEUROSURGERY: { id: 'NEUROSURGERY', names: { 'zh-TW': '神經外科' }, source: generic(SPECIALTY) },
-  CASHIER: { id: 'CASHIER', names: { 'zh-TW': '批價櫃台' }, source: generic(FACILITY) },
-  PHARMACY: { id: 'PHARMACY', names: { 'zh-TW': '藥局' }, source: generic(FACILITY) },
-  EXIT: { id: 'EXIT', names: { 'zh-TW': '出口' }, source: generic(FACILITY) },
+  ENTRANCE: { id: 'ENTRANCE', names: { 'zh-TW': '大門', en: 'Main Entrance' }, source: generic(FACILITY) },
+  REGISTRATION: { id: 'REGISTRATION', names: { 'zh-TW': '掛號櫃台', en: 'Registration Counter' }, source: generic(FACILITY) },
+  ELEVATOR_IN: { id: 'ELEVATOR_IN', names: { 'zh-TW': '電梯口', en: 'Elevator Lobby' }, source: generic(FACILITY) },
+  ELEVATOR_OUT: { id: 'ELEVATOR_OUT', names: { 'zh-TW': '電梯出口', en: 'Elevator Exit' }, source: generic(FACILITY) },
+  NEUROSURGERY: { id: 'NEUROSURGERY', names: { 'zh-TW': '神經外科', en: 'Neurosurgery Clinic' }, source: generic(SPECIALTY) },
+  CASHIER: { id: 'CASHIER', names: { 'zh-TW': '批價櫃台', en: 'Cashier' }, source: generic(FACILITY) },
+  PHARMACY: { id: 'PHARMACY', names: { 'zh-TW': '藥局', en: 'Pharmacy' }, source: generic(FACILITY) },
+  EXIT: { id: 'EXIT', names: { 'zh-TW': '出口', en: 'Exit' }, source: generic(FACILITY) },
 }
 
 /** A URL a person could actually open. Anything else is not a citation. */
@@ -128,5 +129,8 @@ export function placeName(
 ): string | null {
   const entry = lookupPlace(id, registry)
   if (!isVerifiedEntry(entry)) return null
+  // A web source quotes Chinese, so it vouches for no English name. A generic
+  // word is the same word everywhere and may carry its English rendering.
+  if (locale === 'en' && entry!.source!.kind !== 'generic') return null
   return entry!.names[locale] ?? null
 }

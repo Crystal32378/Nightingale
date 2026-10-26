@@ -46,7 +46,7 @@ const SUBJECT_WINDOW = 3
 
 const IMPERATIVE_CHARS = /[往走轉停按拿去問等掃]/
 
-const SEGMENT_SPLIT = /[，,。；;！!？?\n]/
+const SEGMENT_SPLIT = /[，,。；;！!？?\n]|\.(?=\s|$)/
 
 const PERFORMANCE_PARTICLES = /[喔唷呢啦囉耶哦噢嘛]/
 
@@ -57,6 +57,22 @@ const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/u
 const TRIPLED = /(.)\1{2,}/
 
 const SOOTHING = /(沒關係|別擔心|不要擔心|放心|不用怕|不要怕|別緊張|別怕)/
+
+// English versions of the same rules. Phone keyboards type ’, so it is read as '.
+
+/** "you" or "we" and an error word in the same clause; "your left" is not "you". */
+const BLAME_EN = /\b(you|we)\b[\w\s']{0,20}?\b(wrong|lost|missed|off course)\b/i
+
+const IMPERATIVE_EN = /^(go|turn|walk|stop|press|take|ask|wait|scan|head|keep|follow)\b/i
+
+/** Words that join two jobs, read past to find the verb of the second. */
+const JOINER_EN = /^((and|then|please)\s+)+/i
+
+const PERFORMANCE_EN = /\b(oops|whoops|yay|hooray|great job|well done|awesome|uh-oh)\b/i
+
+const SOOTHING_EN = /\b(don't worry|do not worry|no worries|it's ok(ay)?|it is ok(ay)?|relax|take it easy|no problem)\b/i
+
+const english = (text: string) => text.replace(/’/g, "'")
 
 /** Rejects "you went the wrong way" without rejecting "your left hand side". */
 export function checkNoBlame(key: string, text: string): RegisterIssue[] {
@@ -78,6 +94,10 @@ export function checkNoBlame(key: string, text: string): RegisterIssue[] {
       index = text.indexOf(predicate, index + 1)
     }
   }
+  const blame = english(text).match(BLAME_EN)
+  if (blame) {
+    issues.push({ key, rule: 'no-blame', text, detail: `person-as-subject "${blame[1]}" with error word "${blame[2]}"` })
+  }
   return issues
 }
 
@@ -85,7 +105,9 @@ export function checkNoBlame(key: string, text: string): RegisterIssue[] {
 export function checkOneJob(key: string, text: string): RegisterIssue[] {
   const stripped = text.replace(/請問/g, '')
   const segments = stripped.split(SEGMENT_SPLIT).filter((s) => s.trim().length > 0)
-  const jobs = segments.filter((s) => IMPERATIVE_CHARS.test(s))
+  const jobs = segments.filter(
+    (s) => IMPERATIVE_CHARS.test(s) || IMPERATIVE_EN.test(s.trim().replace(JOINER_EN, '')),
+  )
   if (jobs.length > 1) {
     return [
       {
@@ -107,7 +129,8 @@ export function checkNoPerformance(key: string, text: string): RegisterIssue[] {
   if (EXCLAMATION.test(text)) add('exclamation mark')
   if (EMOJI.test(text)) add('emoji')
   if (TRIPLED.test(text)) add('three or more repeated characters')
-  if (SOOTHING.test(text)) add('soothing phrase mixed into an instruction')
+  if (SOOTHING.test(text) || SOOTHING_EN.test(english(text))) add('soothing phrase mixed into an instruction')
+  if (PERFORMANCE_EN.test(text)) add('performative interjection')
   return issues
 }
 

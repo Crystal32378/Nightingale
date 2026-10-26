@@ -129,6 +129,35 @@ describe('validator falls back instead of improvising', () => {
   })
 })
 
+describe('the validator holds English to the same truth', () => {
+  const en = { locale: 'en' as const }
+
+  it('refuses an English direction whose TTL has expired', () => {
+    const expired = instruction({ intent: 'TURN', turn: 'LEFT', turnExpiresAt: now - 1 })
+    const rendered = renderGuidance(expired, now, en)
+    expect(rendered.failures).toContain('EXPIRED_TURN_DIRECTION')
+    expect(rendered.screen).toBe('I am not sure. I will help you ask.')
+  })
+
+  it('allows an English direction inside its TTL', () => {
+    const live = instruction({ intent: 'TURN', turn: 'RIGHT', turnExpiresAt: now + 10_000 })
+    expect(renderGuidance(live, now, en).screen).toBe('Go right.')
+  })
+
+  it.each(['Walk 30 meters.', 'Go up three floors.', 'It is on the second floor.', 'Two minutes from here.'])(
+    'refuses an English distance, floor or count the engine did not supply: %j',
+    (text) => {
+      expect(validate({ key: 'guidance.go' }, text, { instruction: null, now }).failures).toContain('UNSOURCED_NUMBER')
+    },
+  )
+
+  it('does not mistake "your" for a direction or "one" inside a word for a count', () => {
+    for (const text of ['Excuse me, which way to the Pharmacy?', 'I am not sure. I will help you ask.', 'Someone will help.']) {
+      expect(validate({ key: 'ask.generic' }, text, { instruction: null, now }).failures).toEqual([])
+    }
+  })
+})
+
 describe('the shipped registry carries no test scaffolding', () => {
   it('contains only verified places', () => {
     for (const entry of Object.values(PLACE_REGISTRY)) {

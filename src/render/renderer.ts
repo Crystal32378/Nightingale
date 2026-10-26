@@ -1,11 +1,13 @@
 import type { Instruction } from '../engine/types'
 import { placeName, PLACE_REGISTRY, type Locale, type PlaceRegistry } from '../registry/types'
 import type { StringKey, StringRequest } from '../strings/keys'
+import { EN } from '../strings/en'
 import { ZH_TW } from '../strings/zh-TW'
 import { validate, type ValidationFailure } from './validator'
 
 const TABLES: Record<Locale, Record<StringKey, string>> = {
   'zh-TW': ZH_TW,
+  en: EN,
 }
 
 export interface RenderOptions {
