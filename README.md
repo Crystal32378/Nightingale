@@ -29,6 +29,14 @@ For this paired preview, use `VITE_LAST300M_API=https://english-20261008---night
 
 ---
 
+## Indoor destination demo — Nebius x NVIDIA
+
+The indoor screen now accepts a destination request, uses Mock or Nemotron through
+a local server proxy, and asks for confirmation before starting the existing route.
+See the [local setup guide](docs/indoor-setup.md) for installation, environment variables,
+mode switching and phone/LAN limits, and the [scenario evidence](docs/qa/indoor-scenarios-2026-10-23/README.md)
+for the current confirmation and help flows. The walkthrough below preserves the original prototype history.
+
 ## Earlier indoor prototype — historical software spine
 
 The whole product loop runs in a phone browser with **no LLM, no Nemotron, no
