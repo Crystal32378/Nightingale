@@ -54,6 +54,9 @@ export const STRING_KEYS = [
   'label.clinics.register',
   'label.clinics.source',
   'label.clinics.official',
+  'label.voice',
+  'label.voice.female',
+  'label.voice.male',
 ] as const
 
 export type StringKey = (typeof STRING_KEYS)[number]
@@ -151,4 +154,10 @@ export const STRING_NOTES: Record<StringKey, string> = {
   'label.clinics.register': '每個科別旁的官方掛號頁連結，不朗讀。',
   'label.clinics.source': '資料來源網址前的標籤，不朗讀。',
   'label.clinics.official': '醫院官方網路掛號首頁連結，查不到時也一直在，不朗讀。',
+  // Only the English help sentences are recorded in two voices; Chinese is the
+  // device voice, which cannot be told which one to use. So the choice is only
+  // shown in English, where it changes what is heard.
+  'label.voice': '英文求助錄音的聲音選單標籤，只在英文模式顯示，不朗讀。',
+  'label.voice.female': '選項文字，不朗讀。',
+  'label.voice.male': '選項文字，不朗讀。',
 }

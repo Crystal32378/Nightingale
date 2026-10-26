@@ -491,6 +491,31 @@ describe('switching language', () => {
     expect(speak).not.toHaveBeenCalled()
   })
 
+  // Some people hear one voice more clearly than the other. The choice is only
+  // offered where it changes what is heard: Chinese is the device voice.
+  it('plays the male recording once Male is chosen, and offers no voice choice in Chinese', async () => {
+    const played: string[] = []
+    vi.stubGlobal('speechSynthesis', { speak: vi.fn(), cancel: vi.fn() })
+    vi.stubGlobal('Audio', class {
+      volume = 1
+      constructor(public src: string) {}
+      play() {
+        played.push(this.src)
+        return Promise.resolve()
+      }
+      pause() {}
+    })
+    const ui = setup()
+    expect(screen.queryByRole('combobox', { name: /Voice|聲音/ })).toBeNull()
+
+    await toEnglish(ui)
+    await ui.user.selectOptions(screen.getByRole('combobox', { name: 'Voice' }), 'male')
+    await ui.user.click(screen.getByRole('button', { name: 'Help me ask' }))
+
+    expect(played.length).toBeGreaterThanOrEqual(1)
+    for (const src of played) expect(src).toBe('/audio/indoor/en/male/ask-generic.wav')
+  })
+
   it('says the same English sentence with an English device voice when the recording will not play', async () => {
     const speak = vi.fn()
     vi.stubGlobal('SpeechSynthesisUtterance', class {

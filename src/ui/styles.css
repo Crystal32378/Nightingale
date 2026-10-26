@@ -170,6 +170,14 @@ button {
   border-radius: 999px;
 }
 
+.voice {
+  display: block;
+  margin-top: 8px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
 .status {
   display: inline-flex;
   align-items: center;

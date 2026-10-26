@@ -54,4 +54,7 @@ export const EN: Record<StringKey, string> = {
   'label.clinics.register': 'Registration page',
   'label.clinics.source': 'Source',
   'label.clinics.official': 'Taipei City Hospital online registration',
+  'label.voice': 'Voice',
+  'label.voice.female': 'Female',
+  'label.voice.male': 'Male',
 }
