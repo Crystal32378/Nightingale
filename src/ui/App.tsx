@@ -7,6 +7,7 @@ import type { Locale } from '../registry/types'
 import { label, materialize, render, renderPlace } from '../render/renderer'
 import { DEMO_VISIT, MOCK_VENUE } from '../venue/mock'
 import { AskCard, acknowledgeFocusReturn, wantFocusReturn } from './AskCard'
+import { ClinicLookup } from './ClinicLookup'
 import { DevPanel } from './DevPanel'
 import {
   IconAsk,
@@ -387,6 +388,9 @@ export function App() {
           visible: a volume control you must go find is one you never adjust.
           Icon and bars only — no words to misread. */}
       <VolumeControl context="PRIVATE" labels={volumeLabels} />
+
+      {/* Beside the walk, not part of it: the hospital's own department list. */}
+      <ClinicLookup locale={locale} />
 
       {/* Below the fold on purpose: a setting, not part of the walk. */}
       <select

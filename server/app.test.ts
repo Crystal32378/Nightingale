@@ -1,6 +1,8 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { Destination, DestinationInterpreter } from '../src/destination/destination'
 import { createApp } from './app'
+import type { Extract } from './tavily'
 
 /**
  * The proxy is the only thing between the public internet and the API key's
@@ -74,5 +76,65 @@ describe('indoor proxy', () => {
     const { interpreter } = fakeInterpreter('nemotron', { kind: 'uncertain' })
     const res = await createApp(interpreter).request('/api/destination', { method: 'POST', body: '{"text":"x"}' })
     expect(res.status).toBe(404)
+  })
+})
+
+describe('clinic lookup', () => {
+  const pages: Record<string, string> = {
+    'https://webreg.tpech.gov.tw/': readFileSync('server/fixtures/tpech-home.md', 'utf8'),
+    'https://webreg.tpech.gov.tw/RegOnline1_1.aspx?ZCode=F': readFileSync('server/fixtures/tpech-campus-F.md', 'utf8'),
+  }
+  /** Records which pages were fetched, so a test can tell whether a credit was spent. */
+  function fakeExtract(fail = false) {
+    const fetched: string[] = []
+    const extract: Extract = async (url) => {
+      fetched.push(url)
+      if (fail) throw new Error('Tavily 432')
+      return pages[url] ?? 'nothing here'
+    }
+    return { extract, fetched }
+  }
+  const { interpreter } = fakeInterpreter('mock', { kind: 'uncertain' })
+
+  it('lists the campuses from the hospital home page, and says where they came from', async () => {
+    const { extract } = fakeExtract()
+    const res = await createApp(interpreter, extract).request('/indoor-api/campuses')
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body.source).toBe('https://webreg.tpech.gov.tw/')
+    expect(body.campuses).toContainEqual({ code: 'F', name: '仁愛院區' })
+  })
+
+  it('lists a campus departments with the page they came from', async () => {
+    const { extract, fetched } = fakeExtract()
+    const res = await createApp(interpreter, extract).request('/indoor-api/departments?campus=F')
+    const body = await res.json()
+    expect(res.status).toBe(200)
+    expect(body.source).toBe('https://webreg.tpech.gov.tw/RegOnline1_1.aspx?ZCode=F')
+    expect(body.departments.map((d: { name: string }) => d.name)).toContain('神經外科')
+    expect(fetched).toEqual([body.source])
+  })
+
+  it.each(['', '../x', 'F&ZCode=G', 'TOOLONG'])('refuses campus %j without fetching anything', async (campus) => {
+    const { extract, fetched } = fakeExtract()
+    const res = await createApp(interpreter, extract).request(`/indoor-api/departments?campus=${encodeURIComponent(campus)}`)
+    expect(res.status).toBe(400)
+    expect(fetched).toEqual([])
+  })
+
+  it('says unavailable rather than an empty list when Tavily fails', async () => {
+    const { extract } = fakeExtract(true)
+    expect((await createApp(interpreter, extract).request('/indoor-api/departments?campus=F')).status).toBe(502)
+    expect((await createApp(interpreter, extract).request('/indoor-api/campuses')).status).toBe(502)
+  })
+
+  it('says unavailable when the page no longer has the list, instead of claiming the campus has no clinics', async () => {
+    const { extract } = fakeExtract()
+    expect((await createApp(interpreter, extract).request('/indoor-api/departments?campus=G')).status).toBe(502)
+  })
+
+  it('says the lookup is off when there is no Tavily key', async () => {
+    expect((await createApp(interpreter).request('/indoor-api/campuses')).status).toBe(503)
+    expect((await createApp(interpreter).request('/indoor-api/departments?campus=F')).status).toBe(503)
   })
 })
