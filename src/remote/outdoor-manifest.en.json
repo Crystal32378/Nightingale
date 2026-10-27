@@ -432,14 +432,14 @@
           "sha256": "4d18f6d867a3db24823eedf80b06f4ef3ece0f6adcfd65ee34252c24aa1b7a9d",
           "seconds": 4.170958333333333,
           "generatedAt": "2026-10-27T02:13:17.919993+00:00",
-          "listeningReview": "pending"
+          "listeningReview": "approved"
         },
         "Puck": {
           "file": "audio/outdoor/renai-001-en/puck/ask.help-entrance.wav",
           "sha256": "a0808634f8735289b9d44de9ee39fece0e6e15208dae225b1d916089e6627a0c",
           "seconds": 4.090958333333333,
           "generatedAt": "2026-10-27T02:13:24.545710+00:00",
-          "listeningReview": "pending"
+          "listeningReview": "approved"
         }
       }
     }
