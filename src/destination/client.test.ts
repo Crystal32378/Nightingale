@@ -49,9 +49,11 @@ describe('DestinationClient', () => {
     expect(await client.interpret('電梯出口')).toEqual({ mode: 'nemotron', destination: UNCERTAIN })
   })
 
-  it.each([400, 413])('is uncertain, not the mock, when the proxy refuses the sentence (HTTP %i)', async (status) => {
+  it.each([400, 413, 429])('is uncertain, not the mock, when the proxy refuses the sentence (HTTP %i)', async (status) => {
     // A refused sentence (blank, too long) is the person's input, not a broken
     // proxy. Letting the mock guess at it would answer 藥局 here.
+    // 429 is the proxy's own limit (per person, per day, or the kill switch at
+    // 0): the screen says 我不確定 and offers help, with no model call spent.
     const client = new DestinationClient({ fetchImpl: proxyAnswering({ mode: 'nemotron', error: 'x' }, status) })
     expect(await client.interpret('我要去藥局')).toEqual({ mode: 'nemotron', destination: UNCERTAIN })
   })
@@ -66,8 +68,9 @@ describe('DestinationClient', () => {
       expect(await new DestinationClient({ fetchImpl }).interpret('我要去藥局')).toEqual(viaMock)
     })
 
-    it.each([404, 500, 502])('when the proxy answers HTTP %i', async (status) => {
-      // 404 is what Firebase Hosting answers while no proxy is deployed.
+    it.each([404, 429, 500, 502])('when the proxy answers HTTP %i', async (status) => {
+      // 404 is what Firebase Hosting answers while no proxy is deployed. A 429
+      // without a mode is Cloud Run's own (no instance free), not our limit.
       const client = new DestinationClient({ fetchImpl: proxyAnswering({ error: 'x' }, status) })
       expect(await client.interpret('我要去藥局')).toEqual(viaMock)
     })
