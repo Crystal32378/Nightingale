@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { label } from '../render/renderer'
 import { IconAgain, IconDone } from './icons'
 import { NightingaleBird } from './NightingaleBird'
-import { speak } from './speech'
+import { speak, stopSpeaking } from './speech'
 import { raiseContext } from './volumeStore'
 import { visualLines } from './visualText'
 import { VolumeControl } from './VolumeControl'
@@ -33,13 +33,18 @@ const FOCUSABLE =
  * inert for as long as the card is open. On close, focus goes home to the
  * 幫我問 button that opened it — a person always knows where they came back
  * to.
+ *
+ * Closing the card stops the voice: the person has their answer, and the phone
+ * must not talk over the member of staff. `silent` (the outdoor 靜音 choice)
+ * shows the card and says nothing.
  */
-export function AskCard({ text, onClose, lang = 'zh-TW', labels }: { text: string; onClose: () => void; lang?: string; labels?: { again: string; done: string; volume: { level: string; down: string; up: string } } }) {
+export function AskCard({ text, onClose, lang = 'zh-TW', labels, silent = false }: { text: string; onClose: () => void; lang?: string; labels?: { again: string; done: string; volume: { level: string; down: string; up: string } }; silent?: boolean }) {
   const cardRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    speak(text, 'ask.utterance', lang)
-  }, [text, lang])
+    if (!silent) speak(text, 'ask.utterance', lang)
+    return stopSpeaking
+  }, [text, lang, silent])
 
   // Focus goes in on open. Coming home is a two-body problem: the background
   // is inert until the card unmounts, so the card cannot focus anything in
@@ -89,7 +94,7 @@ export function AskCard({ text, onClose, lang = 'zh-TW', labels }: { text: strin
     // Asking to hear it again is evidence it was not heard: one step louder,
     // and it stays there (levelAfterRepeat in voice/level.ts).
     raiseContext('PUBLIC')
-    speak(text, 'ask.utterance', lang)
+    if (!silent) speak(text, 'ask.utterance', lang)
   }
 
   return (

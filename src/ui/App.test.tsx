@@ -491,6 +491,62 @@ describe('switching language', () => {
     expect(speak).not.toHaveBeenCalled()
   })
 
+  // Some people hear one voice more clearly than the other. The choice is only
+  // offered where it changes what is heard: Chinese is the device voice.
+  it('plays the male recording once Male is chosen, and offers no voice choice in Chinese', async () => {
+    const played: string[] = []
+    vi.stubGlobal('speechSynthesis', { speak: vi.fn(), cancel: vi.fn() })
+    vi.stubGlobal('Audio', class {
+      volume = 1
+      constructor(public src: string) {}
+      play() {
+        played.push(this.src)
+        return Promise.resolve()
+      }
+      pause() {}
+    })
+    const ui = setup()
+    expect(screen.queryByRole('combobox', { name: /Voice|聲音/ })).toBeNull()
+
+    await toEnglish(ui)
+    await ui.user.selectOptions(screen.getByRole('combobox', { name: 'Voice' }), 'male')
+    await ui.user.click(screen.getByRole('button', { name: 'Help me ask' }))
+
+    expect(played.length).toBeGreaterThanOrEqual(1)
+    for (const src of played) expect(src).toBe('/audio/indoor/en/male/ask-generic.wav')
+  })
+
+  // Done means the person has their answer: the phone must not keep talking
+  // over the member of staff. A recording runs ~3 s, long enough to notice.
+  it.each([
+    ['Done', (ui: ReturnType<typeof setup>) => ui.user.click(screen.getByRole('button', { name: 'Done' }))],
+    ['Escape', (ui: ReturnType<typeof setup>) => ui.user.keyboard('{Escape}')],
+  ])('stops the recording when the card is closed with %s', async (_how, close) => {
+    const playing: { paused: boolean }[] = []
+    vi.stubGlobal('speechSynthesis', { speak: vi.fn(), cancel: vi.fn() })
+    vi.stubGlobal('Audio', class {
+      volume = 1
+      paused = true
+      play() {
+        this.paused = false
+        playing.push(this)
+        return Promise.resolve()
+      }
+      pause() {
+        this.paused = true
+      }
+    })
+    const ui = setup()
+    await toEnglish(ui)
+    await ui.user.click(screen.getByRole('button', { name: 'Help me ask' }))
+    expect(playing.some((audio) => !audio.paused)).toBe(true)
+
+    await close(ui)
+
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(playing.every((audio) => audio.paused)).toBe(true)
+  })
+
   it('says the same English sentence with an English device voice when the recording will not play', async () => {
     const speak = vi.fn()
     vi.stubGlobal('SpeechSynthesisUtterance', class {

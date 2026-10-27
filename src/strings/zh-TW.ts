@@ -59,4 +59,7 @@ export const ZH_TW: Record<StringKey, string> = {
   'label.clinics.register': '掛號頁面',
   'label.clinics.source': '資料來源',
   'label.clinics.official': '臺北市立聯合醫院網路掛號',
+  'label.voice': '聲音',
+  'label.voice.female': '女聲',
+  'label.voice.male': '男聲',
 }

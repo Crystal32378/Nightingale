@@ -412,7 +412,7 @@ export function Last300mPage() {
       {state.notice ? <p className="l3-notice" role="status">{state.notice}</p> : null}
     </div>
     {askOpen ? (
-      <AskCard lang={locale === 'en' ? 'en-US' : 'zh-TW'} labels={locale === 'en' ? { again: 'Say it again', done: 'Done', volume: { level: 'Volume {n} of 4', down: 'Quieter', up: 'Louder' } } : undefined} text={copy['l3.ask.utterance']} onClose={() => { helpActive.current = false; setAskOpen(false) }} />
+      <AskCard lang={locale === 'en' ? 'en-US' : 'zh-TW'} labels={locale === 'en' ? { again: 'Say it again', done: 'Done', volume: { level: 'Volume {n} of 4', down: 'Quieter', up: 'Louder' } } : undefined} text={copy['l3.ask.utterance']} silent={voice === 'quiet'} onClose={() => { helpActive.current = false; setAskOpen(false) }} />
     ) : null}
     </>
   )

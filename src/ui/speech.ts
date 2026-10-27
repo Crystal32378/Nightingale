@@ -1,5 +1,6 @@
 import { speechVolumeFor } from './volumeStore'
 import recordings from './ask-recordings.en.json'
+import maleRecordings from './ask-recordings.en.male.json'
 
 /**
  * Speech is a playback device, not a writer. It receives the verified string
@@ -9,10 +10,19 @@ import recordings from './ask-recordings.en.json'
  * person chose for this listening context (see volumeStore / voice/level.ts).
  *
  * English help sentences have recordings (scripts/record-indoor-en.ts), chosen
- * by the exact verified text. A sentence without its recording, or a recording
- * that will not play, is said by the device voice instead.
+ * by the exact verified text, in the voice the person chose. A sentence without
+ * its recording, or a recording that will not play, is said by the device voice
+ * instead.
  */
-const RECORDED: Record<string, { file: string }> = recordings
+export type RecordedVoice = 'female' | 'male'
+const RECORDED: Record<RecordedVoice, Record<string, { file: string }>> = { female: recordings, male: maleRecordings }
+
+// ponytail: not persisted, like the outdoor voice choice; localStorage like volumeStore if people ask.
+let voice: RecordedVoice = 'female'
+
+export function setVoice(next: RecordedVoice): void {
+  voice = next
+}
 
 let playing: HTMLAudioElement | null = null
 
@@ -31,7 +41,8 @@ export function speak(text: string, key = 'guidance.go', lang = 'zh-TW'): void {
   try {
     if (typeof window === 'undefined') return
     stopSpeaking()
-    const recording = lang.startsWith('en') && Object.prototype.hasOwnProperty.call(RECORDED, text) ? RECORDED[text] : undefined
+    const recorded = RECORDED[voice]
+    const recording = lang.startsWith('en') && Object.prototype.hasOwnProperty.call(recorded, text) ? recorded[text] : undefined
     if (recording && typeof Audio !== 'undefined') {
       const audio = new Audio(import.meta.env.BASE_URL + recording.file)
       // ponytail: iOS ignores element volume (hardware buttons only); a GainNode if the levels must apply there.

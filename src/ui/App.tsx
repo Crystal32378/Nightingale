@@ -23,7 +23,7 @@ import type { MotionInput } from './birdMotion'
 import { reduceIdleTrigger, type IdleTrigger } from './motionTrigger'
 import { NightingaleBird } from './NightingaleBird'
 import { useNightingale } from './useNightingale'
-import { stopSpeaking } from './speech'
+import { setVoice, stopSpeaking, type RecordedVoice } from './speech'
 import { visualLines } from './visualText'
 import { VolumeControl } from './VolumeControl'
 
@@ -99,6 +99,10 @@ export function App() {
     url.searchParams.set('lang', next)
     window.history.replaceState(null, '', url)
   }
+  const [voice, chooseVoice] = useState<RecordedVoice>('female')
+  useEffect(() => {
+    setVoice(voice)
+  }, [voice])
   const t = (key: Parameters<typeof label>[0]) => label(key, { locale })
   const ng = useNightingale(adapter, locale)
   const { output, actions } = ng
@@ -402,6 +406,25 @@ export function App() {
         <option value="zh-TW">繁體中文</option>
         <option value="en">English</option>
       </select>
+
+      {/* Only English help sentences are recorded in two voices; in Chinese the
+          choice would change nothing, so it is not offered. */}
+      {locale === 'en' && (
+        <label className="voice">
+          {t('label.voice')}
+          <select
+            className="language"
+            value={voice}
+            onChange={(event) => {
+              stopSpeaking()
+              chooseVoice(event.target.value === 'male' ? 'male' : 'female')
+            }}
+          >
+            <option value="female">{t('label.voice.female')}</option>
+            <option value="male">{t('label.voice.male')}</option>
+          </select>
+        </label>
+      )}
 
       <DevPanel
         output={output}
