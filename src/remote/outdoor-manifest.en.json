@@ -3,7 +3,7 @@
   "locale": "en",
   "model": "gemini-2.5-flash-tts",
   "style": "Speak English naturally at a normal conversational pace, with relaxed, effortless articulation and a warm, calm tone. Read only the following text verbatim, without adding any words: ",
-  "scriptSha256": "a1579077950ff8a82d1ed5c781ad0320520114be1099b66bc8d9d6dff0d2fe5e",
+  "scriptSha256": "9b896f9d38c0de9471d758677900e2e565add45ae658a97d6c51e797dd49dead",
   "acceptance": "Crystal accepted fixed copy, Leda/Puck voice IDs and revised normal-pace samples. Other clips have generation/hash checks, not individual human listening acceptance.",
   "utterances": {
     "cp1.guide": {
@@ -420,6 +420,25 @@
           "sha256": "fd43fabf035a01537a01f8c1706c3baf2ea3f144568a57f75f59642c8cefd7c9",
           "seconds": 1.9309583333333333,
           "generatedAt": "2026-10-08T05:02:26.182651+00:00",
+          "listeningReview": "pending"
+        }
+      }
+    },
+    "ask.help-entrance": {
+      "text": "Excuse me, how do I get to the main entrance of the hospital?",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001-en/leda/ask.help-entrance.wav",
+          "sha256": "4d18f6d867a3db24823eedf80b06f4ef3ece0f6adcfd65ee34252c24aa1b7a9d",
+          "seconds": 4.170958333333333,
+          "generatedAt": "2026-10-27T02:13:17.919993+00:00",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001-en/puck/ask.help-entrance.wav",
+          "sha256": "a0808634f8735289b9d44de9ee39fece0e6e15208dae225b1d916089e6627a0c",
+          "seconds": 4.090958333333333,
+          "generatedAt": "2026-10-27T02:13:24.545710+00:00",
           "listeningReview": "pending"
         }
       }

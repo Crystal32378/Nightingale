@@ -552,6 +552,29 @@
           "reviewRecordedAt": "2026-10-07T16:03:15.486938+00:00"
         }
       }
+    },
+    "ask.help-entrance": {
+      "text": "請問，醫院的正門要怎麼走？",
+      "voices": {
+        "Leda": {
+          "file": "audio/outdoor/renai-001/leda/ask.help-entrance.wav",
+          "sha256": "1907ed4ab2ca3869b87989975d0efe61af374d35da5997adb9e733ab14bdadb8",
+          "seconds": 4.370958333333333,
+          "generatedAt": "2026-10-27T02:13:07.753235+00:00",
+          "sourceBatch": "Nightingale-Gemini-4-clips-20261027",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "pending"
+        },
+        "Puck": {
+          "file": "audio/outdoor/renai-001/puck/ask.help-entrance.wav",
+          "sha256": "a88c59f13399d8a3becb2689c9d1cf31eb0f360bbe2a5f03dea1607e1f4962ea",
+          "seconds": 4.170958333333333,
+          "generatedAt": "2026-10-27T02:13:12.369440+00:00",
+          "sourceBatch": "Nightingale-Gemini-4-clips-20261027",
+          "generationStyle": "Speak Mandarin gently and unhurried, like a grandchild walking an elder. Use a calm, warm, conversational voice. Read only the following text verbatim, without adding any words: ",
+          "listeningReview": "pending"
+        }
+      }
     }
   }
 }

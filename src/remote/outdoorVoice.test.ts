@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
 import { lintStringTable } from '../lint/register'
 import { outdoorKeysFor, OutdoorSequence, outdoorManifest } from './outdoorVoice'
+import { outdoorStrings } from './locale'
 
 describe('verified outdoor recordings', () => {
   it('selects the crossing, then after + along only once the walker confirms done', () => {
@@ -23,8 +24,8 @@ describe('verified outdoor recordings', () => {
     const script = readFileSync('docs/tts-outdoor-script.md', 'utf8')
     const rows = script.split('\n').map(line => line.split('|').map(c => c.trim()))
       .filter(c => c.length === 6 && /^[a-z]+[\d.]|^ask\.|^recover\.|^arrived$|^reanchor$|^photo\./.test(c[1]))
-    expect(rows).toHaveLength(22)
-    expect(Object.keys(outdoorManifest.utterances)).toHaveLength(22)
+    expect(rows).toHaveLength(23)
+    expect(Object.keys(outdoorManifest.utterances)).toHaveLength(23)
     for (const row of rows) {
       const item = outdoorManifest.utterances[row[1]]
       expect(item.text).toBe(row[3])
@@ -39,6 +40,18 @@ describe('verified outdoor recordings', () => {
     for (const retired of ['cp2.turn', 'cp2.straight', 'cp2.store', 'cp3.turn']) {
       expect(outdoorManifest.utterances[retired]).toBeUndefined()
     }
+  })
+
+  it('records the 幫我問 card word for word as it is shown, in both languages, without touching ask.entrance', async () => {
+    const played: string[] = []
+    const player = new OutdoorSequence(async file => { played.push(file) })
+    for (const locale of ['zh-TW', 'en'] as const) {
+      const manifest = JSON.parse(readFileSync(`src/remote/outdoor-manifest${locale === 'en' ? '.en' : ''}.json`, 'utf8'))
+      expect(manifest.utterances['ask.help-entrance'].text).toBe(outdoorStrings(locale)['l3.ask.utterance'])
+      expect(manifest.utterances['ask.entrance'].text).not.toBe(outdoorStrings(locale)['l3.ask.utterance'])
+      await player.play(['ask.help-entrance'], 'Puck', locale)
+    }
+    expect(played).toEqual(['audio/outdoor/renai-001/puck/ask.help-entrance.wav', 'audio/outdoor/renai-001-en/puck/ask.help-entrance.wav'])
   })
 })
 

@@ -382,7 +382,7 @@ export function Last300mPage() {
           {/* 幫我問 is Nightingale's ask-a-person move: it opens the question
               card a passerby can read (and the phone can say). It never calls
               the backend, records nothing, and parses no reply. */}
-          <button ref={helpRef} className="l3-secondary l3-icon-button" onClick={() => { voiceInput.current?.cancel(); helpActive.current = true; player.stop(); setAskOpen(true) }}>
+          <button ref={helpRef} className="l3-secondary l3-icon-button" onClick={() => { voiceInput.current?.cancel(); helpActive.current = true; player.stop(); unlock(); setAskOpen(true) }}>
             <IconAsk className="l3-btn-icon" />
             {copy['l3.button.help']}
           </button>
@@ -412,7 +412,7 @@ export function Last300mPage() {
       {state.notice ? <p className="l3-notice" role="status">{state.notice}</p> : null}
     </div>
     {askOpen ? (
-      <AskCard lang={locale === 'en' ? 'en-US' : 'zh-TW'} labels={locale === 'en' ? { again: 'Say it again', done: 'Done', volume: { level: 'Volume {n} of 4', down: 'Quieter', up: 'Louder' } } : undefined} text={copy['l3.ask.utterance']} silent={voice === 'quiet'} onClose={() => { helpActive.current = false; setAskOpen(false) }} />
+      <AskCard lang={locale === 'en' ? 'en-US' : 'zh-TW'} labels={locale === 'en' ? { again: 'Say it again', done: 'Done', volume: { level: 'Volume {n} of 4', down: 'Quieter', up: 'Louder' } } : undefined} text={copy['l3.ask.utterance']} speech={{ say: () => void player.play(['ask.help-entrance'], voiceRef.current, localeRef.current), stop: () => player.stop() }} onClose={() => { helpActive.current = false; setAskOpen(false) }} />
     ) : null}
     </>
   )

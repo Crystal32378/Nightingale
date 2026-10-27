@@ -35,16 +35,19 @@ const FOCUSABLE =
  * to.
  *
  * Closing the card stops the voice: the person has their answer, and the phone
- * must not talk over the member of staff. `silent` (the outdoor 靜音 choice)
- * shows the card and says nothing.
+ * must not talk over the member of staff. `speech` replaces the shared voice
+ * (outdoor passes its Leda/Puck player, which also honours 靜音).
  */
-export function AskCard({ text, onClose, lang = 'zh-TW', labels, silent = false }: { text: string; onClose: () => void; lang?: string; labels?: { again: string; done: string; volume: { level: string; down: string; up: string } }; silent?: boolean }) {
+export function AskCard({ text, onClose, lang = 'zh-TW', labels, speech }: { text: string; onClose: () => void; lang?: string; labels?: { again: string; done: string; volume: { level: string; down: string; up: string } }; speech?: { say: () => void; stop: () => void } }) {
   const cardRef = useRef<HTMLDivElement>(null)
+  const speechRef = useRef(speech)
+  speechRef.current = speech
+  const say = useCallback(() => speechRef.current ? speechRef.current.say() : speak(text, 'ask.utterance', lang), [text, lang])
 
   useEffect(() => {
-    if (!silent) speak(text, 'ask.utterance', lang)
-    return stopSpeaking
-  }, [text, lang, silent])
+    say()
+    return () => speechRef.current ? speechRef.current.stop() : stopSpeaking()
+  }, [say])
 
   // Focus goes in on open. Coming home is a two-body problem: the background
   // is inert until the card unmounts, so the card cannot focus anything in
@@ -94,7 +97,7 @@ export function AskCard({ text, onClose, lang = 'zh-TW', labels, silent = false 
     // Asking to hear it again is evidence it was not heard: one step louder,
     // and it stays there (levelAfterRepeat in voice/level.ts).
     raiseContext('PUBLIC')
-    if (!silent) speak(text, 'ask.utterance', lang)
+    say()
   }
 
   return (
