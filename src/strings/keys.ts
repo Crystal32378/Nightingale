@@ -157,7 +157,7 @@ export const STRING_NOTES: Record<StringKey, string> = {
   // Only the English help sentences are recorded in two voices; Chinese is the
   // device voice, which cannot be told which one to use. So the choice is only
   // shown in English, where it changes what is heard.
-  'label.voice': '英文求助錄音的聲音選單標籤，只在英文模式顯示，不朗讀。',
+  'label.voice': '求助錄音的聲音選單標籤，中英文都顯示，不朗讀。',
   'label.voice.female': '選項文字，不朗讀。',
   'label.voice.male': '選項文字，不朗讀。',
 }

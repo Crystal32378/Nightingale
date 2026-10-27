@@ -407,24 +407,21 @@ export function App() {
         <option value="en">English</option>
       </select>
 
-      {/* Only English help sentences are recorded in two voices; in Chinese the
-          choice would change nothing, so it is not offered. */}
-      {locale === 'en' && (
-        <label className="voice">
-          {t('label.voice')}
-          <select
-            className="language"
-            value={voice}
-            onChange={(event) => {
-              stopSpeaking()
-              chooseVoice(event.target.value === 'male' ? 'male' : 'female')
-            }}
-          >
-            <option value="female">{t('label.voice.female')}</option>
-            <option value="male">{t('label.voice.male')}</option>
-          </select>
-        </label>
-      )}
+      {/* The help sentences are recorded in two voices, in both languages. */}
+      <label className="voice">
+        {t('label.voice')}
+        <select
+          className="language"
+          value={voice}
+          onChange={(event) => {
+            stopSpeaking()
+            chooseVoice(event.target.value === 'male' ? 'male' : 'female')
+          }}
+        >
+          <option value="female">{t('label.voice.female')}</option>
+          <option value="male">{t('label.voice.male')}</option>
+        </select>
+      </label>
 
       <DevPanel
         output={output}
