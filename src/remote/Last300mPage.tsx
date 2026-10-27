@@ -3,6 +3,7 @@ import { VirtualBirdAdapter } from '../adapters/virtual'
 import { acknowledgeFocusReturn, AskCard, wantFocusReturn } from '../ui/AskCard'
 import { IconAsk, IconCamera, IconCrossing, IconCurrent, IconDestination, IconExit, IconHospital, IconWalk } from '../ui/icons'
 import { NightingaleBird } from '../ui/NightingaleBird'
+import { speechVolumeFor } from '../ui/volumeStore'
 import { Last300mClient, RemoteProtocolError, type LocationReport, type RemoteAction, type RouteInfo } from './last300mClient'
 import { RemoteGuidanceText } from './RemoteGuidanceText'
 import { doneLabelFor, stepCardFor, type StepIcon } from './stepCard'
@@ -412,7 +413,7 @@ export function Last300mPage() {
       {state.notice ? <p className="l3-notice" role="status">{state.notice}</p> : null}
     </div>
     {askOpen ? (
-      <AskCard lang={locale === 'en' ? 'en-US' : 'zh-TW'} labels={locale === 'en' ? { again: 'Say it again', done: 'Done', volume: { level: 'Volume {n} of 4', down: 'Quieter', up: 'Louder' } } : undefined} text={copy['l3.ask.utterance']} speech={{ say: () => void player.play(['ask.help-entrance'], voiceRef.current, localeRef.current), stop: () => player.stop() }} onClose={() => { helpActive.current = false; setAskOpen(false) }} />
+      <AskCard lang={locale === 'en' ? 'en-US' : 'zh-TW'} labels={locale === 'en' ? { again: 'Say it again', done: 'Done', volume: { level: 'Volume {n} of 4', down: 'Quieter', up: 'Louder' } } : undefined} text={copy['l3.ask.utterance']} speech={{ say: () => void player.play(['ask.help-entrance'], voiceRef.current, localeRef.current, speechVolumeFor('ask.utterance')), stop: () => player.stop() }} onClose={() => { helpActive.current = false; setAskOpen(false) }} />
     ) : null}
     </>
   )

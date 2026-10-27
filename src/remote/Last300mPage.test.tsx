@@ -4,6 +4,7 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { Last300mPage } from './Last300mPage'
+import { speechVolumeFor } from '../ui/volumeStore'
 
 /**
  * The 幫我問 card speaks in the outdoor voice the person chose — the same
@@ -17,11 +18,15 @@ import { Last300mPage } from './Last300mPage'
 const speak = vi.fn()
 const fetched: string[] = []
 const stopped = vi.fn()
+const gains: Array<{ value: number }> = []
+const started: Array<number | undefined> = [] // the gain each recording started at
 
 beforeEach(() => {
   speak.mockReset()
   stopped.mockReset()
   fetched.length = 0
+  gains.length = 0
+  started.length = 0
   // A session start answers; recordings answer with bytes; route info fails.
   vi.stubGlobal('fetch', vi.fn(async (url: string) => {
     fetched.push(String(url))
@@ -48,7 +53,8 @@ beforeEach(() => {
     resume() { return Promise.resolve() }
     close() { return Promise.resolve() }
     decodeAudioData() { return Promise.resolve({}) }
-    createBufferSource() { return { connect() {}, disconnect() {}, start() {}, stop: stopped, onended: null } }
+    createGain() { const node = { gain: { value: 1 }, connect() {}, disconnect() {} }; gains.push(node.gain); return node }
+    createBufferSource() { return { connect() {}, disconnect() {}, start() { started.push(gains.slice(-1)[0]?.value) }, stop: stopped, onended: null } }
   })
 })
 
@@ -83,4 +89,18 @@ it('says the help question in the chosen outdoor voice, stops it on close, and n
   await user.click(screen.getByRole('button', { name: '再說一遍' }))
   expect(helpRecordings()).toEqual([])
   expect(speak).not.toHaveBeenCalled()
+})
+
+it('plays the help question at the card volume, one step louder after 再說一遍', async () => {
+  const user = userEvent.setup()
+  render(<StrictMode><Last300mPage /></StrictMode>)
+  await user.click(screen.getByRole('button', { name: '開始' }))
+  await user.click(await screen.findByRole('button', { name: '幫我問' }))
+  await waitFor(() => expect(helpRecordings()).not.toEqual([]))
+  await waitFor(() => expect(started.slice(-1)[0]).toBe(speechVolumeFor('ask.utterance')))
+  const before = speechVolumeFor('ask.utterance')
+
+  await user.click(screen.getByRole('button', { name: '再說一遍' }))
+  expect(speechVolumeFor('ask.utterance')).toBeGreaterThan(before)
+  await waitFor(() => expect(started.slice(-1)[0]).toBe(speechVolumeFor('ask.utterance')))
 })

@@ -42,14 +42,15 @@ export function outdoorKeysFor(routeId: string, action: RemoteAction, locale: Ou
 /** A new response, mute, help, or unmount cancels the whole previous sequence. */
 export class OutdoorSequence {
   private controller: AbortController | null = null
-  constructor(private readonly clip: (file: string, signal: AbortSignal) => Promise<void>) {}
+  constructor(private readonly clip: (file: string, signal: AbortSignal, volume: number) => Promise<void>) {}
 
   stop(): void {
     this.controller?.abort()
     this.controller = null
   }
 
-  async play(keys: string[], voice: OutdoorVoice, locale: OutdoorLocale = 'zh-TW'): Promise<void> {
+  /** volume: 0–1, as speech.ts applies it; route guidance plays at full. */
+  async play(keys: string[], voice: OutdoorVoice, locale: OutdoorLocale = 'zh-TW', volume = 1): Promise<void> {
     this.stop()
     if (voice === 'quiet' || keys.length === 0) return
     const utterances = (locale === 'en' ? enManifest : outdoorManifest).utterances
@@ -60,7 +61,7 @@ export class OutdoorSequence {
     try {
       for (const recording of recordings) {
         if (controller.signal.aborted) return
-        await this.clip(recording!.file, controller.signal)
+        await this.clip(recording!.file, controller.signal, volume)
       }
     } catch {
       // Missing, blocked, offline: retain text; no device or remote TTS fallback.
@@ -73,7 +74,7 @@ export class OutdoorSequence {
 /** Unlock on a real user press; responses arriving after fetch can then play. */
 export function createOutdoorPlayer() {
   let context: AudioContext | null = null
-  const player = new OutdoorSequence(async (file, signal) => {
+  const player = new OutdoorSequence(async (file, signal, volume) => {
     const active = context
     if (!active || active.state !== 'running' || signal.aborted) return
     const response = await fetch(import.meta.env.BASE_URL + file, { signal })
@@ -83,11 +84,16 @@ export function createOutdoorPlayer() {
     await new Promise<void>((resolve) => {
       const source = active.createBufferSource()
       source.buffer = buffer
-      source.connect(active.destination)
+      // A gain node, not element volume: iOS honours it.
+      const gain = active.createGain()
+      gain.gain.value = volume
+      source.connect(gain)
+      gain.connect(active.destination)
       const finish = () => {
         source.onended = null
         signal.removeEventListener('abort', stop)
         source.disconnect()
+        gain.disconnect()
         resolve()
       }
       const stop = () => {
@@ -100,7 +106,7 @@ export function createOutdoorPlayer() {
     })
   })
   return {
-    play: (keys: string[], voice: OutdoorVoice, locale: OutdoorLocale = 'zh-TW') => player.play(keys, voice, locale),
+    play: (keys: string[], voice: OutdoorVoice, locale: OutdoorLocale = 'zh-TW', volume = 1) => player.play(keys, voice, locale, volume),
     stop: () => player.stop(),
     unlock: () => {
       try {
