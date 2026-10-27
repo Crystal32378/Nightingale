@@ -84,6 +84,12 @@ Edit `.env` locally. The indoor proxy uses these variables:
 | `NEBIUS_API_KEY` | Server-only Nebius Token Factory credential | Missing or whitespace-only value selects Mock |
 | `HOST` | Address on which the proxy listens | `127.0.0.1`; keep this for local use |
 | `PORT` | Proxy listening port | `8787`; keep this to match the Vite forwarding target |
+| `RATE_LIMIT_PER_MINUTE` | Requests per person per minute, every `/indoor-api` route | `10`; must be a whole number of at least 1 |
+| `DAILY_LIMIT` | Model calls per Taipei day, all people together | `400`; `0` stops every model call (kill switch) |
+
+The proxy refuses to start if either limit is not a whole number, so a typo
+cannot quietly mean "no limit". The counts are kept in memory: a restart starts
+them again at zero.
 
 `MINIMAX_API_KEY` and `MINIMAX_GROUP_ID` in the example file belong to separate
 audio tooling. Leave them empty unless you are doing that work.
@@ -106,14 +112,16 @@ npm.cmd run server
 Expected startup message:
 
 ```text
-indoor proxy on http://127.0.0.1:8787 (mock)
+indoor proxy on http://127.0.0.1:8787 (mock, clinics off, 10/min per person, 400/day)
 ```
 
 or, when a nonblank key is present:
 
 ```text
-indoor proxy on http://127.0.0.1:8787 (nemotron)
+indoor proxy on http://127.0.0.1:8787 (nemotron, clinics off, 10/min per person, 400/day)
 ```
+
+`clinics on` means a `TAVILY_API_KEY` is set.
 
 The startup mode only indicates which interpreter was selected. It does **not**
 prove that the credential works or that the account has available credit.
@@ -162,6 +170,7 @@ when using a different account.
 | Model cannot classify the request | Proxy returns `mode: nemotron`, `destination.kind: uncertain` |
 | Upstream failure, invalid key, or model timeout (8 seconds) | Working proxy returns HTTP 200 with Nemotron `uncertain`; no Mock reclassification |
 | Invalid text (HTTP 400) or body over 4 KB (HTTP 413), with a valid mode in the response | Client displays `uncertain` in that mode instead of guessing with Mock |
+| Per-person or daily limit reached, or `DAILY_LIMIT=0` (HTTP 429 with a mode) | Client displays `uncertain` with help; no model call is made. A 429 without a mode (Cloud Run itself) still uses Mock |
 
 `uncertain` displays `我不確定。我陪你問。` (I'm not sure. I'll help you ask.).
 `幫我問` (Help me ask) opens a generic help card without starting a visit.
@@ -194,8 +203,22 @@ bound to `127.0.0.1`; opening it on all interfaces bypasses its local-only bound
 
 Do not expose a key-bearing dev server through a public tunnel or port-forward:
 forwarded requests can appear to come from loopback. Real-model phone acceptance
-belongs to the later protected deployment. The current proxy has no authentication
-or rate limiter; `npm run build` alone does not deploy a proxy or add those controls.
+belongs to the later protected deployment. The proxy has per-person and daily
+limits but no authentication; `npm run build` alone does not deploy a proxy.
+
+To run the proxy the way a deployment does, without development dependencies:
+
+```powershell
+npm.cmd run build:server
+npm.cmd start
+```
+
+`build:server` bundles `server/` into `dist-server/index.js`; `start` runs it with
+`node`. Cloud Run builds from source with `gcp-build`, which runs `build:server`.
+
+When checking with `curl` on Windows Git Bash, send Chinese text from a UTF-8 file
+(`--data-binary @file.json`). Typed inline, it reaches the proxy garbled and the
+model answers uncertain.
 
 ## 6. Troubleshooting and checks
 
@@ -203,7 +226,7 @@ or rate limiter; `npm run build` alone does not deploy a proxy or add those cont
 | --- | --- |
 | UI shows Mock on this computer | Use `127.0.0.1`, check proxy startup mode, `.env` location, and port 8787 |
 | UI shows Mock on a phone | Expected for LAN access; see section 5 |
-| Startup says Nemotron but every request is uncertain | Check account/key/credit and connectivity locally; startup does not validate the key |
+| Startup says Nemotron but every request is uncertain | Check account/key/credit and connectivity locally; startup does not validate the key. If the proxy answers HTTP 429, the per-person or daily limit is reached, or `DAILY_LIMIT=0` |
 | Changing `.env` has no effect | Restart the proxy, clear stale process overrides, and check for `.env.local` or `.env.development*` |
 | Port 5173 is busy | Stop the server you started or choose another frontend port and open that URL; `--strictPort` prevents a silent port change |
 | Port 8787 is busy | Stop your previous proxy; changing `PORT` alone does not change Vite's fixed target |

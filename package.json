@@ -12,6 +12,9 @@
     "lint:register": "vitest run src/lint/register.test.ts",
     "voice:plan": "vite-node scripts/export-voice-plan.ts",
     "server": "vite-node server/index.ts",
+    "build:server": "vite build --ssr server/index.ts --outDir dist-server",
+    "gcp-build": "npm run build:server",
+    "start": "node dist-server/index.js",
     "build:hosting": "tsc -b && VITE_LAST300M_API= vite build",
     "deploy:hosting": "npm run build:hosting && npx --yes firebase-tools deploy --only hosting"
   },

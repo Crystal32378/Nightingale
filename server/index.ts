@@ -1,7 +1,7 @@
 import { serve } from '@hono/node-server'
 import { MockInterpreter } from '../src/destination/mock'
 import { NemotronInterpreter } from '../src/destination/nemotron'
-import { createApp } from './app'
+import { createApp, readLimits } from './app'
 import { tavilyExtract } from './tavily'
 
 // The key lives in .env locally and in the platform's environment when
@@ -17,11 +17,13 @@ const interpreter = apiKey ? new NemotronInterpreter({ apiKey }) : new MockInter
 // No Tavily key: the clinic lookup answers 503 and the screen links to the hospital site.
 const tavilyKey = process.env.TAVILY_API_KEY?.trim()
 const extract = tavilyKey ? tavilyExtract(tavilyKey) : undefined
+// DAILY_LIMIT=0 stops every model call without a code change (the kill switch).
+const limits = readLimits(process.env)
 const port = Number(process.env.PORT) || 8787
 // Loopback only: anyone else who can reach this spends the key's credit
 // without knowing it. A deploy sets HOST=0.0.0.0 behind its own protection.
 const hostname = process.env.HOST || '127.0.0.1'
 
-serve({ fetch: createApp(interpreter, extract).fetch, port, hostname }, () => {
-  console.log(`indoor proxy on http://${hostname}:${port} (${interpreter.mode}, clinics ${extract ? 'on' : 'off'})`)
+serve({ fetch: createApp(interpreter, extract, limits).fetch, port, hostname }, () => {
+  console.log(`indoor proxy on http://${hostname}:${port} (${interpreter.mode}, clinics ${extract ? 'on' : 'off'}, ${limits.perMinute}/min per person, ${limits.perDay}/day)`)
 })

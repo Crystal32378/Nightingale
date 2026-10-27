@@ -21,8 +21,8 @@ export interface DestinationClientOptions {
 /**
  * The screen's side of the indoor proxy. Whenever the proxy cannot be used —
  * not there, an HTTP error, an answer it does not recognise, too slow — the
- * mock answers instead and says so. A sentence the proxy refuses (400/413) is
- * uncertain. A place the proxy names still goes through parseDestination.
+ * mock answers instead and says so. A sentence the proxy refuses (400/413), or
+ * one past its limits (429), is uncertain. A place the proxy names still goes through parseDestination.
  */
 export class DestinationClient {
   private readonly baseUrl: string
@@ -50,7 +50,8 @@ export class DestinationClient {
         body: JSON.stringify({ text }),
         signal: AbortSignal.timeout(this.timeoutMs),
       })
-      const refused = res.status === 400 || res.status === 413
+      // 429: the proxy's own limit, so uncertain with help, and no call spent.
+      const refused = res.status === 400 || res.status === 413 || res.status === 429
       if (!res.ok && !refused) return null
       const { mode, destination } = (await res.json()) ?? {}
       if (mode !== 'mock' && mode !== 'nemotron') return null
