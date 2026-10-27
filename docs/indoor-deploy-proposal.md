@@ -39,7 +39,18 @@ requirement, but the cost owner still needs to agree.
 
 ## Must be done before the URL is public
 
-The proxy has **no authentication and no rate limit** today. A rewrite makes it
+**Status (2026-10-27):** items 1, 2, 3, 4 and 6 are in the proxy (see
+[local setup](indoor-setup.md)): `RATE_LIMIT_PER_MINUTE` (default 10),
+`DAILY_LIMIT` (default 400, `0` is the kill switch), HTTP 429 shown as
+uncertain with help, and `npm start` from a bundle. The daily count is the soft,
+in-memory one described in item 2. Item 5 is still open: Token Factory's billing
+documentation describes no spending cap (past the credit it charges the card),
+so the daily limit is what keeps the bill below the credit. The client address
+used for item 1 must still be checked on the deployed service.
+
+The original list:
+
+The proxy has **no authentication**. A rewrite makes it
 reachable through Hosting, and the Cloud Run URL itself is also reachable, so
 the limits have to live in the proxy:
 
@@ -76,9 +87,12 @@ examples.
    `firebase target:apply hosting indoor SITE_ID`.
 2. Store the key: create a Secret Manager secret (e.g. `nebius-api-key`) and
    grant the service's identity `roles/secretmanager.secretAccessor`.
-3. Deploy the proxy with `HOST=0.0.0.0` and the secret:
-   `gcloud run deploy nightingale-indoor --region asia-east1 --update-secrets=NEBIUS_API_KEY=nebius-api-key:latest --update-env-vars=HOST=0.0.0.0 --max-instances=1 ...`
-   (source/container details per item 6 above).
+3. Deploy the proxy from source with `HOST=0.0.0.0`, the limits and the secret:
+   `gcloud run deploy nightingale-indoor --source . --region asia-east1 --update-secrets=NEBIUS_API_KEY=nebius-api-key:latest --update-env-vars=HOST=0.0.0.0,DAILY_LIMIT=400,RATE_LIMIT_PER_MINUTE=10 --max-instances=1 ...`
+   The Node.js buildpack runs the `gcp-build` script (bundles `server/`) instead
+   of `build`, then starts with `npm start`. A Tavily key goes in the same way
+   (`TAVILY_API_KEY`) if the clinic lookup is on. To stop model calls later:
+   `gcloud run services update nightingale-indoor --region asia-east1 --update-env-vars=DAILY_LIMIT=0`.
 4. Add the indoor site to `firebase.json` with the `/indoor-api/**` rewrite
    (`"run": { "serviceId": "nightingale-indoor", "region": "asia-east1" }`),
    build with `npm run build:hosting`, and deploy only that site:
@@ -99,7 +113,7 @@ for the owner to approve.
 | --- | --- |
 | Bad frontend release | Firebase console → Hosting → the indoor site's release history → Roll back (creates a new release serving the earlier version) |
 | Bad proxy revision | `gcloud run services update-traffic nightingale-indoor --to-revisions PREVIOUS_REVISION=100` |
-| Stop model spending now | Revoke the key in Token Factory. Every request then answers uncertain and the screen offers help; this behaviour is verified in the [scenario report](qa/indoor-scenarios-2026-10-23/README.md) (invalid key → uncertain) |
+| Stop model spending now | Set `DAILY_LIMIT=0` on the service (step 3): every request answers uncertain with help and no call is made. Or revoke the key in Token Factory. Every request then answers uncertain and the screen offers help; this behaviour is verified in the [scenario report](qa/indoor-scenarios-2026-10-23/README.md) (invalid key → uncertain) |
 | Take the indoor demo down | Disable the indoor site, or remove the rewrite and redeploy the site |
 
 ## Questions for the owner
