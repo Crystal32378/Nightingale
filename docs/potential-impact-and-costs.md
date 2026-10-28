@@ -6,7 +6,9 @@
 
 [English indoor demo](https://nightingale-indoor.web.app/?lang=en) · [Source code](https://github.com/Crystal32378/Nightingale)
 
-Nightingale explores a simple hospital-wayfinding experience: one next step, bilingual help and explicit uncertainty instead of invented directions. Its intended benefit is easier navigation and communication—not a measured improvement in outcomes.
+## Everyday experience in an ageing society
+
+In an ageing society, treating illness is not the only part of care that matters: the everyday experience of a hospital visit deserves attention too. Nightingale explores whether small personal-agent interactions—one understandable next step, bilingual help and a place to ask again—could make that experience less confusing or anxious. These are intended benefits to evaluate, not measured improvements in outcomes. Explicit uncertainty replaces invented directions; human volunteers and hospital staff remain essential.
 
 ## A place to ask again—not a replacement for volunteers
 
