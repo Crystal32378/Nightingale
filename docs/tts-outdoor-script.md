@@ -29,6 +29,7 @@
 | photo.remind | 第一次按拍照 | 只拍招牌就好，別拍到人臉、車牌和病患資料。照片會交給 Google 辨識，我們不保存原始照片。 | **新錄** |
 | photo.wait | 照片辨識中 | 我看一下這張照片。 | **新錄** |
 | photo.wait2 | 辨識超過 10 秒 | 快好了。 | **新錄** |
+| ask.help-entrance | 幫我問（給路人看的卡） | 請問，醫院的正門要怎麼走？ | **新錄**（2026-10-27） |
 
 停用：舊 cp2.cross（輪椅道）、cp2.turn、cp2.straight、cp2.store（7-Eleven）、舊 cp3.cross（八十秒）。
 

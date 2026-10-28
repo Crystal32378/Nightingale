@@ -360,6 +360,8 @@ describe('asking for help without a destination', () => {
       constructor(public text: string) {}
     })
     vi.stubGlobal('speechSynthesis', { speak, cancel: vi.fn() })
+    // The recording will not play, so the device voice says it instead.
+    vi.stubGlobal('Audio', class { volume = 1; play() { return Promise.reject(new Error('blocked')) } pause() {} })
     const ui = setup()
     await ui.enter('不要唸出這段文字')
     await ui.user.click(screen.getByRole('button', { name: '幫我問' }))
@@ -491,9 +493,35 @@ describe('switching language', () => {
     expect(speak).not.toHaveBeenCalled()
   })
 
-  // Some people hear one voice more clearly than the other. The choice is only
-  // offered where it changes what is heard: Chinese is the device voice.
-  it('plays the male recording once Male is chosen, and offers no voice choice in Chinese', async () => {
+  // Some people hear one voice more clearly than the other, in either language.
+  it.each([
+    ['female', '/audio/zh-TW/female/ask.generic.mp3'],
+    ['male', '/audio/zh-TW/male/ask.generic.mp3'],
+  ])('plays the Chinese %s recording of the card, not the device voice', async (voice, file) => {
+    const speak = vi.fn()
+    const played: string[] = []
+    vi.stubGlobal('speechSynthesis', { speak, cancel: vi.fn() })
+    vi.stubGlobal('Audio', class {
+      volume = 1
+      constructor(public src: string) {}
+      play() {
+        played.push(this.src)
+        return Promise.resolve()
+      }
+      pause() {}
+    })
+    const ui = setup()
+    await ui.user.selectOptions(screen.getByRole('combobox', { name: '聲音' }), voice)
+    await ui.user.click(screen.getByRole('button', { name: '幫我問' }))
+    await ui.user.click(screen.getByRole('button', { name: '再說一遍' }))
+
+    expect(screen.getByRole('dialog', { name: '請問，可以幫我找路嗎？' })).toBeTruthy()
+    expect(played.length).toBeGreaterThanOrEqual(2)
+    for (const src of played) expect(src).toBe(file)
+    expect(speak).not.toHaveBeenCalled()
+  })
+
+  it('plays the male recording once Male is chosen', async () => {
     const played: string[] = []
     vi.stubGlobal('speechSynthesis', { speak: vi.fn(), cancel: vi.fn() })
     vi.stubGlobal('Audio', class {
@@ -506,8 +534,6 @@ describe('switching language', () => {
       pause() {}
     })
     const ui = setup()
-    expect(screen.queryByRole('combobox', { name: /Voice|聲音/ })).toBeNull()
-
     await toEnglish(ui)
     await ui.user.selectOptions(screen.getByRole('combobox', { name: 'Voice' }), 'male')
     await ui.user.click(screen.getByRole('button', { name: 'Help me ask' }))

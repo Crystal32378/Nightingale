@@ -60,7 +60,7 @@ describe('English presentation keeps route identity separate from server prose',
   it('ships the complete accepted English script in separate files with intact provenance', () => {
     const script = JSON.parse(readFileSync('src/remote/outdoor-en-script.json', 'utf8'))
     const manifest = JSON.parse(readFileSync('src/remote/outdoor-manifest.en.json', 'utf8'))
-    expect(Object.keys(manifest.utterances)).toHaveLength(22)
+    expect(Object.keys(manifest.utterances)).toHaveLength(23)
     expect(manifest.scriptSha256).toBe(createHash('sha256').update(readFileSync('src/remote/outdoor-en-script.json')).digest('hex'))
     for (const [key, entry] of Object.entries(manifest.utterances) as Array<[string, { text: string; voices: Record<string, { file: string; sha256: string }> }]>) {
       expect(entry.text).toBe(script.utterances[key])

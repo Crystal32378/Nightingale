@@ -23,6 +23,7 @@
     "reanchor": "What can you see nearby? Just tell me.",
     "photo.remind": "Photograph the sign only. Keep faces, number plates, and patient information out of the picture. Google will read the photo. Nightingale does not save the original image.",
     "photo.wait": "Let me take a look at this photo.",
-    "photo.wait2": "I am still looking."
+    "photo.wait2": "I am still looking.",
+    "ask.help-entrance": "Excuse me, how do I get to the main entrance of the hospital?"
   }
 }

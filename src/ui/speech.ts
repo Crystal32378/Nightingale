@@ -1,6 +1,8 @@
 import { speechVolumeFor } from './volumeStore'
 import recordings from './ask-recordings.en.json'
 import maleRecordings from './ask-recordings.en.male.json'
+import zhFemale from '../voice/manifest.zh-TW.female.json'
+import zhMale from '../voice/manifest.zh-TW.male.json'
 
 /**
  * Speech is a playback device, not a writer. It receives the verified string
@@ -9,13 +11,20 @@ import maleRecordings from './ask-recordings.en.male.json'
  * Loudness is not the sentence's business either: it comes from the level the
  * person chose for this listening context (see volumeStore / voice/level.ts).
  *
- * English help sentences have recordings (scripts/record-indoor-en.ts), chosen
- * by the exact verified text, in the voice the person chose. A sentence without
+ * Help sentences have recordings — English from scripts/record-indoor-en.ts,
+ * Chinese from the MiniMax manifests (their ask.* entries) — chosen by the
+ * exact verified text, in the voice the person chose. A sentence without
  * its recording, or a recording that will not play, is said by the device voice
  * instead.
  */
 export type RecordedVoice = 'female' | 'male'
-const RECORDED: Record<RecordedVoice, Record<string, { file: string }>> = { female: recordings, male: maleRecordings }
+type Manifest = { utterances: Record<string, { text: string; file: string }> }
+const zhAsk = (manifest: Manifest) =>
+  Object.fromEntries(Object.entries(manifest.utterances).filter(([key]) => key.startsWith('ask.')).map(([, u]) => [u.text, u]))
+const RECORDED: Record<RecordedVoice, Record<string, { file: string }>> = {
+  female: { ...recordings, ...zhAsk(zhFemale) },
+  male: { ...maleRecordings, ...zhAsk(zhMale) },
+}
 
 // ponytail: not persisted, like the outdoor voice choice; localStorage like volumeStore if people ask.
 let voice: RecordedVoice = 'female'
@@ -42,7 +51,7 @@ export function speak(text: string, key = 'guidance.go', lang = 'zh-TW'): void {
     if (typeof window === 'undefined') return
     stopSpeaking()
     const recorded = RECORDED[voice]
-    const recording = lang.startsWith('en') && Object.prototype.hasOwnProperty.call(recorded, text) ? recorded[text] : undefined
+    const recording = Object.prototype.hasOwnProperty.call(recorded, text) ? recorded[text] : undefined
     if (recording && typeof Audio !== 'undefined') {
       const audio = new Audio(import.meta.env.BASE_URL + recording.file)
       // ponytail: iOS ignores element volume (hardware buttons only); a GainNode if the levels must apply there.

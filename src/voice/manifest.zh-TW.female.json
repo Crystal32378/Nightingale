@@ -192,6 +192,15 @@
       "sha256": "d18b64f164b9e39ee191021d64cc3917054ab841334eea368ee2a8ff84c1fb19",
       "bytes": 40586,
       "durationMs": 0
+    },
+    "ask.generic": {
+      "text": "請問，可以幫我找路嗎？",
+      "file": "audio/zh-TW/female/ask.generic.mp3",
+      "context": "PUBLIC",
+      "pitch": 1,
+      "sha256": "03c7d9e53a42c3680aba9ca85849f1d56940ede9630124b958bcd374d52f7ebc",
+      "bytes": 39332,
+      "durationMs": 2392
     }
   }
 }
